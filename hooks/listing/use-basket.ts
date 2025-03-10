@@ -22,7 +22,7 @@ interface LocationHours {
 
 interface BasketProps {
   listingId: string;
-  address: any;
+  address?: any;
   user?: any | null;
   initialQuantity?: number;
   hours?: LocationHours | null;

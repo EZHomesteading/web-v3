@@ -378,7 +378,34 @@ const getUserLocationsBasket = async (): Promise<BasketLocation[] | null> => {
     );
   }
 };
+const getUserLocations = async (): Promise<BasketLocation[] | null> => {
+  const session = await authCache();
+  try {
+    const locations = await prisma.location.findMany({
+      where: {
+        userId: session?.user?.id,
+      },
+      select: {
+        id: true,
+        coordinates: true,
+        address: true,
+        role: true,
+        user: {
+          select: {
+            id: true,
+          },
+        },
+      },
+    });
 
+    return locations;
+  } catch (error) {
+    console.error("Error fetching user location:", error);
+    throw new Error(
+      error instanceof Error ? error.message : "Unknown error occurred"
+    );
+  }
+};
 // Update the getUserStore function
 const getUserStore = async (params: IStoreParams): Promise<any | null> => {
   try {
@@ -682,6 +709,7 @@ export {
   getNavUser,
   getRoleGate,
   getUserLocationsBasket,
+  getUserLocations,
   getRole,
   GetStoreByLocation,
 };

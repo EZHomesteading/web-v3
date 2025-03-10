@@ -64,3 +64,21 @@
     --ring: 240 4.9% 83.9% !important;
   }
 }
+.zmax {
+  z-index: 9999 !important;
+}
+.zmid {
+  z-index: 5000 !important;
+}
+.z {
+  z-index: 100 !important;
+}
+.z-dropdown {
+  z-index: 50;
+}
+.z-navigation {
+  z-index: 40;
+}
+.z-content {
+  z-index: 30;
+}

@@ -16,7 +16,6 @@ interface AvailabilityScoreProps {
   };
   type: "pickup" | "delivery";
 }
-
 const AvailabilityScore = ({ scores, type }: AvailabilityScoreProps) => {
   const typeScores = scores[type];
 
@@ -32,7 +31,22 @@ const AvailabilityScore = ({ scores, type }: AvailabilityScoreProps) => {
         return "text-gray-300";
     }
   };
+  const getDotColor = (score: number, dotIndex: number) => {
+    if (dotIndex >= score) {
+      return "bg-gray-200"; // Default inactive color
+    }
 
+    switch (score) {
+      case 3:
+        return "bg-green-500";
+      case 2:
+        return "bg-yellow-500";
+      case 1:
+        return "bg-red-500";
+      default:
+        return "bg-gray-200";
+    }
+  };
   return (
     <div className="flex items-center justify-between space-x-1">
       <div
@@ -46,14 +60,13 @@ const AvailabilityScore = ({ scores, type }: AvailabilityScoreProps) => {
         </span>
       </div>
       <div className="flex space-x-1">
-        {[...Array(3)].map((_, i) => (
+        {[0, 1, 2].map((dotIndex) => (
           <div
-            key={i}
-            className={`w-2 h-2 rounded-full ${
-              i < typeScores.combinedScore
-                ? getColor(typeScores.combinedScore).replace("text-", "bg-")
-                : "bg-gray-200"
-            }`}
+            key={dotIndex}
+            className={`w-2 h-2 rounded-full ${getDotColor(
+              typeScores.combinedScore,
+              dotIndex
+            )}`}
           />
         ))}
       </div>
