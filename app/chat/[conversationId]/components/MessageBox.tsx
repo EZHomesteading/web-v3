@@ -7,7 +7,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import Image from "next/image";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { format } from "date-fns";
-import "react-datetime-picker/dist/DateTimePicker.css";
+//import "react-datetime-picker/dist/DateTimePicker.css";
 import axios from "axios";
 //import toast from "react-hot-toast";
 import CancelModal from "./CancelModal";

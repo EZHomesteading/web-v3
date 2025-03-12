@@ -17,6 +17,8 @@ const ChatId = async ({
   searchParams: { redirect_status?: string; payment_intent?: string };
 }) => {
   // If there's a successful payment, redirect to the clean URL
+  params = await params;
+  searchParams = await searchParams;
   if (searchParams.redirect_status === "succeeded") {
     redirect(`/chat/${params.conversationId}`);
   }

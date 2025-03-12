@@ -1,5 +1,5 @@
 "use client";
-import { Sheet, SheetContent, SheetTrigger } from "../../ui/sheet";
+import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "../../ui/sheet";
 import { getStatusText } from "@/components/icons/notification-order-status";
 import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
@@ -96,7 +96,11 @@ const NotificationIcon = ({ bOrders, sOrders, harvestMessages }: Props) => {
             Alerts
           </div>
         </SheetTrigger>
-        <SheetContent className="pt-12 bg-slate-500 opacity-border-none justify-start flex flex-col gap-y-1 border-none overflow-y-auto">
+
+        <SheetContent className="pt-12 bg-slate-500 opacity-border-none justify-start flex flex-col gap-y-1 border-none overflow-y-auto z-9999">
+          <SheetTitle className="pl-10 pt-1  border-neutral-200 border-b-[1px] ">
+            <div className="absolute top-4 right-10">Chat Notifications</div>
+          </SheetTitle>
           {notifications.map((notification, index) => (
             <Link
               key={index}

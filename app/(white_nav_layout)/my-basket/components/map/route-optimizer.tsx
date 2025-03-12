@@ -3,6 +3,7 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Location } from "@prisma/client";
 import RouteOptimizer from "@/app/(white_nav_layout)/map/mapping/route-optimizer";
 import { X } from "lucide-react";
+import { DialogTitle } from "@radix-ui/react-dialog";
 
 interface RouteOptimizerModalProps {
   isOpen: boolean;
@@ -52,6 +53,7 @@ const RouteOptimizerModal: React.FC<RouteOptimizerModalProps> = ({
           return false;
         }}
       >
+        <DialogTitle className="hidden">Route Optimizer</DialogTitle>
         <button
           onClick={() => onClose()}
           className="absolute top-1 right-1 p-2 rounded-full hover:bg-gray-100 z-[9999999]"

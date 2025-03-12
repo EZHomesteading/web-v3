@@ -6,9 +6,7 @@ import Button from "@/components/modals/chatmodals/Button";
 import { CommonInputProps } from "@/types/create.types";
 import { FieldValues, useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
-import Input from "@/app/(no-nav_layout)/create/components/listing-input";
 import { OrderStatus } from "@prisma/client";
-import axios from "axios";
 
 interface ConfirmModalProps {
   open: boolean;

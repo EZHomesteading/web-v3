@@ -1,12 +1,14 @@
+"use client";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import {
   GoogleMap,
   Circle,
   useLoadScript,
   MarkerF,
   Autocomplete,
+  Libraries,
 } from "@react-google-maps/api";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -191,7 +193,7 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
             }}
             className="bg-white rounded-3xl border shadow-xl z-[101] fixed w-full max-w-[700px] mx-auto inset-0 h-[550px] overflow-hidden"
           >
-            <div className="relative h-full bg-white rounded-3xl flex flex-col px-6 pb-6 pt-14">
+            <div className="relative h-full bg-white rounded-3xl flex flex-col px-6 pb-6 pt-6">
               <button
                 onClick={onClose}
                 className="absolute top-2 right-2 text-black bg-white p-2 rounded-full shadow-sm hover:bg-gray-50 transition-colors"
@@ -265,6 +267,8 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
     </AnimatePresence>
   );
 };
+const libraries: Libraries = ["places", "geometry"];
+
 const AvailabilityMap: React.FC<AvailabilityMapProps> = ({
   setStartLoc,
   setEndLoc,
@@ -294,13 +298,16 @@ const AvailabilityMap: React.FC<AvailabilityMapProps> = ({
       return defaultCoords;
     }
   })();
+
   const googleMapsApiKey = mapsKey;
-  //const libraries: ("places" | "geometry")[] = ["places", "geometry"];
   const mapRef = useRef<google.maps.Map | null>(null);
+
+  // Use the static libraries array
   const { isLoaded } = useLoadScript({
     googleMapsApiKey,
-    libraries: ["places", "geometry"],
+    libraries, // Use the libraries constant defined outside
   });
+
   const [selectedDate, setSelectedDate] = useState<string>("");
   const [selectedTime, setSelectedTime] = useState<string>("");
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
@@ -338,73 +345,78 @@ const AvailabilityMap: React.FC<AvailabilityMapProps> = ({
       nextOpenTime: string;
     }>
   >([]);
-  const locationInputRef = useRef<HTMLInputElement>(null);
-  const LocationSearchBox = ({
-    onPlaceSelect,
-    isLoaded,
-  }: {
-    onPlaceSelect: (address: string, coordinates: [number, number]) => void;
-    isLoaded: boolean;
-  }) => {
-    const locationInputRef = useRef<HTMLInputElement>(null);
-    const locationSearchBoxRef = useRef<google.maps.places.Autocomplete | null>(
-      null
-    );
 
-    if (!isLoaded)
-      return <Input type="text" placeholder="Loading..." disabled />;
+  const LocationSearchBox = useCallback(
+    ({
+      onPlaceSelect,
+      isLoaded,
+    }: {
+      onPlaceSelect: (address: string, coordinates: [number, number]) => void;
+      isLoaded: boolean;
+    }) => {
+      const locationInputRef = useRef<HTMLInputElement>(null);
+      const locationSearchBoxRef =
+        useRef<google.maps.places.Autocomplete | null>(null);
 
-    return (
-      <Autocomplete
-        onLoad={(autocomplete) => {
-          locationSearchBoxRef.current = autocomplete;
-        }}
-        onPlaceChanged={() => {
-          if (locationSearchBoxRef.current) {
-            const place = locationSearchBoxRef.current.getPlace();
-            if (place.geometry?.location && place.formatted_address) {
-              onPlaceSelect(place.formatted_address, [
-                place.geometry.location.lng(),
-                place.geometry.location.lat(),
-              ]);
+      if (!isLoaded)
+        return <Input type="text" placeholder="Loading..." disabled />;
+
+      return (
+        <Autocomplete
+          onLoad={(autocomplete) => {
+            locationSearchBoxRef.current = autocomplete;
+          }}
+          onPlaceChanged={() => {
+            if (locationSearchBoxRef.current) {
+              const place = locationSearchBoxRef.current.getPlace();
+              if (place.geometry?.location && place.formatted_address) {
+                onPlaceSelect(place.formatted_address, [
+                  place.geometry.location.lng(),
+                  place.geometry.location.lat(),
+                ]);
+              }
             }
-          }
-        }}
-        options={{
-          componentRestrictions: { country: "us" },
-          fields: ["formatted_address", "geometry", "name"],
-          types: ["address"],
-        }}
-      >
-        <Input
-          ref={locationInputRef}
-          type="text"
-          placeholder="Enter new address..."
-          className="w-full text-lg p-4 h-12"
-          onClick={(e) => e.stopPropagation()}
-        />
-      </Autocomplete>
-    );
-  };
+          }}
+          options={{
+            componentRestrictions: { country: "us" },
+            fields: ["formatted_address", "geometry", "name"],
+            types: ["address"],
+          }}
+        >
+          <Input
+            ref={locationInputRef}
+            type="text"
+            placeholder="Enter new address..."
+            className="w-full text-lg p-4 h-12"
+            onClick={(e) => e.stopPropagation()}
+          />
+        </Autocomplete>
+      );
+    },
+    []
+  );
 
   const [zoom, setZoom] = useState<number>(20);
 
-  const getDisplayText = () => {
+  const getDisplayText = useCallback(() => {
     if (!selectedDate || !selectedTime) {
       return "Enter Departure Date and Time";
     }
     return formatDateToMMMDDAtHourMin(
       new Date(`${selectedDate}T${selectedTime}`)
     );
-  };
-  const generateRandomOffset = (): number => {
+  }, [selectedDate, selectedTime]);
+
+  const generateRandomOffset = useCallback((): number => {
     const maxOffset = 0.007;
     return (Math.random() - 0.5) * maxOffset;
-  };
-  const handleDateTimeSelect = (date: string, time: string) => {
+  }, []);
+
+  const handleDateTimeSelect = useCallback((date: string, time: string) => {
     setSelectedDate(date);
     setSelectedTime(time);
-  };
+  }, []);
+
   useEffect(() => {
     if (userLoc?.[0]?.coordinates) {
       setHereCoordinates(userLoc[0].coordinates);
@@ -415,6 +427,7 @@ const AvailabilityMap: React.FC<AvailabilityMapProps> = ({
       });
     }
   }, [userLoc]);
+
   useEffect(() => {
     const newRandomPositions: RandomizedPositions = {};
     locations.forEach((location) => {
@@ -429,65 +442,75 @@ const AvailabilityMap: React.FC<AvailabilityMapProps> = ({
         };
       }
     });
-    setRandomizedPositions((prev) => ({ ...prev, ...newRandomPositions }));
-  }, [locations]);
-  const handlePlaceSelect = (
-    address: string,
-    coordinates: [number, number]
-  ) => {
-    setInitLoc({
-      address,
-      coordinates,
-    });
-    setHereCoordinates(coordinates);
-    setMapCenter({
-      lng: coordinates[0],
-      lat: coordinates[1],
-    });
-    setIsChangeLocationOpen(false);
-  };
-  const findNextOpenTime = (location: any, selectedDateTime: Date): string => {
-    const hours = location.hours?.pickup;
-    if (!hours?.length) return "No schedule available";
 
-    const now = new Date();
-    now.setHours(0, 0, 0, 0);
-
-    // Find today's or next available schedule
-    const currentSchedule = hours.find((day: any) => {
-      const scheduleDate = new Date(day.date);
-      return scheduleDate.getTime() >= now.getTime();
-    });
-
-    if (!currentSchedule) return "No upcoming availability";
-
-    const formatTime = (minutes: number) => {
-      const hour = Math.floor(minutes / 60);
-      const ampm = hour >= 12 ? "PM" : "AM";
-      const hour12 = hour % 12 || 12;
-      return `${hour12}:00${ampm}`;
-    };
-
-    const formatDate = (date: Date) => {
-      const day = date.getDate();
-      const suffix = ["th", "st", "nd", "rd"][day % 10 > 3 ? 0 : day % 10];
-      return `${date.toLocaleString("en-US", {
-        month: "short",
-      })} ${day}${suffix}`;
-    };
-
-    const scheduleDate = new Date(currentSchedule.date);
-    const { open } = currentSchedule.timeSlots[0];
-
-    if (scheduleDate.getTime() === now.getTime()) {
-      return `Opens today at ${formatTime(open)}`;
+    // Only update if we have new positions to add
+    if (Object.keys(newRandomPositions).length > 0) {
+      setRandomizedPositions((prev) => ({ ...prev, ...newRandomPositions }));
     }
+  }, [locations, generateRandomOffset, randomizedPositions]);
 
-    return `Opens on ${scheduleDate.toLocaleString("en-US", {
-      weekday: "long",
-    })} on ${formatDate(scheduleDate)}, at ${formatTime(open)}`;
-  };
-  const checkLocationAvailability = (): void => {
+  const handlePlaceSelect = useCallback(
+    (address: string, coordinates: [number, number]) => {
+      setInitLoc({
+        address,
+        coordinates,
+      });
+      setHereCoordinates(coordinates);
+      setMapCenter({
+        lng: coordinates[0],
+        lat: coordinates[1],
+      });
+      setIsChangeLocationOpen(false);
+    },
+    []
+  );
+
+  const findNextOpenTime = useCallback(
+    (location: any, selectedDateTime: Date): string => {
+      const hours = location.hours?.pickup;
+      if (!hours?.length) return "No schedule available";
+
+      const now = new Date();
+      now.setHours(0, 0, 0, 0);
+
+      // Find today's or next available schedule
+      const currentSchedule = hours.find((day: any) => {
+        const scheduleDate = new Date(day.date);
+        return scheduleDate.getTime() >= now.getTime();
+      });
+
+      if (!currentSchedule) return "No upcoming availability";
+
+      const formatTime = (minutes: number) => {
+        const hour = Math.floor(minutes / 60);
+        const ampm = hour >= 12 ? "PM" : "AM";
+        const hour12 = hour % 12 || 12;
+        return `${hour12}:00${ampm}`;
+      };
+
+      const formatDate = (date: Date) => {
+        const day = date.getDate();
+        const suffix = ["th", "st", "nd", "rd"][day % 10 > 3 ? 0 : day % 10];
+        return `${date.toLocaleString("en-US", {
+          month: "short",
+        })} ${day}${suffix}`;
+      };
+
+      const scheduleDate = new Date(currentSchedule.date);
+      const { open } = currentSchedule.timeSlots[0];
+
+      if (scheduleDate.getTime() === now.getTime()) {
+        return `Opens today at ${formatTime(open)}`;
+      }
+
+      return `Opens on ${scheduleDate.toLocaleString("en-US", {
+        weekday: "long",
+      })} on ${formatDate(scheduleDate)}, at ${formatTime(open)}`;
+    },
+    []
+  );
+
+  const checkLocationAvailability = useCallback((): void => {
     if (!selectedDate || !selectedTime) {
       alert("Please select both date and time");
       return;
@@ -533,13 +556,16 @@ const AvailabilityMap: React.FC<AvailabilityMapProps> = ({
         });
       }
     });
+
     setEnteredDate(true);
     setLocationStatuses(newStatuses);
+
     if (unavailable.length > 0) {
       setUnavailableLocations(unavailable);
       setShowUnavailableDialog(true);
     }
-  };
+  }, [selectedDate, selectedTime, locations, findNextOpenTime]);
+
   useEffect(() => {
     const now = new Date();
     const timeInMinutes = now.getHours() * 60 + now.getMinutes();
@@ -576,41 +602,51 @@ const AvailabilityMap: React.FC<AvailabilityMapProps> = ({
 
     setLocationStatuses(initialStatuses);
   }, [locations]);
-  const getLocationStatusColor = (
-    status: LocationStatus
-  ): {
-    fillColor: string;
-    strokeColor: string;
-    strokeWeight?: number;
-  } => {
-    if (!status.isOpen && status.willOpen) {
+
+  const getLocationStatusColor = useCallback(
+    (
+      status: LocationStatus
+    ): {
+      fillColor: string;
+      strokeColor: string;
+      strokeWeight?: number;
+    } => {
+      if (!status.isOpen && status.willOpen) {
+        return {
+          fillColor: "red",
+          strokeColor: "green",
+          strokeWeight: 3,
+        };
+      } else if (!status.isOpen) {
+        return {
+          fillColor: "red",
+          strokeColor: "red",
+        };
+      } else if (status.closesSoon) {
+        return {
+          fillColor: "yellow",
+          strokeColor: "yellow",
+        };
+      }
       return {
-        fillColor: "red",
+        fillColor: "green",
         strokeColor: "green",
-        strokeWeight: 3,
       };
-    } else if (!status.isOpen) {
-      return {
-        fillColor: "red",
-        strokeColor: "red",
-      };
-    } else if (status.closesSoon) {
-      return {
-        fillColor: "yellow",
-        strokeColor: "yellow",
-      };
-    }
-    return {
-      fillColor: "green",
-      strokeColor: "green",
-    };
-  };
+    },
+    []
+  );
+
+  const createDateFromStrings = useCallback(
+    (dateStr: string, timeStr: string): Date => {
+      return new Date(`${dateStr}T${timeStr}`);
+    },
+    []
+  );
+
   if (!isLoaded) {
     return <div>Loading maps...</div>;
   }
-  const createDateFromStrings = (dateStr: string, timeStr: string): Date => {
-    return new Date(`${dateStr}T${timeStr}`);
-  };
+
   return (
     <div className="mt-8">
       <RouteOptimizerModal
@@ -732,7 +768,6 @@ const AvailabilityMap: React.FC<AvailabilityMapProps> = ({
         )}
         <div className="h-[400px] rounded-lg overflow-hidden">
           <GoogleMap
-            key={mapsKey}
             mapContainerClassName="w-full h-full"
             center={mapCenter}
             zoom={9}
@@ -752,10 +787,9 @@ const AvailabilityMap: React.FC<AvailabilityMapProps> = ({
               fullscreenControl: false,
               minZoom: 6,
               maxZoom: 10,
-              scaleControl: true, // Enable scale control
+              scaleControl: true,
             }}
           >
-            {" "}
             <MarkerF
               position={{
                 lat: hereCoordinates[1],
@@ -837,7 +871,7 @@ const AvailabilityMap: React.FC<AvailabilityMapProps> = ({
               );
             })}
           </GoogleMap>
-        </div>{" "}
+        </div>
       </div>
 
       <div className="mt-4 flex gap-4 justify-center">
@@ -862,4 +896,4 @@ const AvailabilityMap: React.FC<AvailabilityMapProps> = ({
   );
 };
 
-export default AvailabilityMap;
+export default React.memo(AvailabilityMap);

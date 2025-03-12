@@ -269,7 +269,7 @@ export default function CheckoutForm({
 
                   <ul className="divide-y divide-gray-100">
                     {basket.items.map((item: any) => (
-                      <li key={item.id} className="flex py-4 gap-4">
+                      <li key={item.listing.id} className="flex py-4 gap-4">
                         <div className="h-20 w-20 flex-none relative">
                           <Image
                             src={item.listing.imageSrc[0]}

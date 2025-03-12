@@ -5,6 +5,8 @@ import React, {
   useState,
   useMemo,
   useEffect,
+  useRef,
+  useCallback,
 } from "react";
 import {
   Carousel,
@@ -30,7 +32,9 @@ import { Trash2Icon } from "lucide-react";
 import LocationModal from "./LocSelect";
 import WeeklyHours from "./weeklyhours";
 import CheckoutButton from "./checkoutButton";
-import { useLoadScript } from "@react-google-maps/api";
+import { Libraries, useLoadScript } from "@react-google-maps/api";
+import { BasketContext, BasketProvider } from "@/hooks/basketprovider";
+import ClientOnly from "@/components/client/ClientOnly";
 
 // Keep specific types where they're well-defined
 interface ListingType {
@@ -47,13 +51,7 @@ export interface BasketItem {
   listing: ListingType;
   [key: string]: any;
 }
-interface BasketContextType {
-  basketTotals: {
-    total: number;
-    itemCount: number;
-  };
-  updateBasketTotals: (totals: { total: number; itemCount: number }) => void;
-}
+
 // Use any for complex nested types
 interface DetailedBasketGridProps {
   mapsKey: string;
@@ -77,21 +75,6 @@ interface DetailedBasketCardProps {
 interface QuantityControlProps {
   item: BasketItem;
 }
-const BasketContext = createContext<BasketContextType | undefined>(undefined);
-
-export const BasketProvider = ({ children }: { children: React.ReactNode }) => {
-  const [basketTotals, setBasketTotals] = useState({ total: 0, itemCount: 0 });
-
-  const updateBasketTotals = (totals: { total: number; itemCount: number }) => {
-    setBasketTotals(totals);
-  };
-
-  return (
-    <BasketContext.Provider value={{ basketTotals, updateBasketTotals }}>
-      {children}
-    </BasketContext.Provider>
-  );
-};
 
 export const useBasket = () => {
   const context = useContext(BasketContext);
@@ -100,6 +83,7 @@ export const useBasket = () => {
   }
   return context;
 };
+
 const DetailedBasketGrid: React.FC<DetailedBasketGridProps> = ({
   baskets,
   mapsKey,
@@ -110,20 +94,22 @@ const DetailedBasketGrid: React.FC<DetailedBasketGridProps> = ({
   userName,
 }) => {
   return (
-    <BasketProvider>
-      <DetailedBasketGridContent
-        baskets={baskets}
-        mapsKey={mapsKey}
-        userLocs={userLocs}
-        userLoc={userLoc}
-        mk={mk}
-        userId={userId}
-        userName={userName}
-      />
-    </BasketProvider>
+    <ClientOnly>
+      <BasketProvider>
+        <DetailedBasketGridContent
+          baskets={baskets}
+          mapsKey={mapsKey}
+          userLocs={userLocs}
+          userLoc={userLoc}
+          mk={mk}
+          userId={userId}
+          userName={userName}
+        />
+      </BasketProvider>
+    </ClientOnly>
   );
 };
-
+const libraries: Libraries = ["places", "geometry"];
 const DetailedBasketGridContent: React.FC<DetailedBasketGridProps> = ({
   baskets,
   mapsKey,
@@ -133,17 +119,17 @@ const DetailedBasketGridContent: React.FC<DetailedBasketGridProps> = ({
   mk,
   userId,
 }) => {
-  // Track delivery/pickup mode for each basket
-  const { updateBasketTotals } = useBasket();
+  // Get basketTotals from context ONCE at the top level
+  const { basketTotals, updateBasketTotals } = useBasket();
   const [pickupTimes, setPickupTimes] = useState(null);
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: mapsKey,
-    libraries: ["places", "geometry"],
+    libraries,
   });
 
   const [startLoc, setStartLoc] = useState<any[]>([]);
   const [endLoc, setEndLoc] = useState<any[]>([]);
-  useEffect(() => {}, [pickupTimes]);
+
   const [basketModes, setBasketModes] = useState<
     Record<string, DeliveryPickupToggleMode>
   >(() =>
@@ -175,46 +161,38 @@ const DetailedBasketGridContent: React.FC<DetailedBasketGridProps> = ({
   }, [userLoc]);
   // Filter locations based on their current mode
   const locations = useMemo(() => {
-    //console.log("Recalculating locations with basketModes:", basketModes);
-
-    const filteredLocations = baskets.reduce(
-      (acc: BasketLocation[], basket) => {
-        if (basket.location) {
-          const basketMode = basketModes[basket.id];
-
-          // Include location if:
-          // - It's in PICKUP mode
-          if (basketMode === DeliveryPickupToggleMode.PICKUP) {
-            acc.push(basket.location);
-            // console.log("Adding location:", basket.location.id);
-          }
+    return baskets.reduce((acc: BasketLocation[], basket) => {
+      if (basket.location) {
+        const basketMode = basketModes[basket.id];
+        if (basketMode === DeliveryPickupToggleMode.PICKUP) {
+          acc.push(basket.location);
         }
-        return acc;
-      },
-      []
-    );
-
-    //console.log("Filtered locations:", filteredLocations);
-    return filteredLocations;
+      }
+      return acc;
+    }, []);
   }, [baskets, basketModes]);
 
-  const handleBasketModeChange = (
-    basketId: string,
-    mode: DeliveryPickupToggleMode
-  ) => {
-    //console.log("Mode change requested:", { basketId, mode });
-    setBasketModes((prev) => {
-      const newModes = {
-        ...prev,
-        [basketId]: mode,
-      };
-      // console.log("New basket modes:", newModes);
-      return newModes;
-    });
-  };
+  const handleBasketModeChange = useCallback(
+    (basketId: string, mode: DeliveryPickupToggleMode) => {
+      setBasketModes((prev) => {
+        // Only update if the mode has actually changed
+        if (prev[basketId] === mode) {
+          return prev; // Return the same object if no changes
+        }
+
+        return {
+          ...prev,
+          [basketId]: mode,
+        };
+      });
+    },
+    []
+  );
+
   useEffect(() => {
-    const interval = setInterval(() => {
-      const totals = baskets.reduce(
+    // Calculate totals function
+    const calculateTotals = () => {
+      const newTotals = baskets.reduce(
         (acc, basket) => ({
           total:
             acc.total +
@@ -232,22 +210,31 @@ const DetailedBasketGridContent: React.FC<DetailedBasketGridProps> = ({
         }),
         { total: 0, itemCount: 0 }
       );
-      updateBasketTotals(totals);
-    }, 2000);
 
-    return () => clearInterval(interval);
-  }, [updateBasketTotals]);
+      // Only update if totals have changed
+      if (
+        basketTotals.total !== newTotals.total ||
+        basketTotals.itemCount !== newTotals.itemCount
+      ) {
+        updateBasketTotals(newTotals);
+      }
+    };
+
+    // Run once immediately
+    calculateTotals();
+
+    // Set up interval
+    const intervalId = setInterval(calculateTotals, 1000);
+
+    // Clean up
+    return () => clearInterval(intervalId);
+  }, [baskets, updateBasketTotals, basketTotals]);
 
   interface SummaryCard {
     baskets: any[];
     pickupTimes: Record<string, Date> | null;
   }
-  interface BasketState {
-    id: string;
-    locationId: string;
-    orderMethod: string;
-    deliveryDate: Date | null;
-  }
+
   function findLargestSODT(baskets: any[]): number {
     // Initialize with 0 in case there are no eligible items
     let largestSODT = 0;
@@ -285,40 +272,41 @@ const DetailedBasketGridContent: React.FC<DetailedBasketGridProps> = ({
   }
 
   const startDelay = findLargestSODT(baskets);
-  console.log(startDelay);
-  const OrderSummaryCard = ({ baskets, pickupTimes }: SummaryCard) => {
-    const { basketTotals } = useBasket();
+  const OrderSummaryCard = React.memo(
+    ({ baskets, pickupTimes }: SummaryCard) => {
+      const { basketTotals } = useBasket();
 
-    return (
-      <Card className="p-6">
-        <h2 className="text-xl font-semibold mb-4">Order Summary</h2>
-        <div className="space-y-4">
-          <div className="flex justify-between">
-            <span>Total Items:</span>
-            <span>{basketTotals.itemCount}</span>
-          </div>
-          <div className="flex justify-between">
-            <span>Subtotal:</span>
-            <span>${basketTotals.total.toFixed(2)}</span>
-          </div>
-          <div className="border-t pt-4">
-            <div className="flex justify-between font-semibold">
-              <span>Total:</span>
+      return (
+        <Card className="p-6">
+          <h2 className="text-xl font-semibold mb-4">Order Summary</h2>
+          <div className="space-y-4">
+            <div className="flex justify-between">
+              <span>Total Items:</span>
+              <span>{basketTotals.itemCount}</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Subtotal:</span>
               <span>${basketTotals.total.toFixed(2)}</span>
             </div>
-          </div>
+            <div className="border-t pt-4">
+              <div className="flex justify-between font-semibold">
+                <span>Total:</span>
+                <span>${basketTotals.total.toFixed(2)}</span>
+              </div>
+            </div>
 
-          <CheckoutButton
-            startLoc={startLoc}
-            endLoc={endLoc}
-            baskets={baskets}
-            pickupTimes={pickupTimes}
-            basketTotals={basketTotals}
-          />
-        </div>
-      </Card>
-    );
-  };
+            <CheckoutButton
+              startLoc={startLoc}
+              endLoc={endLoc}
+              baskets={baskets}
+              pickupTimes={pickupTimes}
+              basketTotals={basketTotals}
+            />
+          </div>
+        </Card>
+      );
+    }
+  );
   return (
     <div className={`${OutfitFont.className} w-full  pb-32`}>
       {isLoaded ? (
@@ -356,7 +344,6 @@ const DetailedBasketGridContent: React.FC<DetailedBasketGridProps> = ({
                 userLoc={userLoc}
                 locations={locations}
                 mapsKey={mapsKey}
-                key={locations.length} // Add key to force re-render
                 setPickupTimes={setPickupTimes}
               />
             </div>

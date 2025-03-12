@@ -139,8 +139,11 @@ const CheckoutButton = ({
           endLoc: endLoc,
         }
       );
-
+      console.log(orderGroupResponse);
       const orderGroupId = orderGroupResponse.data.id;
+      if (!orderGroupId) {
+        return;
+      }
       // Prepare updates for all baskets that need pickup times set
       const updates = baskets
         .filter((basket) => {
