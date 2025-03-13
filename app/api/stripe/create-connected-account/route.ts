@@ -4,13 +4,13 @@ import prisma from "@/lib/prismadb";
 import Stripe from "stripe";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
-  apiVersion: "2023-10-16",
+  apiVersion: "2025-02-24.acacia",
 });
 
 export async function POST(request: Request) {
   const body = await request.json();
   const { userId } = body;
-  console.log(body)
+  console.log(body);
   try {
     const user = await prisma.user.findUnique({
       where: { id: userId },

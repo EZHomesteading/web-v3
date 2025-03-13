@@ -243,16 +243,16 @@ const MessageBox: React.FC<MessageBoxProps> = ({
             return;
           } else if (error.response?.status === 400) {
             // Bad request
-            router.push("/selling/my-store");
+            // router.push("/selling/my-store");
             return;
           } else {
             // General error
-            router.push("/selling/my-store");
+            // router.push("/selling/my-store");
             return;
           }
         } else {
           // Non-axios error
-          router.push("/selling/my-store");
+          //router.push("/selling/my-store");
           return;
         }
       }

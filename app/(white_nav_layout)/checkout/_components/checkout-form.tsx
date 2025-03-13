@@ -132,8 +132,8 @@ export default function CheckoutForm({
           }
 
           const seller = await sellerResponse.json();
-          const sellerStripeID = seller?.stripeAccountId;
-          console.log(sellerStripeID);
+          const sellerStripeID = seller?.data.stripeAccountId;
+          console.log("POR QUES", sellerStripeID);
           const response = await axios.post(
             "/api/stripe/create-payment-intent",
             {

@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
-  apiVersion: "2023-10-16",
+  apiVersion: "2025-02-24.acacia",
 });
 
 interface TransferData {
@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
       const paymentIntent = await stripe.paymentIntents.retrieve(
         paymentIntentId
       );
-      console.log(paymentIntent);
+      // console.log(paymentIntent);
       return paymentIntent;
     } catch (error) {
       console.error("Error retrieving payment intent:", error);
@@ -29,9 +29,9 @@ export async function POST(request: NextRequest) {
     }
   }
   const paymentIntent = await getPaymentIntent(paymentId);
-  console.log(paymentIntent);
+  //console.log(paymentIntent);
   const order = await getOrderByIdTransfer({ orderId: orderId });
-  console.log(order);
+  console.log(paymentIntent);
   if (!order) {
     return NextResponse.json({ error: "Order not found" }, { status: 404 });
   } else if (
@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
   ) {
     return NextResponse.json(
       { error: "Invalid Stripe account" },
-      { status: 400 }
+      { status: 408 }
     );
   }
 

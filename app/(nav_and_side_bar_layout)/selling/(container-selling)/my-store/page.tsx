@@ -12,7 +12,8 @@ function processOrderQuantities(orders: any) {
 
   orders.forEach((order: any) => {
     try {
-      const quantityData = parse(order.quantity);
+      console.log(order.quantity);
+      const quantityData = order.quantity;
       quantityData.forEach((item: any) => {
         const { id, quantity } = item;
         const currentQuantity = quantityMap.get(id) || 0;

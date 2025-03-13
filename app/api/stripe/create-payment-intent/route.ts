@@ -17,7 +17,10 @@ export async function POST(request: NextRequest) {
     orderGroupId,
     sellerStripeID,
   } = await request.json();
-
+  console.log(sellerStripeID);
+  if (!sellerStripeID) {
+    return;
+  }
   try {
     if (orderId === null) {
       console.error("Error creating PaymentIntent:");

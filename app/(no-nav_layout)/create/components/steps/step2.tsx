@@ -3,7 +3,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import SearchClient from "@/components/client/SearchClient";
+import SearchClient from "../SearchClient";
 import { FormattedProduct } from "@/hooks/use-product";
 import useProducts from "@/hooks/use-product";
 import { FieldValues, UseFormSetValue } from "react-hook-form";

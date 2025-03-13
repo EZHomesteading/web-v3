@@ -1,6 +1,6 @@
 import CreateClient from "./components/CreateClient";
 import type { Viewport } from "next";
-import CreatePopup from "../../(white_nav_layout)/info-modals/create-info-modal";
+import CreatePopup from "@/app/(white_nav_layout)/info-modals/create-info-modal";
 import { getUserLocations } from "@/actions/getLocations";
 import { auth } from "@/auth";
 import { UserRole } from "@prisma/client";
@@ -14,6 +14,7 @@ const Page = async ({
 }: {
   searchParams?: { [key: string]: string | string[] | undefined };
 }) => {
+  const resolvedparams = await searchParams;
   const session = await auth();
   if (!session) {
     window.location.replace("/");
@@ -23,7 +24,7 @@ const Page = async ({
   locations = locations?.filter((loc) => loc.role !== UserRole.CONSUMER); // i hate javascript
 
   const defaultLocation = locations?.find(
-    (loc) => loc?.id === searchParams?.id && loc.role !== UserRole.CONSUMER
+    (loc) => loc?.id === resolvedparams?.id && loc.role !== UserRole.CONSUMER
   );
 
   return (
