@@ -4,7 +4,7 @@ import { currentUser } from "@/lib/auth";
 import { pusherServer } from "@/lib/pusher";
 import prisma from "@/lib/prismadb";
 import webPush, { PushSubscription } from "web-push";
-import { getUserById } from "@/data/user";
+import { getUserById } from "@/utils/user";
 
 export async function POST(request: Request) {
   try {

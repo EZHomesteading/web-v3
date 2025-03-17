@@ -10,7 +10,7 @@ import AccountCard from "./account-card";
 import Input from "./input";
 import { Button } from "@/components/ui/button";
 import { UploadButton } from "@/utils/uploadthing";
-import { FormValues, AddressFields } from "@/types/address.types";
+import { FormValues, AddressFields } from "@/types/address";
 import { UserInfo } from "next-auth";
 import { Location } from "@prisma/client";
 import Alert from "@/components/ui/custom-alert";

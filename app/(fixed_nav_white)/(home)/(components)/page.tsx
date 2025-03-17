@@ -3,7 +3,7 @@ import { UserRole } from "@prisma/client";
 import { currentUser } from "@/lib/auth";
 // import prisma from "@/lib/prisma";
 // import Stripe from "stripe";
-import { getUserById } from "@/data/user";
+import { getUserById } from "@/utils/user";
 import AdminHome from "./admin-home";
 import Home from "./home";
 

@@ -2,7 +2,7 @@ import ClientOnly from "@/components/client/ClientOnly";
 import ProfileClient from "./ProfileClient";
 import { getUserWithBuyReviews } from "@/actions/getUser";
 import { User, Reviews } from "@prisma/client";
-import { getUserById } from "@/data/user";
+import { getUserById } from "@/utils/user";
 import NotFound from "@/app/[...not_found]/page";
 
 interface ReviewWithReviewer extends Reviews {

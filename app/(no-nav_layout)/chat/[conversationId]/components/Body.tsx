@@ -4,7 +4,7 @@ import axios from "axios";
 import { useEffect, useRef, useState } from "react";
 import { pusherClient } from "@/lib/pusher";
 import MessageBox from "./MessageBox";
-import { FullMessageType } from "@/types";
+import { FullMessageType } from "chat-types";
 import { find } from "lodash";
 import { $Enums, Order, Reviews, User } from "@prisma/client";
 import { format } from "date-fns";

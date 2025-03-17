@@ -11,10 +11,7 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import Input from "../listing-input";
 import UnitSelect, { QuantityTypeValue } from "../UnitSelect";
-import {
-  CommonInputProps,
-  InputProps,
-} from "../../../../../types/create.types";
+import { CommonInputProps, InputProps } from "../../../../../types/create";
 import { Outfit } from "next/font/google";
 import { PiBasketLight, PiRulerThin } from "react-icons/pi";
 import { HiOutlineExclamationTriangle } from "react-icons/hi2";

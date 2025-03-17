@@ -100,6 +100,10 @@ declare module "chat-types" {
     capacity: number | null;
     timeSlots: TimeSlot[];
   }
+  export type FullMessageType = Message & {
+    sender: User;
+    seen: User[];
+  };
 
   interface Hours {
     delivery: AvailabilityDay[];

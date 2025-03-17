@@ -9,7 +9,7 @@ import {
   CommonInputProps,
   InputProps,
   SubCategory,
-} from "@/types/create.types";
+} from "@/types/create";
 import { Progress } from "@/components/ui/progress";
 import axios from "axios";
 import { ReactNode, useEffect, useState } from "react";

@@ -27,23 +27,23 @@ export const secondsToInputTimeString = (seconds: number): string => {
   )}`;
 };
 
-const formatDuration = (seconds: number): string => {
-  const hours = Math.floor(seconds / 3600);
-  const minutes = Math.floor((seconds % 3600) / 60);
-  return hours > 0 ? `${hours} hr ${minutes} min` : `${minutes} min`;
-};
+// const formatDuration = (seconds: number): string => {
+//   const hours = Math.floor(seconds / 3600);
+//   const minutes = Math.floor((seconds % 3600) / 60);
+//   return hours > 0 ? `${hours} hr ${minutes} min` : `${minutes} min`;
+// };
 
-const secondsToTimeString = (seconds: number): string => {
-  const hours = Math.floor(seconds / 3600);
-  const minutes = Math.floor((seconds % 3600) / 60);
-  const period = hours >= 12 ? "PM" : "AM";
-  const displayHours = hours % 12 || 12;
-  return `${displayHours}:${String(minutes).padStart(2, "0")} ${period}`;
-};
+// const secondsToTimeString = (seconds: number): string => {
+//   const hours = Math.floor(seconds / 3600);
+//   const minutes = Math.floor((seconds % 3600) / 60);
+//   const period = hours >= 12 ? "PM" : "AM";
+//   const displayHours = hours % 12 || 12;
+//   return `${displayHours}:${String(minutes).padStart(2, "0")} ${period}`;
+// };
 
-const metersToMiles = (meters: number): number => {
-  return meters * 0.000621371;
-};
-const formatAddress = (address: string[]): string => {
-  return address.join(", ");
-};
+// const metersToMiles = (meters: number): number => {
+//   return meters * 0.000621371;
+// };
+// const formatAddress = (address: string[]): string => {
+//   return address.join(", ");
+// };
