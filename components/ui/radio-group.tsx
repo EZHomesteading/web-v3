@@ -17,7 +17,7 @@ const RadioGroup = React.forwardRef<
     />
   );
 });
-RadioGroup.name = RadioGroupPrimitive.Root.name;
+RadioGroup.displayName = RadioGroupPrimitive.Root.displayName;
 
 const RadioGroupItem = React.forwardRef<
   React.ElementRef<typeof RadioGroupPrimitive.Item>,
@@ -38,6 +38,6 @@ const RadioGroupItem = React.forwardRef<
     </RadioGroupPrimitive.Item>
   );
 });
-RadioGroupItem.name = RadioGroupPrimitive.Item.name;
+RadioGroupItem.displayName = RadioGroupPrimitive.Item.displayName;
 
 export { RadioGroup, RadioGroupItem };
