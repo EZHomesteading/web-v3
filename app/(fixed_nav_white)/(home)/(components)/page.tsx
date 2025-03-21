@@ -47,7 +47,7 @@ const HomePage = async () => {
 };
 
 export default HomePage;
-// async function generateUniqueUrl(displayName: string): Promise<string> {
+// async function generateUniqueUrl(name: string): Promise<string> {
 //   let url = convertToUrl(displayName);
 //   let uniqueUrl = url;
 //   while (true) {
@@ -99,7 +99,7 @@ export default HomePage;
 //   }
 //   return uniqueUrl;
 // }
-// function convertToUrl(displayName: string): string {
+// function convertToUrl(name: string): string {
 //   return displayName
 //     .toLowerCase()
 //     .replace(/[^a-z0-9]+/g, "-")

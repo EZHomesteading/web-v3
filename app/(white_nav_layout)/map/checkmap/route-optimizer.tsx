@@ -439,7 +439,7 @@ const RouteOptimizer = ({
                             {" "}
                             <span>
                               {" "}
-                              {index + 1}. {order.location.displayName}Pickup
+                              {index + 1}. {order.location.name}Pickup
                               Time:
                             </span>
                             <span className="text-blue-600 font-medium">
@@ -627,7 +627,7 @@ const RouteOptimizer = ({
           <React.Fragment key={order.id}>
             <MarkerF
               label={{
-                text: order.location.displayName || order.name || "NO NAME SET",
+                text: order.location.name || order.name || "NO NAME SET",
                 className: "marker-label",
                 color: "black",
                 fontFamily: "Arial",
@@ -657,7 +657,7 @@ const RouteOptimizer = ({
               mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
             >
               <div className="x-2 py-1 rounded -mt-12 text-sm font-medium whitespace-nowrap max-w-[200px] text-center absolute transform -translate-x-1/2">
-                {order.location.displayName}
+                {order.location.name}
               </div>
             </OverlayView>
           </React.Fragment>

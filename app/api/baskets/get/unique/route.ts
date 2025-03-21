@@ -47,8 +47,8 @@ export async function GET(
               select: {
                 id: true,
                 title: true,
-                quantityType: true,
-                imageSrc: true,
+                unit: true,
+                images: true,
                 stock: true,
                 price: true,
                 SODT: true,
@@ -65,7 +65,7 @@ export async function GET(
           select: {
             id: true,
             SODT: true,
-            displayName: true,
+            name: true,
             image: true,
             type: true,
             coordinates: true,

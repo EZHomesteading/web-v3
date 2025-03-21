@@ -47,6 +47,6 @@ const Slider = React.forwardRef<
   );
 });
 
-Slider.displayName = SliderPrimitive.Root.displayName;
+Slider.name = SliderPrimitive.Root.name;
 
 export { Slider };

@@ -8,7 +8,7 @@ export type OrderMap = {
   pickupDate: Date;
   name: string | undefined;
   location: {
-    displayName: string;
+    name: string;
     coordinates: number[];
     address: string[];
   };

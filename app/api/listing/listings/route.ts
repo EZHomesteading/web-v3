@@ -20,12 +20,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const {
-      keyWords,
-      title,
-      SODT,
-      description,
-      imageSrc,
+    const images:
       category,
       quantityType,
       stock,
@@ -78,12 +73,7 @@ export async function POST(request: Request) {
     }
 
     // Create listing data
-    const listingData = {
-      keyWords,
-      title,
-      SODT,
-      description,
-      imageSrc,
+    const listingData = images:
       category,
       quantityType,
       stock,

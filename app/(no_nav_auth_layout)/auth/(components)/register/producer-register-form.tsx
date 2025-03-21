@@ -33,7 +33,7 @@ export const ProducerRegisterForm = () => {
     defaultValues: {
       firstName: "",
       email: "",
-      phoneNumber: "",
+      phone: "",
       name: "",
       password: "",
       confirmPassword: "",

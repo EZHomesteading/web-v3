@@ -387,7 +387,7 @@ export const calculateRouteWithTimings = async (
     if (hasTimePassed(expectedArrival, selectedDate, startDelay)) {
       throw {
         type: "TIME_PASSED",
-        message: `Arrival time at ${location.displayName} has already passed`,
+        message: `Arrival time at ${location.name} has already passed`,
         details: {
           location,
           expectedArrival: secondsToTimeString(expectedArrival),
@@ -409,7 +409,7 @@ export const calculateRouteWithTimings = async (
     if (expectedArrival + BUFFER_TIME < openTime) {
       throw {
         type: "LOCATION_CLOSED",
-        message: `${location.displayName} will not be open yet when we arrive`,
+        message: `${location.name} will not be open yet when we arrive`,
         location,
         details: {
           expectedArrival: secondsToTimeString(expectedArrival),
@@ -426,7 +426,7 @@ export const calculateRouteWithTimings = async (
     if (serviceEndTime > closeTime) {
       throw {
         type: "LOCATION_CLOSED",
-        message: `${location.displayName} would be closed at arrival or during service`,
+        message: `${location.name} would be closed at arrival or during service`,
         location,
         details: {
           expectedArrival: secondsToTimeString(expectedArrival),

@@ -344,7 +344,7 @@ const calculateRouteWithArrivalTimings = async (
     if (hasTimePassed(arrivalTime, selectedDate, startDelay)) {
       throw {
         type: "TIME_PASSED",
-        message: `Arrival time at ${location.displayName} has already passed`,
+        message: `Arrival time at ${location.name} has already passed`,
         details: {
           location,
           expectedArrival: secondsToTimeString(arrivalTime),
@@ -359,7 +359,7 @@ const calculateRouteWithArrivalTimings = async (
     if (arrivalTime + AVERAGE_STOP_TIME > closeTime) {
       throw {
         type: "LOCATION_CLOSED",
-        message: `${location.displayName} would be closed by the time we need to depart`,
+        message: `${location.name} would be closed by the time we need to depart`,
         location,
         details: {
           expectedDeparture: secondsToTimeString(
@@ -375,7 +375,7 @@ const calculateRouteWithArrivalTimings = async (
     if (arrivalTime < openTime) {
       throw {
         type: "LOCATION_CLOSED",
-        message: `${location.displayName} will not be open when we need to arrive`,
+        message: `${location.name} will not be open when we need to arrive`,
         location,
         details: {
           expectedArrival: secondsToTimeString(arrivalTime),

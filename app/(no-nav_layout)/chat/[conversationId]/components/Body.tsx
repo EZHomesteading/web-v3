@@ -335,7 +335,7 @@ const Body: React.FC<BodyProps> = ({
                 >
                   <div className="flex-shrink-0">
                     <Image
-                      src={listing.imageSrc[0] || "/placeholder.jpg"}
+                      src={listing.images[0] || "/placeholder.jpg"}
                       alt={listing.title}
                       width={64}
                       height={64}
@@ -345,10 +345,10 @@ const Body: React.FC<BodyProps> = ({
                   <div className="flex-grow">
                     <p className="font-normal">{listing.title}</p>
                     <p className="text-xs font-extralight text-gray-700">
-                      ${listing.price} per {listing.quantityType}
+                      ${listing.price} per {listing.unit}
                     </p>
                     <p className="text-xs font-extralight text-gray-700">
-                      {getQuantitiy(listing.id)} {listing.quantityType} for $
+                      {getQuantitiy(listing.id)} {listing.unit} for $
                       {getQuantitiy(listing.id) * listing.price}
                     </p>
                   </div>

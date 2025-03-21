@@ -83,7 +83,7 @@ const SendMessageComponent = ({
           <div className="fixed bottom-0 w-screen h-20 bg-white border-t">
             <div className="flex justify-between pr-4 items-center w-full h-full">
               <div className="pl-4">
-                ${listing.price} per {listing.quantityType}
+                ${listing.price} per {listing.unit}
               </div>
               <div className="flex gap-2">
                 <button
@@ -97,7 +97,7 @@ const SendMessageComponent = ({
                 >
                   {isInBasket
                     ? "Remove from Basket"
-                    : `Add ${listing.minOrder} ${listing.quantityType} to Basket`}
+                    : `Add ${listing.minOrder} ${listing.unit} to Basket`}
                 </button>
                 <DrawerTrigger asChild>
                   <button className="px-4 font-semibold rounded-md py-3 text-sm shadow-sm bg-sky-100">

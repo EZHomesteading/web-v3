@@ -35,7 +35,7 @@ export const CoOpRegisterForm = () => {
     defaultValues: {
       firstName: "",
       email: "",
-      phoneNumber: "",
+      phone: "",
       name: "",
       password: "",
       confirmPassword: "",

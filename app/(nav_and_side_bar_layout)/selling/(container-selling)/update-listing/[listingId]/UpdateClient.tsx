@@ -179,9 +179,9 @@ const UpdateClient = ({ listing }: UpdateListingProps) => {
       stock: listing?.stock,
       price: listing?.price,
       shelfLife: listing?.shelfLife,
-      imageSrc: listing?.imageSrc ?? [],
+      images: listing?.images ?? [],
       category: listing?.category,
-      quantityType: listing?.quantityType,
+      unit: listing?.unit,
       emailList: listing?.emailList,
       minOrder: listing?.minOrder,
       sodt: listing?.SODT,
@@ -245,16 +245,16 @@ const UpdateClient = ({ listing }: UpdateListingProps) => {
       stock: parseInt(data.stock),
       shelfLife: parseInt(data.shelfLife),
       price: parseFloat(data.price),
-      imageSrc: watch("imageSrc"),
+      images: watch("imageSrc"),
       description: description,
       location: data.location,
       harvestFeatures: data.harvestFeatures,
       harvestDates: harvestDates,
       projectedStock: data.projectedStock,
-      quantityType:
-        data.quantityType === "none" || data.quantityType === "each"
+      unit:
+        data.unit === "none" || data.unit === "each"
           ? ""
-          : data.quantityType,
+          : data.unit,
     };
     axios
       .post("/api/listing/updateListing", formData)
@@ -441,7 +441,7 @@ const UpdateClient = ({ listing }: UpdateListingProps) => {
             </ul>
             <div className="flex justify-end">
               <UnitSelect
-                value={quantityType}
+                value=unit:
                 onChange={(value) => {
                   setQuantityType(value as QuantityTypeValue);
                   setValue("quantityType", value?.value);

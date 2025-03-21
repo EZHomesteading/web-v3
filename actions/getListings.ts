@@ -11,15 +11,15 @@ export type FinalListing = {
   rating: number[];
   reports: number | null;
   SODT: number | null;
-  quantityType: string | null;
+  unit: string | null;
   shelfLife: number;
   harvestFeatures: boolean | null;
   projectedStock: number | null;
   harvestDates: string[];
   createdAt: Date;
   location: Location | null;
-  keyWords: string[];
-  imageSrc: string[];
+  tags: string[];
+  images: string[];
   userId: string;
   subCategory: string;
   minOrder: number | null;
@@ -37,12 +37,12 @@ export type FinalListing1 = {
   price: number;
   stock: number;
   rating: number[];
-  quantityType: string | null;
+  unit: string | null;
   createdAt: Date;
   location: {
     id: string;
     userId: string;
-    displayName: string | null;
+    name: string | null;
     type: string;
     coordinates: number[];
     address: string[];
@@ -72,8 +72,8 @@ export type FinalListing1 = {
       })[];
     } | null;
   } | null;
-  keyWords: string[];
-  imageSrc: string[];
+  tags: string[];
+  images: string[];
   subCategory: string;
   minOrder: number | null;
   review: boolean | null;
@@ -142,8 +142,8 @@ export async function getListingsByIdsChat(listingIds: string[]) {
         id: true,
         title: true,
         price: true,
-        imageSrc: true,
-        quantityType: true,
+        images: true,
+        unit: true,
       },
       orderBy: {
         price: "asc",
@@ -227,11 +227,11 @@ export async function getUnique(params: { id?: string }) {
         title: true,
         id: true,
         description: true,
-        imageSrc: true,
+        images: true,
         shelfLife: true,
         stock: true,
         createdAt: true,
-        quantityType: true,
+        unit: true,
         price: true,
         rating: true,
         minOrder: true,
@@ -279,7 +279,7 @@ export async function getListingStockById(params: { listingId?: string }) {
       },
       select: {
         stock: true,
-        quantityType: true,
+        unit: true,
         title: true,
       },
     });

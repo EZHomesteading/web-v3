@@ -77,8 +77,8 @@ const CreateClient = ({ user, locations, defaultLocation }: Props) => {
       locationRole: "",
       stock: "",
       projectedStock: "",
-      quantityType: "",
-      imageSrc: [],
+      unit: "",
+      images: [],
       price: "",
       title: "",
       description: "",
@@ -218,16 +218,16 @@ const CreateClient = ({ user, locations, defaultLocation }: Props) => {
       parseInt(data.shelfLifeYears, 10) * 365;
 
     let formData = {
-      keyWords: tags,
+      tags: tags,
       title: title,
       SODT: parseInt(data.sodt),
       description: description,
-      imageSrc: imageSrc,
+      images: imageSrc,
       category: category,
-      quantityType:
-        data.quantityType === "none" || data.quantityType === "each"
+      unit:
+        data.unit === "none" || data.unit === "each"
           ? ""
-          : data.quantityType,
+          : data.unit,
       stock: projectHarvest === false ? 0 : parseInt(data.stock, 10),
       shelfLife: shelfLife,
       minOrder: parseInt(data.minOrder),
@@ -619,10 +619,10 @@ const CreateClient = ({ user, locations, defaultLocation }: Props) => {
                       }}
                       key={location?.id}
                     >
-                      {location?.displayName ? (
+                      {location?.name ? (
                         <div>
                           <p className={`text-base font-medium `}>
-                            {location?.displayName}
+                            {location?.name}
                           </p>
                           <p className={`text-xs text-neutral-700 font-medium`}>
                             {location?.address[0]}
@@ -706,7 +706,7 @@ const CreateClient = ({ user, locations, defaultLocation }: Props) => {
           <StepThree
             role={formLocationRole}
             title={formTitle}
-            quantityType={quantityType}
+            unit=unit:
             setQuantityType={setQuantityType}
             postSODT={postSODT}
             handleSODTCheckboxChange={handleSODTCheckboxChange}
@@ -749,7 +749,7 @@ const CreateClient = ({ user, locations, defaultLocation }: Props) => {
         )}
         {step === 7 && (
           <StepSix
-            imageSrc={imageSrc}
+            images=images:
             setImageSrc={setImageSrc}
             imageStates={imageStates}
             handleMouseEnter={handleMouseEnter}

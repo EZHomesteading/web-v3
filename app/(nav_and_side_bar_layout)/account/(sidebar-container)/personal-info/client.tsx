@@ -54,7 +54,7 @@ const Page: React.FC<PageProps> = ({ apiKey, user, location }) => {
     defaultValues: {
       name: user?.name,
       email: user?.email,
-      phoneNumber: user?.phoneNumber,
+      phone: user?.phone,
       ...addressFields,
     },
   });
@@ -65,7 +65,7 @@ const Page: React.FC<PageProps> = ({ apiKey, user, location }) => {
     reset({
       name: user?.name,
       email: user?.email,
-      phoneNumber: user?.phoneNumber,
+      phone: user?.phone,
       ...addressFields,
     });
   }, [user, addressFields, reset]);
@@ -113,7 +113,7 @@ const Page: React.FC<PageProps> = ({ apiKey, user, location }) => {
       image,
       name: data.name,
       email: data.email,
-      phoneNumber: data.phoneNumber,
+      phone: data.phone,
     };
     try {
       await axios.post("/api/useractions/update", formData);
@@ -146,7 +146,7 @@ const Page: React.FC<PageProps> = ({ apiKey, user, location }) => {
       hours: location?.hours || null,
       role: location?.role || "COOP",
       isDefault: location?.isDefault,
-      displayname: location?.displayName,
+      displayname: location?.name,
     };
 
     try {
@@ -248,7 +248,7 @@ const Page: React.FC<PageProps> = ({ apiKey, user, location }) => {
         </AccountCard>
         <AccountCard
           title="Phone Number"
-          info={watchedFields.phoneNumber || "No Phone Number Saved"}
+          info={watchedFields.phone || "No Phone Number Saved"}
           onSave={handleSubmit(onSubmit)}
           isEditing={editingCard === "PhoneNumber"}
           onEditStart={() => handleEditStart("PhoneNumber")}

@@ -13,7 +13,7 @@ interface StepTwoProps {
   title: string;
   setTitle: (value: string) => void;
   setReview: (value: boolean) => void;
-  setImageSrc: (imageSrc: string[]) => void;
+  setImageSrc: (images: string[]) => void;
   description: string;
   setDescription: (value: string) => void;
   tag: string;

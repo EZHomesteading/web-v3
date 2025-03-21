@@ -551,7 +551,7 @@ const AvailabilityMap: React.FC<AvailabilityMapProps> = ({
       if (!isOpen) {
         unavailable.push({
           name:
-            location.displayName || location.user?.name || "Unknown Location",
+            location.name || location.user?.name || "Unknown Location",
           nextOpenTime: findNextOpenTime(location, selectedDateTime),
         });
       }
@@ -855,7 +855,7 @@ const AvailabilityMap: React.FC<AvailabilityMapProps> = ({
                     }
                     label={{
                       text:
-                        location.displayName ||
+                        location.name ||
                         location.user.name ||
                         "no name found",
                       color: "black",

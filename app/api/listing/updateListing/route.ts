@@ -5,10 +5,7 @@ import prisma from "@/lib/prismadb";
 export async function POST(request: Request) {
   const body = await request.json();
 
-  const {
-    id,
-    description,
-    imageSrc,
+  const images:
     category,
     quantityType,
     stock,
@@ -37,9 +34,7 @@ export async function POST(request: Request) {
 
   const listing = await prisma.listing.update({
     where: { id: id },
-    data: {
-      description,
-      imageSrc,
+    data: images:
       category,
       quantityType,
       projectedStock,

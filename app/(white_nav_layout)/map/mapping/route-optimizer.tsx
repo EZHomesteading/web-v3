@@ -468,7 +468,7 @@ const RouteOptimizer = ({
         <div className="space-y-2">
           <p className="text-red-600 font-medium">
             Cannot route to{" "}
-            {error.location?.displayName || error.location.user.name}
+            {error.location?.name || error.location.user.name}
           </p>
           <p>
             This location would be closed when we arrive. Their hours are:{" "}
@@ -493,7 +493,7 @@ const RouteOptimizer = ({
       errorMessage = (
         <div className="space-y-2">
           <p className="text-red-600 font-medium">
-            Excessive wait time for {error.location?.displayName || "location"}
+            Excessive wait time for {error.location?.name || "location"}
           </p>
           <p>
             Would arrive at {error.details?.arrivalTime || "N/A"} but pickup
@@ -526,7 +526,7 @@ const RouteOptimizer = ({
           </p>
           {error.details.location && (
             <p className="text-sm text-gray-600">
-              Location: {error.details.location.displayName}
+              Location: {error.details.location.name}
             </p>
           )}
         </div>
@@ -784,7 +784,7 @@ const RouteOptimizer = ({
                                         className={`${OutfitFont.className} font-medium truncate`}
                                       >
                                         {index + 1}.{" "}
-                                        {location.displayName ||
+                                        {location.name ||
                                           location.user.name}
                                       </span>
                                     </div>
@@ -1090,7 +1090,7 @@ const RouteOptimizer = ({
                         >
                           <div className="font-medium text-xs md:text-sm">
                             {index + 1}.{" "}
-                            {location.displayName || location?.user?.name}
+                            {location.name || location?.user?.name}
                           </div>
                           <div className="pl-2 md:pl-4">
                             <div className="text-gray-600 text-xs">
@@ -1342,7 +1342,7 @@ const RouteOptimizer = ({
                 }
                 label={{
                   text:
-                    location.displayName ||
+                    location.name ||
                     location.user.name ||
                     "no name found",
                   color: "black",

@@ -25,7 +25,7 @@ export default async function getDisputes() {
               select: {
                 id: true,
                 email: true,
-                phoneNumber: true,
+                phone: true,
                 createdAt: true,
                 role: true,
                 fullName: true,
@@ -35,7 +35,7 @@ export default async function getDisputes() {
               select: {
                 id: true,
                 email: true,
-                phoneNumber: true,
+                phone: true,
                 createdAt: true,
                 role: true,
                 fullName: true,

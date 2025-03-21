@@ -64,7 +64,7 @@ const CheckoutButton = ({
         const adjustedListing: AdjustedListing = {
           listingId: item.listing.id,
           title: item.listing.title,
-          sellerName: basket.location.displayName || basket.location.user.name,
+          sellerName: basket.location.name || basket.location.user.name,
           expiry: expiry,
           soonValue: 0,
         };

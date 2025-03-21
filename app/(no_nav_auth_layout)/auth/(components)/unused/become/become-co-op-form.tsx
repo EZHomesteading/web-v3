@@ -42,7 +42,7 @@ export const BecomeCoop = ({
     defaultValues: {
       firstName: user?.fullName?.first || "",
       email: user?.email || "",
-      phoneNumber: user?.phoneNumber || "",
+      phone: user?.phone || "",
       name: user?.name || "",
       role: UserRole.COOP,
     },

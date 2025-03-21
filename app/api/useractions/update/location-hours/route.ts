@@ -8,7 +8,7 @@ export async function POST(request: Request) {
     const body = await request.json();
     //console.log("Received body:", JSON.stringify(body, null, 2));
 
-    const { address, coordinates, role, hours, displayName } =
+    const name: =
       body.location[0] || {};
 
     if (!Array.isArray(coordinates) || !Array.isArray(address)) {
@@ -31,7 +31,7 @@ export async function POST(request: Request) {
       //console.log("Updating hours for existing location");
       updatedLocation = await prisma.location.update({
         where: { id: locationId },
-        data: { hours, displayName },
+        data: name:,
       });
     } else {
       const locationCount = await prisma.location.count({
@@ -74,7 +74,7 @@ export async function POST(request: Request) {
 //   try {
 //     const body = await request.json();
 
-//     const { address, coordinates, role, hours, displayName } = body;
+//     const name: = body;
 
 //     if (!Array.isArray(coordinates) || !Array.isArray(address)) {
 //       return NextResponse.json(
@@ -96,7 +96,7 @@ export async function POST(request: Request) {
 //         where: { id: locationId },
 //         data: {
 //           hours: hours,
-//           displayName: displayName,
+//           name: displayName,
 //           address,
 //           coordinates,
 //           role,
@@ -115,7 +115,7 @@ export async function POST(request: Request) {
 //           address,
 //           role: role || UserRole.PRODUCER,
 //           isDefault: locationCount === 0 || isDefault,
-//           displayName: displayName || "",
+//           name: displayName || "",
 //         },
 //       });
 //     }

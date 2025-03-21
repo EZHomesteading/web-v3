@@ -30,7 +30,7 @@ export async function GET(req: NextRequest) {
       },
       select: {
         id: true,
-        displayName: true,
+        name: true,
         coordinates: true,
         address: true,
         hours: true,
