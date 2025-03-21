@@ -196,8 +196,7 @@ export const UpdateSchema = z.object({
     .optional(),
   name: z.string().min(1, { message: "Name is required" }).optional(),
   email: z.string().email({ message: "Email is required" }).optional(),
-  phoneNumber: z.any().optional(),
-  location: z.object(locationDef).optional(),
+  phone: z.any().optional(),
 
   role: z.nativeEnum(UserRole).optional(),
 });

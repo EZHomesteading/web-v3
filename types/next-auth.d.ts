@@ -7,7 +7,7 @@ declare module "next-auth" {
     id: string;
     name: string;
     email: string;
-    phoneNumber?: string;
+    phone?: string;
     fullName?: fullName;
     stripeAccountId?: string;
     url: string;

@@ -83,6 +83,7 @@
     "@types/jsonwebtoken": "^9.0.9",
     "@types/lodash": "^4.17.16",
     "@types/next-auth": "^3.15.0",
+    "@types/next-pwa": "^5.6.9",
     "@types/node": "^20",
     "@types/react": "^19.0.10",
     "@types/react-dom": "^19",

@@ -1,10 +1,11 @@
 "use client";
-//become coop auth form
+//producer register form with location handling
 import * as z from "zod";
-import { useEffect, useState, useTransition } from "react";
+import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { UpdateSchema } from "@/schemas";
+import { UserRole } from "@prisma/client";
+import { RegisterVendorSchema } from "@/schemas";
 import { Input } from "@/components/ui/input";
 import {
   Form,
@@ -14,89 +15,84 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { CardWrapper } from "@/app/(no_nav)/auth/(components)/login/auth-card-wrapper";
 import { Button } from "@/components/ui/button";
 import { FormError } from "@/components/form-error";
 import { FormSuccess } from "@/components/form-success";
-import { useRouter } from "next/navigation";
-import { UserRole } from "@prisma/client";
-import "react-phone-number-input/style.css";
+import { register } from "@/actions/auth/register-vendor";
 import PhoneInput from "react-phone-number-input";
-import { UserInfo } from "next-auth";
-import { CardWrapper } from "@/app/(no_nav)/auth/(components)/login/auth-card-wrapper";
+import PasswordInput from "./password-input";
 
-interface BecomeCoopProps {
-  user?: UserInfo;
-  createStripeConnectedAccount: () => Promise<any>;
-}
-export const BecomeCoop = ({
-  user,
-  createStripeConnectedAccount,
-}: BecomeCoopProps) => {
-  const router = useRouter();
+export const ProducerRegisterForm = () => {
   const [error, setError] = useState<string | undefined>("");
   const [success, setSuccess] = useState<string | undefined>("");
   const [isPending, startTransition] = useTransition();
 
-  const form = useForm<z.infer<typeof UpdateSchema>>({
-    resolver: zodResolver(UpdateSchema),
+  const form = useForm<z.infer<typeof RegisterVendorSchema>>({
+    resolver: zodResolver(RegisterVendorSchema),
     defaultValues: {
-      firstName: user?.fullName?.first || "",
-      email: user?.email || "",
-      phone: user?.phone || "",
-      name: user?.name || "",
-      role: UserRole.COOP,
+      firstName: "",
+      email: "",
+      phone: "",
+      name: "",
+      password: "",
+      confirmPassword: "",
+
+      role: UserRole.PRODUCER,
     },
   });
-  const onSubmit = async (values: z.infer<typeof UpdateSchema>) => {
-    try {
-      const updatedValues = {
-        ...values,
-      };
-      await createStripeConnectedAccount();
 
-      await fetch("/api/useractions/update", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(updatedValues),
-      });
+  const onSubmit = (values: z.infer<typeof RegisterVendorSchema>) => {
+    setError("");
+    setSuccess("");
 
-      setSuccess("Your account has been updated.");
-    } catch (error) {
-      console.error("Error in onSubmit:", error);
-      setError("An error occurred. Please try again.");
-    } finally {
-      startTransition(() => {
-        setError("");
-        setSuccess("Your account has been updated.");
-        router.push("/onboard");
+    startTransition(() => {
+      register(values).then((data) => {
+        setError(data?.error);
       });
-    }
+    });
   };
 
+  const [showPassword, setShowPassword] = useState(false);
+  const toggleShowPassword = () => setShowPassword(!showPassword);
   return (
     <CardWrapper
       backButtonLabel="Already have an account?"
       backButtonHref="/auth/login"
+      className={`mb-4`}
     >
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-          <div className="space-y-4">
+        <form onSubmit={form.handleSubmit(onSubmit)}>
+          <div className="space-y-2">
             <>
               <FormField
                 control={form.control}
                 name="firstName"
                 render={({ field }) => (
-                  <FormItem className="w-[280px] sm:w-[350px]">
+                  <FormItem className="w-280px sm:w-[350px]">
                     <FormLabel>First Name</FormLabel>
                     <FormControl>
                       <Input
                         {...field}
                         disabled={isPending}
-                        placeholder="john"
-                        type="name"
-                        className="font-light"
+                        placeholder="Johnny"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />{" "}
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Display Name</FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        disabled={isPending}
+                        placeholder="Appleseed Farm"
                       />
                     </FormControl>
                     <FormMessage />
@@ -108,14 +104,13 @@ export const BecomeCoop = ({
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Current Email</FormLabel>
+                    <FormLabel>Email</FormLabel>
                     <FormControl>
                       <Input
                         {...field}
                         disabled={isPending}
-                        placeholder="john.doe@example.com"
+                        placeholder="jappleseedfarms@example.com"
                         type="email"
-                        className="font-light"
                       />
                     </FormControl>
                     <FormMessage />
@@ -124,7 +119,7 @@ export const BecomeCoop = ({
               />
               <FormField
                 control={form.control}
-                name="phone"
+                name="phoneNumber"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Phone Number</FormLabel>
@@ -143,26 +138,30 @@ export const BecomeCoop = ({
                         defaultCountry="US"
                         countrySelectProps={{ disabled: true }}
                         maxLength={14}
-                        className="font-light"
                       />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
+              <PasswordInput
+                form={form}
+                isPending={isPending}
+                toggleShowPassword={toggleShowPassword}
+                showPassword={showPassword}
+              />
               <FormField
                 control={form.control}
-                name="name"
+                name="confirmPassword"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Co-op Name</FormLabel>
+                    <FormLabel>Confirm Password</FormLabel>
                     <FormControl>
                       <Input
                         {...field}
                         disabled={isPending}
-                        placeholder="Appleseed Store"
-                        type="name"
-                        className="font-light"
+                        placeholder="******"
+                        type={showPassword ? "text" : "password"}
                       />
                     </FormControl>
                     <FormMessage />
@@ -173,12 +172,13 @@ export const BecomeCoop = ({
                 onClick={() => onSubmit(form.getValues())}
                 disabled={isPending}
                 type="submit"
-                className="w-1/2 text-xs"
+                className="w-full"
               >
-                Become an EZH Co-op
+                Become an EZH Grower
               </Button>
             </>
           </div>
+
           <FormError message={error} />
           <FormSuccess message={success} />
         </form>
@@ -186,3 +186,5 @@ export const BecomeCoop = ({
     </CardWrapper>
   );
 };
+
+export default ProducerRegisterForm;
