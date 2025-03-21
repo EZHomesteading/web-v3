@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Slider } from "@/app/(nav_market_layout)/market/(components)/radius-slider";
 import { Switch } from "@/components/ui/switch";
 import FiltersIcon from "@/components/navbar/icons/filters-icon";
 import { IoStorefrontOutline } from "react-icons/io5";
@@ -21,6 +20,7 @@ import {
 import { UserRole } from "@prisma/client";
 import { OutfitFont } from "@/components/fonts";
 import { XIcon } from "lucide-react";
+import { Slider } from "./radius-slider";
 
 interface Props {
   role?: UserRole;

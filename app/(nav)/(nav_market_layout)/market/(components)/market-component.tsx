@@ -4,6 +4,7 @@ import Categories from "./categories";
 import EmptyState from "@/components/EmptyState";
 import { UserRole } from "@prisma/client";
 import { MarketCard, MarketGrid } from "./market-components";
+import { ListingWithLocAndUser } from "@/types";
 
 interface DayHours {
   date: string;
@@ -15,40 +16,14 @@ interface TimeSlot {
   close: number;
 }
 
-export interface MarketListing {
-  id: string;
-  title: string;
-  images: string[];
-  price: number;
-  rating: number[];
-  quantityType?: string;
-  stock: number;
-  location: {
-    id: string;
-    name: string;
-    address: string[];
-    role: UserRole;
-    hours: {
-      pickup?: DayHours[];
-      delivery?: DayHours[];
-      [key: string]: DayHours[] | undefined;
-    };
-  } | null;
-  minOrder?: number;
-  user: {
-    id: string;
-    name: string;
-  };
-}
-
 interface ShopProps {
-  listings: MarketListing[];
+  listings: ListingWithLocAndUser[];
   user?: UserInfo;
   basketItemIds: any[];
   params?: string;
 }
 
-const Shop = ({ params, listings, user, basketItemIds }: ShopProps) => {
+const Market = ({ params, listings, user, basketItemIds }: ShopProps) => {
   let imageCount = 0;
   return (
     <>
@@ -75,4 +50,4 @@ const Shop = ({ params, listings, user, basketItemIds }: ShopProps) => {
   );
 };
 
-export default Shop;
+export default Market;

@@ -1,7 +1,7 @@
 import dynamic from "next/dynamic";
 import { getCurrentUser } from "@/actions/getUser";
 import { UserInfo } from "next-auth";
-import { MarketListing } from "@/app/(nav_market_layout)/market/(components)/market-component";
+import { ListingWithLocAndUser } from "@/types";
 
 export interface ShopProps {
   userId?: string;
@@ -23,7 +23,9 @@ export interface ShopProps {
 
 const MarketComponent = dynamic(
   () =>
-    import("@/app/(nav_market_layout)/market/(components)/market-component"),
+    import(
+      "@/app/(nav)/(nav_market_layout)/market/(components)/market-component"
+    ),
   {
     ssr: true,
   }
@@ -41,7 +43,7 @@ const ShopPage = async ({
 
   let user = await getCurrentUser();
   let basketItemIds: any = [];
-  let listings: MarketListing[] = [];
+  let listings: ListingWithLocAndUser[] = [];
 
   const params = new URLSearchParams({
     ...(resolvedSearchParams?.lat && { lat: resolvedSearchParams.lat }),
@@ -73,7 +75,7 @@ const ShopPage = async ({
 
   return (
     <MarketComponent
-      listings={listings as unknown as MarketListing[]}
+      listings={listings}
       user={user as unknown as UserInfo}
       basketItemIds={basketItemIds || []}
       params={params.toString()}

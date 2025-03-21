@@ -1,47 +1,38 @@
-import { UserRole } from "./user";
+import { Location } from "./location";
+import { User } from "./user";
 
-export type Location = {
-  //mandatory
+export type Listing = {
+  //mandatory fields, cannot exist without these
   id: string;
   userId: string;
-  type: string; // "Point"
-  coordinates: Coordinates;
-  address: Address;
-  name: string; // if (!location.name) use user name in things like market page
-  role: UserRole;
-  bio: string;
-  hours: Hours; // nullable to easily check if a user has hours but ensure its not undefined
-  SODT: number | null; // nullable to differeniate between who has and hasnt set SODT, and if its null set it a default value when another user tries to buy like 24 hours
-  isDefault: boolean;
-  image?: string; // if (!location.image) use user.image in things like market page
+  locationId: string;
+  title: string;
+  category: string;
+  subcategory: string;
+  images: string[];
+  description: string;
+  price: number;
+  stock: number;
+  minOrder: number;
+  shelfLife: number; // days until expiration, -1 means no expiry
+  rating: number[];
   createdAt: Date;
-  updatedAt: Date;
+
+  //optional fields that should be completely omitted in the db if not present to avoid bloat
+  harvestFeatures?: boolean;
+  projectedStock?: number; // does this need to be refactored?
+  SODT?: number;
+  quantityType?: string;
+  reports?: number;
+  tags?: string[]; // change from keyWords
+  emailList?: string[];
+  smsList?: string[]; // for some reason theres an extra layer of abstraction here in the schema where its a time of notif list which is a list which is an array of strings
 };
 
-export type TimeSlot = {
-  open: number;
-  close: number;
+export type ListingWithLoc = Listing & {
+  location: Location;
 };
 
-export type Availability = {
-  date: Date;
-  timeSlots: TimeSlot[];
-  capacity?: number;
-};
-
-export type Hours = {
-  delivery: Availability[];
-  pickup: Availability[];
-};
-
-export type Address = {
-  street: string;
-  city: string;
-  state: string;
-  zip: string;
-};
-
-export type Coordinates = {
-  lat: number;
-  lng: number;
+export type ListingWithLocAndUser = ListingWithLoc & {
+  user: User;
 };
