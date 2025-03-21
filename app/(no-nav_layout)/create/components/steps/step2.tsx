@@ -13,7 +13,7 @@ interface StepTwoProps {
   title: string;
   setTitle: (value: string) => void;
   setReview: (value: boolean) => void;
-  setImageSrc: (images: string[]) => void;
+  setImages: (images: string[]) => void;
   description: string;
   setDescription: (value: string) => void;
   tag: string;
@@ -38,7 +38,7 @@ const StepTwo: React.FC<StepTwoProps> = ({
   buildKeyWords,
   isLoading,
   subcat,
-  setImageSrc,
+  setImages,
   setReview,
   onCustomTitleSet,
   setValue,
@@ -117,12 +117,12 @@ const StepTwo: React.FC<StepTwoProps> = ({
     setProduct(value);
     if (value) {
       setTitle(value.label);
-      setImageSrc(value.photo ? [value.photo] : []);
+      setImages(value.photo ? [value.photo] : []);
       setValue("title", value.label);
     } else {
       setValue("title", "");
       setTitle("");
-      setImageSrc([]);
+      setImages([]);
     }
   };
 

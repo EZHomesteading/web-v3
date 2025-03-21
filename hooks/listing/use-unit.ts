@@ -1,4 +1,4 @@
-const quantityTypes = [
+const units = [
   {
     unit: "lb",
   },
@@ -50,11 +50,11 @@ const quantityTypes = [
   },
 ];
 
-const formattedTypes = quantityTypes.map((product) => ({
+const formattedTypes = units.map((product) => ({
   value: product.unit,
   label: product.unit,
 }));
-const useQuantityTypes = () => {
+const useUnits = () => {
   const getAll = () => formattedTypes;
 
   const getByValue = (value: string) => {
@@ -67,4 +67,4 @@ const useQuantityTypes = () => {
   };
 };
 
-export default useQuantityTypes;
+export default useUnits;

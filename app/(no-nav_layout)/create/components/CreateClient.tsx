@@ -14,7 +14,7 @@ import { Progress } from "@/components/ui/progress";
 import axios from "axios";
 import { ReactNode, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { QuantityTypeValue } from "./UnitSelect";
+import { unitValue } from "./UnitSelect";
 import { addDays, format } from "date-fns";
 import StepOne from "./steps/step1";
 import StepTwo from "./steps/step2";
@@ -22,7 +22,6 @@ import StepThree from "./steps/step3";
 import StepFour from "./steps/step4";
 import StepFive from "./steps/step5";
 import StepSix from "./steps/step6";
-import { Location, UserRole } from "@prisma/client";
 import { OutfitFont } from "@/components/fonts";
 import { Label } from "@/components/ui/label";
 import Help from "./help";
@@ -30,6 +29,7 @@ import CreateHeader from "./header.create";
 import Toast from "@/components/ui/toast";
 import Link from "next/link";
 import { PiArrowRight } from "react-icons/pi";
+import { Location } from "@/types";
 
 interface Props {
   defaultLocation?: Location;
@@ -47,9 +47,7 @@ const CreateClient = ({ user, locations, defaultLocation }: Props) => {
   const [checkbox4Checked, setCheckbox4Checked] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [step, setStep] = useState(1);
-  const [quantityType, setQuantityType] = useState<
-    QuantityTypeValue | undefined
-  >(undefined);
+  const [unit, setUnit] = useState<unitValue | undefined>(undefined);
 
   const router = useRouter();
 
@@ -95,8 +93,8 @@ const CreateClient = ({ user, locations, defaultLocation }: Props) => {
   const [selectedLoc, setSelectedLoc] = useState(defaultLocation);
 
   const handleCustomTitleSet = () => {
-    setImageSrc([]); // Clear the imageSrc array
-    setValue("imageSrc", []); // Clear the imageSrc in the form state
+    setImages([]); // Clear the images array
+    setValue("images", []); // Clear the images in the form state
   };
   const handleCheckboxChange = (checked: boolean, index: number) => {
     setRating((prevRating) => {
@@ -176,7 +174,7 @@ const CreateClient = ({ user, locations, defaultLocation }: Props) => {
     });
   };
 
-  const [imageSrc, setImageSrc] = useState<string[]>([]);
+  const [images, setImages] = useState<string[]>([]);
   const [imageStates, setImageStates] = useState(
     [...Array(3)].map(() => ({
       isHovered: false,
@@ -222,12 +220,9 @@ const CreateClient = ({ user, locations, defaultLocation }: Props) => {
       title: title,
       SODT: parseInt(data.sodt),
       description: description,
-      images: imageSrc,
+      images: images,
       category: category,
-      unit:
-        data.unit === "none" || data.unit === "each"
-          ? ""
-          : data.unit,
+      unit: data.unit === "none" || data.unit === "each" ? "" : data.unit,
       stock: projectHarvest === false ? 0 : parseInt(data.stock, 10),
       shelfLife: shelfLife,
       minOrder: parseInt(data.minOrder),
@@ -256,8 +251,8 @@ const CreateClient = ({ user, locations, defaultLocation }: Props) => {
         "locationId",
         "locationRole",
         "stock",
-        "quantityType",
-        "imageSrc",
+        "unit",
+        "images",
         "price",
         "title",
         "description",
@@ -286,7 +281,7 @@ const CreateClient = ({ user, locations, defaultLocation }: Props) => {
       setRating([]);
       setTags([]);
       setCertificationChecked(false);
-      setQuantityType(undefined);
+      setUnit(undefined);
 
       router.push("/selling/my-store");
 
@@ -344,7 +339,7 @@ const CreateClient = ({ user, locations, defaultLocation }: Props) => {
       ],
       4: [
         {
-          condition: () => !quantityType,
+          condition: () => !unit,
           message: "Please enter a unit for your listing",
         },
         {
@@ -390,7 +385,7 @@ const CreateClient = ({ user, locations, defaultLocation }: Props) => {
       ],
       7: [
         {
-          condition: () => Array.isArray(imageSrc) && imageSrc.length === 0,
+          condition: () => Array.isArray(images) && images.length === 0,
           message: "Please upload at least one photo",
         },
       ],
@@ -589,7 +584,10 @@ const CreateClient = ({ user, locations, defaultLocation }: Props) => {
       <div className="w-full fixed top-0 left-0 zmid">
         <Progress value={progress} className="w-full h-[6px] bg-gray-200" />
         {step > 0 && (
-          <CreateHeader setStep={setStep} street={selectedLoc?.address[0]} />
+          <CreateHeader
+            setStep={setStep}
+            street={selectedLoc?.address.street}
+          />
         )}
       </div>
       {/* content container */}
@@ -625,12 +623,12 @@ const CreateClient = ({ user, locations, defaultLocation }: Props) => {
                             {location?.name}
                           </p>
                           <p className={`text-xs text-neutral-700 font-medium`}>
-                            {location?.address[0]}
+                            {location?.address?.street}
                           </p>
                         </div>
                       ) : (
                         <p className={`text-base font-medium `}>
-                          {location?.address[0]}
+                          {location?.address?.street}
                         </p>
                       )}
                     </button>
@@ -689,7 +687,7 @@ const CreateClient = ({ user, locations, defaultLocation }: Props) => {
             title={title}
             setValue={setValue}
             setTitle={setTitle}
-            setImageSrc={setImageSrc}
+            setImages={setImages}
             description={description}
             setDescription={setDescription}
             tag={tag}
@@ -706,8 +704,8 @@ const CreateClient = ({ user, locations, defaultLocation }: Props) => {
           <StepThree
             role={formLocationRole}
             title={formTitle}
-            unit=unit:
-            setQuantityType={setQuantityType}
+            unit={unit}
+            setUnit={setUnit}
             postSODT={postSODT}
             handleSODTCheckboxChange={handleSODTCheckboxChange}
             usersodt={user?.SODT ?? null}
@@ -749,8 +747,8 @@ const CreateClient = ({ user, locations, defaultLocation }: Props) => {
         )}
         {step === 7 && (
           <StepSix
-            images=images:
-            setImageSrc={setImageSrc}
+            images={images}
+            setImages={setImages}
             imageStates={imageStates}
             handleMouseEnter={handleMouseEnter}
             handleMouseLeave={handleMouseLeave}

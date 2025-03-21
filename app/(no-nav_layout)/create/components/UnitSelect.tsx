@@ -1,20 +1,20 @@
 "use client";
 
+import useUnits from "@/hooks/listing/use-unit";
 import Select from "react-select";
-import useQuantityTypes from "@/hooks/listing/use-quantitytype";
 
-export type QuantityTypeValue = {
+export type unitValue = {
   unit: string;
   value: string;
 };
 
 interface ProductSelectProps {
-  value?: QuantityTypeValue;
-  onChange: (value: QuantityTypeValue) => void;
+  value?: unitValue;
+  onChange: (value: unitValue) => void;
 }
 
 const UnitSelect: React.FC<ProductSelectProps> = ({ value, onChange }) => {
-  const { getAll } = useQuantityTypes();
+  const { getAll } = useUnits();
 
   return (
     <div className="relative peer">
@@ -22,9 +22,7 @@ const UnitSelect: React.FC<ProductSelectProps> = ({ value, onChange }) => {
         placeholder="Unit"
         options={getAll()}
         value={value}
-        onChange={(value: QuantityTypeValue) =>
-          onChange(value as QuantityTypeValue)
-        }
+        onChange={(value: unitValue) => onChange(value as unitValue)}
         formatOptionLabel={(option: any) => (
           <div className="rounded-lg text-black">{option.label}</div>
         )}

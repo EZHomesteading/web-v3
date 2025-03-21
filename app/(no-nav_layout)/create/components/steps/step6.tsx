@@ -7,44 +7,45 @@ import { SimpleUploadButton } from "../image-upload-button";
 
 interface StepSixProps {
   images: string[];
-  setImageSrc: (images: string[]) => void;
+  setImages: (images: string[]) => void;
   imageStates: { isHovered: boolean; isFocused: boolean }[];
   handleMouseEnter: (index: number) => void;
   handleMouseLeave: (index: number) => void;
   handleClick: (index: number) => void;
 }
 
-const StepSix: React.FC<StepSixProps> = (images:
-  setImageSrc,
+const StepSix: React.FC<StepSixProps> = ({
+  images,
+  setImages,
   imageStates,
   handleMouseEnter,
   handleMouseLeave,
   handleClick,
-}) => {
+}: StepSixProps) => {
   const handleImageUpload = (url: string) => {
-    const newImageSrc = [...images];
-    const emptyIndex = newImageSrc.findIndex((src) => !src);
+    const newimages = [...images];
+    const emptyIndex = newimages.findIndex((src) => !src);
     if (emptyIndex !== -1) {
-      newImageSrc[emptyIndex] = url;
+      newimages[emptyIndex] = url;
     } else {
-      newImageSrc.push(url);
+      newimages.push(url);
     }
-    setImageSrc(newImageSrc);
+    setImages(newimages);
     console.log("Image uploaded:", url);
-    console.log("Updated images:", newImageSrc);
+    console.log("Updated images:", newimages);
   };
 
   const handleImageDelete = (index: number) => {
-    const newImageSrc = imageSrc.filter((src, i) => i !== index && src !== "");
-    while (newImageSrc.length < 3) {
-      newImageSrc.push("");
+    const newimages = images.filter((src, i) => i !== index && src !== "");
+    while (newimages.length < 3) {
+      newimages.push("");
     }
-    setImageSrc(newImageSrc);
+    setImages(newimages);
     console.log("Image deleted at index:", index);
-    console.log("Updated images:", newImageSrc);
+    console.log("Updated images:", newimages);
   };
 
-  console.log("Current images:", imageSrc);
+  console.log("Current images:", images);
 
   return (
     <div className="flex flex-col gap-4 min-h-screen fade-in pt-[10%]">
@@ -69,10 +70,10 @@ const StepSix: React.FC<StepSixProps> = (images:
                   onMouseLeave={() => handleMouseLeave(index)}
                   onClick={() => handleClick(index)}
                 >
-                  {imageSrc[index] ? (
+                  {images[index] ? (
                     <>
                       <Image
-                        src={imageSrc[index]}
+                        src={images[index]}
                         fill
                         alt={`Listing Image ${index + 1}`}
                         className="object-cover rounded-xl"

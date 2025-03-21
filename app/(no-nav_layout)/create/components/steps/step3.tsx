@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import Input from "../listing-input";
-import UnitSelect, { QuantityTypeValue } from "../UnitSelect";
+import UnitSelect, { unitValue } from "../UnitSelect";
 import { CommonInputProps, InputProps } from "../../../../../types/create";
 import { Outfit } from "next/font/google";
 import { PiBasketLight, PiRulerThin } from "react-icons/pi";
@@ -29,8 +29,8 @@ const outfit = Outfit({
 
 interface StepThreeProps {
   role: string;
-  unit: QuantityTypeValue | undefined;
-  setQuantityType: (value: QuantityTypeValue | undefined) => void;
+  unit: unitValue | undefined;
+  setUnit: (value: unitValue | undefined) => void;
   postSODT: boolean;
   handleSODTCheckboxChange: (checked: boolean, index: number) => void;
   handleProjectHarvestCheckboxChange: (checked: boolean, index: number) => void;
@@ -44,16 +44,19 @@ interface StepThreeProps {
   //setHarvestDates: (newDates: string[]) => void;
 }
 
-const StepThree: React.FC<StepThreeProps> = (unit:
-  setQuantityType,
+const StepThree: React.FC<StepThreeProps> = ({
+  setUnit,
   postSODT,
   handleSODTCheckboxChange,
   handleProjectHarvestCheckboxChange,
   projectHarvest,
+  unit,
+  title,
   usersodt,
   commonInputProps,
   inputProps,
   setValue,
+  role,
 }) => {
   const [harvestDates, setHarvestDates] = useState<string[]>([]);
 
@@ -85,11 +88,11 @@ const StepThree: React.FC<StepThreeProps> = (unit:
 
   let label = "Price";
 
-  if (quantityType) {
-    if (quantityType.value === "each" || quantityType.value === "none") {
+  if (unit) {
+    if (unit.value === "each" || unit.value === "none") {
       label = "Price per";
     } else {
-      label = `Price per ${quantityType.value}`;
+      label = `Price per ${unit.value}`;
     }
   }
 
@@ -174,11 +177,11 @@ const StepThree: React.FC<StepThreeProps> = (unit:
 
             <div className="relative">
               <UnitSelect
-                value=unit:
+                value={unit}
                 onChange={(value) => {
-                  setQuantityType(value);
+                  setUnit(value);
                   if (value) {
-                    inputProps.setValue("quantityType", value.value);
+                    inputProps.setValue("unit", value.value);
                   }
                 }}
               />{" "}
