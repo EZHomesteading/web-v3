@@ -5,8 +5,6 @@ import { cn } from "@/lib/utils";
 
 interface NavbarProps {
   user: NavUser | null;
-  // uniqueUrl?: string;
-  // canReceivePayouts,
   className: string;
   harvestMessages:
     | {
@@ -16,13 +14,7 @@ interface NavbarProps {
     | undefined;
 }
 
-const Navbar = ({
-  user,
-  className,
-  // canReceivePayouts,
-  // uniqueUrl,
-  harvestMessages,
-}: NavbarProps) => {
+const Navbar = ({ user, className, harvestMessages }: NavbarProps) => {
   return (
     <>
       <div

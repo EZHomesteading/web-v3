@@ -17,13 +17,29 @@ const nextConfig = {
     ],
     domains: [],
   },
+
+  headers: async () => {
+    return [
+      {
+        source: "/serviceWorker.js",
+        headers: [
+          {
+            key: "Content-Type",
+            value: "application/javascript",
+          },
+        ],
+      },
+    ];
+  },
 };
 
 const withPWA = require("next-pwa")({
   dest: "public",
-  disable: process.env.NODE_ENV === "production" ? false : true,
+
+  disable: process.env.NODE_ENV === "development", // Disable in dev, enable in prod
   register: true,
   skipWaiting: true,
+  swSrc: "public/serviceWorker.js",
 });
 
 module.exports = withPWA(nextConfig);
