@@ -26,7 +26,7 @@ const DialogOverlay = React.forwardRef<
     {...props}
   />
 ));
-DialogOverlay.displayName = DialogPrimitive.Overlay.displayName;
+DialogOverlay.name = DialogPrimitive.Overlay.name;
 
 const DialogContent = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Content>,
@@ -50,7 +50,7 @@ const DialogContent = React.forwardRef<
     </DialogPrimitive.Content>
   </DialogPortal>
 ));
-DialogContent.displayName = DialogPrimitive.Content.displayName;
+DialogContent.name = DialogPrimitive.Content.name;
 
 const DialogHeader = ({
   className,
@@ -64,7 +64,7 @@ const DialogHeader = ({
     {...props}
   />
 );
-DialogHeader.displayName = "DialogHeader";
+DialogHeader.name = "DialogHeader";
 
 const DialogFooter = ({
   className,
@@ -78,7 +78,7 @@ const DialogFooter = ({
     {...props}
   />
 );
-DialogFooter.displayName = "DialogFooter";
+DialogFooter.name = "DialogFooter";
 
 const DialogTitle = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Title>,
@@ -93,7 +93,7 @@ const DialogTitle = React.forwardRef<
     {...props}
   />
 ));
-DialogTitle.displayName = DialogPrimitive.Title.displayName;
+DialogTitle.name = DialogPrimitive.Title.name;
 
 const DialogDescription = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Description>,
@@ -105,7 +105,7 @@ const DialogDescription = React.forwardRef<
     {...props}
   />
 ));
-DialogDescription.displayName = DialogPrimitive.Description.displayName;
+DialogDescription.name = DialogPrimitive.Description.name;
 
 export {
   Dialog,

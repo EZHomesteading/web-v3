@@ -72,6 +72,6 @@ function Calendar({
   );
 }
 
-Calendar.displayName = "Calendar";
+Calendar.name = "Calendar";
 
 export { Calendar };

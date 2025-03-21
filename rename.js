@@ -112,7 +112,7 @@ async function processFile(filePath) {
 
 // Entry point
 async function main() {
-  const appDir = path.join(process.cwd(), 'hooks');
+  const appDir = path.join(process.cwd(), 'components');
   
   // Check if app directory exists
   try {

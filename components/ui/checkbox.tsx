@@ -35,6 +35,6 @@ const Checkbox = React.forwardRef<
     )}
   </div>
 ));
-Checkbox.displayName = "Checkbox";
+Checkbox.name = "Checkbox";
 
 export { Checkbox };

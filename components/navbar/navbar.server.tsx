@@ -49,7 +49,7 @@ export default async function Navbar({ user, className = "bg-inherit" }: p) {
   );
 }
 
-// async function generateUniqueUrl(displayName: string): Promise<string> {
+// async function generateUniqueUrl(name: string): Promise<string> {
 //   let url = convertToUrl(displayName);
 //   let uniqueUrl = url;
 //   while (true) {
@@ -101,7 +101,7 @@ export default async function Navbar({ user, className = "bg-inherit" }: p) {
 //   }
 //   return uniqueUrl;
 // }
-// function convertToUrl(displayName: string): string {
+// function convertToUrl(name: string): string {
 //   return displayName
 //     .toLowerCase()
 //     .replace(/[^a-z0-9]+/g, "-")
