@@ -1,5 +1,4 @@
 import { UserInfo } from "next-auth";
-import { MarketListing } from "./market-component";
 import Image from "next/image";
 import {
   Carousel,
@@ -12,6 +11,7 @@ import { Clock } from "lucide-react";
 import Link from "next/link";
 
 import ClientBasketButton from "./market-toggle.client";
+import { Availability, Hours, ListingWithLocAndUser } from "@/types";
 
 const MarketGrid = ({ children }: { children: any }) => {
   return (
@@ -32,7 +32,7 @@ const MarketGrid = ({ children }: { children: any }) => {
   );
 };
 interface MarketCardProps {
-  listing: MarketListing;
+  listing: ListingWithLocAndUser;
   user?: UserInfo;
   imageCount: number;
   basketItemIds: any[];
@@ -78,7 +78,7 @@ const MarketCard = ({
 }: MarketCardProps) => {
   const locHours = listing?.location?.hours;
   function calculateAvailabilityScores(
-    hours: LocationHours | null | undefined
+    hours: Hours | null | undefined
   ): ScoreResult {
     if (!hours) {
       return {
@@ -88,12 +88,12 @@ const MarketCard = ({
     }
 
     return {
-      pickup: calculateServiceScores(hours.pickup || []),
-      delivery: calculateServiceScores(hours.delivery || []),
+      pickup: calculateServiceScores(hours?.pickup || []),
+      delivery: calculateServiceScores(hours?.delivery || []),
     };
   }
   console.log(listing);
-  function calculateServiceScores(hours: DayHours[]) {
+  function calculateServiceScores(hours: Availability[]) {
     const today = new Date();
     const next7Days = Array.from({ length: 7 }, (_, i) => {
       const date = new Date(today);
@@ -191,7 +191,7 @@ const MarketCard = ({
           <div className="relative overflow-hidden rounded-xl w-full z-0 aspect-square">
             <Carousel className="h-full w-full relative rounded-lg z-0">
               <CarouselContent className="h-full z-0">
-                {listing?.images?.map((src, index) => (
+                {listing?.images?.map((src: string, index: number) => (
                   <CarouselItem
                     key={index}
                     className="flex items-center justify-center relative aspect-square h-full"
@@ -211,7 +211,7 @@ const MarketCard = ({
               </CarouselContent>
               {listing?.images?.length > 1 && (
                 <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex space-x-2">
-                  {listing.images.map((_, index) => (
+                  {listing.images.map((_: string, index: number) => (
                     <div
                       key={index}
                       className="w-2 h-2 rounded-full bg-white opacity-90 hover:opacity-100 transition-opacity duration-200 cursor-pointer"
@@ -227,15 +227,15 @@ const MarketCard = ({
               {listing.location?.name || listing?.user?.name}
             </h2>
             <p className={` text-xs font-light text-neutral-500`}>
-              {listing?.location?.address?.[1]},{" "}
-              {listing?.location?.address?.[2]}
+              {listing?.location?.address?.street},{" "}
+              {listing?.location?.address?.city}
             </p>
 
             <div className="flex items-center justify-between mt-2 w-full">
               <div className={`text-sm flex items-center gap-1`}>
                 <span className="font-semibold">${listing.price}</span>
                 <span className="font-light">
-                  per {listing.unit ? listing.unit: "item"}
+                  per {listing.unit ? listing.unit : "item"}
                 </span>
               </div>
 

@@ -22,7 +22,7 @@ export type Listing = {
   harvestFeatures?: boolean;
   projectedStock?: number; // does this need to be refactored?
   SODT?: number;
-  quantityType?: string;
+  unit?: string;
   reports?: number;
   tags?: string[]; // change from keyWords
   emailList?: string[];

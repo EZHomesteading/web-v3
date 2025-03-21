@@ -31,11 +31,11 @@ const MarketComponent = dynamic(
   }
 );
 
-const ShopPage = async ({
+export default async function MarketPage({
   searchParams,
 }: {
   searchParams?: ShopProps["searchParams"];
-}) => {
+}) {
   const apiUrl = process.env.API_URL;
 
   // Await the search parameters
@@ -81,6 +81,4 @@ const ShopPage = async ({
       params={params.toString()}
     />
   );
-};
-
-export default ShopPage;
+}
