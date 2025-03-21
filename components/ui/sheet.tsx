@@ -35,7 +35,7 @@ const SheetOverlay = React.forwardRef<
     ref={ref}
   />
 ));
-SheetOverlay.name = SheetPrimitive.Overlay.name;
+SheetOverlay.displayName = SheetPrimitive.Overlay.displayName;
 
 const sheetVariants = cva(
   "fixed z-50 gap-4 bg-background shadow-lg transition ease-in-out data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:duration-300 data-[state=open]:duration-500",
@@ -79,7 +79,7 @@ const SheetContent = React.forwardRef<
     </SheetPrimitive.Content>
   </SheetPortal>
 ));
-SheetContent.name = SheetPrimitive.Content.name;
+SheetContent.displayName = SheetPrimitive.Content.displayName;
 
 const SheetHeader = ({
   className,
@@ -93,7 +93,7 @@ const SheetHeader = ({
     {...props}
   />
 );
-SheetHeader.name = "SheetHeader";
+SheetHeader.displayName = "SheetHeader";
 
 const SheetFooter = ({
   className,
@@ -107,7 +107,7 @@ const SheetFooter = ({
     {...props}
   />
 );
-SheetFooter.name = "SheetFooter";
+SheetFooter.displayName = "SheetFooter";
 
 const SheetTitle = React.forwardRef<
   React.ElementRef<typeof SheetPrimitive.Title>,
@@ -119,7 +119,7 @@ const SheetTitle = React.forwardRef<
     {...props}
   />
 ));
-SheetTitle.name = SheetPrimitive.Title.name;
+SheetTitle.displayName = SheetPrimitive.Title.displayName;
 
 const SheetDescription = React.forwardRef<
   React.ElementRef<typeof SheetPrimitive.Description>,
@@ -131,7 +131,7 @@ const SheetDescription = React.forwardRef<
     {...props}
   />
 ));
-SheetDescription.name = SheetPrimitive.Description.name;
+SheetDescription.displayName = SheetPrimitive.Description.displayName;
 
 export {
   Sheet,

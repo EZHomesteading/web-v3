@@ -33,7 +33,7 @@ const FormField = <
   ...props
 }: ControllerProps<TFieldValues, TName>) => {
   return (
-    <FormFieldContext.Provider value={{ name: props.name }}>
+    <FormFieldContext.Provider value={{ name: props.displayName }}>
       <Controller {...props} />
     </FormFieldContext.Provider>
   );
@@ -44,7 +44,7 @@ const useFormField = () => {
   const itemContext = React.useContext(FormItemContext);
   const { getFieldState, formState } = useFormContext();
 
-  const fieldState = getFieldState(fieldContext.name, formState);
+  const fieldState = getFieldState(fieldContext.displayName, formState);
 
   if (!fieldContext) {
     throw new Error("useFormField should be used within <FormField>");
@@ -54,7 +54,7 @@ const useFormField = () => {
 
   return {
     id,
-    name: fieldContext.name,
+    name: fieldContext.displayName,
     formItemId: `${id}-form-item`,
     formDescriptionId: `${id}-form-item-description`,
     formMessageId: `${id}-form-item-message`,
@@ -82,7 +82,7 @@ const FormItem = React.forwardRef<
     </FormItemContext.Provider>
   );
 });
-FormItem.name = "FormItem";
+FormItem.displayName = "FormItem";
 
 const FormLabel = React.forwardRef<
   React.ElementRef<typeof LabelPrimitive.Root>,
@@ -99,7 +99,7 @@ const FormLabel = React.forwardRef<
     />
   );
 });
-FormLabel.name = "FormLabel";
+FormLabel.displayName = "FormLabel";
 
 const FormControl = React.forwardRef<
   React.ElementRef<typeof Slot>,
@@ -122,7 +122,7 @@ const FormControl = React.forwardRef<
     />
   );
 });
-FormControl.name = "FormControl";
+FormControl.displayName = "FormControl";
 
 const FormDescription = React.forwardRef<
   HTMLParagraphElement,
@@ -139,7 +139,7 @@ const FormDescription = React.forwardRef<
     />
   );
 });
-FormDescription.name = "FormDescription";
+FormDescription.displayName = "FormDescription";
 
 const FormMessage = React.forwardRef<
   HTMLParagraphElement,
@@ -163,7 +163,7 @@ const FormMessage = React.forwardRef<
     </p>
   );
 });
-FormMessage.name = "FormMessage";
+FormMessage.displayName = "FormMessage";
 
 export {
   useFormField,

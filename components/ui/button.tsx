@@ -52,6 +52,6 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     );
   }
 );
-Button.name = "Button";
+Button.displayName = "Button";
 
 export { Button, buttonVariants };
