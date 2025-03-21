@@ -140,9 +140,9 @@ type pickupDate {
   time Int
 }
 
-type fullName {
-  first String?
-  last  String?
+type FullName {
+  first String
+  last  String
 }
 
 model OrderGroup {
@@ -152,58 +152,74 @@ model OrderGroup {
   endLoc   Float[]
 }
 
+type Coordinates {
+  lat Float
+  lng Float
+}
+
+type Address {
+  street String
+  city   String
+  state  String
+  zip    String
+}
+
 model Location {
-  id                  String    @id @default(auto()) @map("_id") @db.ObjectId
-  userId              String    @db.ObjectId
-  name                String?
+  //mandatory
+  id                  String      @id @default(auto()) @map("_id") @db.ObjectId
+  userId              String      @db.ObjectId
   type                String
-  coordinates         Float[]
-  address             String[]
-  hours               Hours?
-  role                UserRole  @default(PRODUCER)
+  coordinates         Coordinates
+  address             Address
+  hours               Hours
+  role                UserRole    @default(PRODUCER)
+  isDefault           Boolean     @default(false)
   SODT                Int?
+  showPreciseLocation Boolean     @default(false)
+  createdAt           DateTime    @default(now())
+  updatedAt           DateTime    @updatedAt
+  // not required
   bio                 String?
+  name                String?
   image               String?
-  isDefault           Boolean   @default(false)
-  showPreciseLocation Boolean   @default(false)
-  createdAt           DateTime  @default(now())
-  updatedAt           DateTime  @updatedAt
   baskets             Basket[]
-  user                User      @relation(fields: [userId], references: [id])
+  user                User        @relation(fields: [userId], references: [id])
   listings            Listing[]
   orders              Order[]
 }
 
 model User {
+  //mandatory
   id                    String                 @id @default(auto()) @map("_id") @db.ObjectId
   name                  String
   email                 String                 @unique
-  fullName              fullName?
-  emailVerified         DateTime?
-  phoneNumber           String?
-  locations             Location[]
-  image                 String?
   role                  UserRole               @default(PRODUCER)
+  createdAt             DateTime               @default(now())
+  updatedAt             DateTime               @updatedAt
+  //not required
+  fullName              FullName?
+  emailVerified         DateTime?
+  phone                 String?
+  image                 String?
   password              String?
   stripeAccountId       String?
   totalPaidOut          Int?
-  notifications         Notification[]
-  createdAt             DateTime               @default(now())
-  updatedAt             DateTime               @updatedAt
   url                   String?
   favoriteIds           String[]               @db.ObjectId
+  notifications         Notification[]
   accounts              Account[]
   sessions              Session[]
+  locations             Location[]
   listings              Listing[]
   baskets               Basket[]
   following             Following?
   buyerOrders           Order[]                @relation("buyer")
   sellerOrders          Order[]                @relation("seller")
   sentMessages          Message[]
+  openCloseTemplates    OpenCloseTemplates[]
   twoFactorConfirmation TwoFactorConfirmation?
   subscriptions         String?
   hasPickedRole         Boolean?
-  openCloseTemplates    OpenCloseTemplates[]
   canRecievePayouts     Boolean?               @default(false)
 }
 
@@ -292,36 +308,36 @@ model TwoFactorConfirmation {
 }
 
 model Listing {
-  id              String     @id @default(auto()) @map("_id") @db.ObjectId
+  id              String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId          String   @db.ObjectId
+  locationId      String?  @db.ObjectId
   SODT            Int? //set out and delivery time for co-ops/producers respectively expressed as an interger
   title           String
   category        String // "homemade", "unprocessed-produce", "dairy-meats", "durables" 
   subCategory     String
   stock           Int
-  quantityType    String
+  shelfLife       Int // -1 means no shelf life
+  minOrder        Int
+  unit            String
   price           Float
   description     String
   projectedStock  Int?
   harvestFeatures Boolean?
-  harvestDates    String[]
-  keyWords        String[]
-  minOrder        Int
-  imageSrc        String[]
   review          Boolean?
   harvestType     String?
   reports         Int?
-  shelfLife       Int
-  locationId      String?    @db.ObjectId
-  location        Location?  @relation(fields: [locationId], references: [id], onDelete: SetNull)
   rating          Int[]
-  userId          String     @db.ObjectId
-  createdAt       DateTime   @default(now())
-  emailList       notifList?
-  smsList         notifList?
+  createdAt       DateTime @default(now())
+  harvestDates    String[]
+  tags            String[]
+  images          String[]
+  emailList       String[]
+  smsList         String[]
 
   user               User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
   basketItem         BasketItem[]
   recentlyViewedItem RecentlyViewedItem[]
+  location           Location?            @relation(fields: [locationId], references: [id], onDelete: SetNull)
 }
 
 enum orderMethod {
@@ -344,11 +360,12 @@ enum basket_time_type {
 model RecentlyViewedItem {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
   listingId String   @db.ObjectId
-  listing   Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
   quantity  Int      @default(1)
   price     Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  listing Listing @relation(fields: [listingId], references: [id], onDelete: Cascade)
 
   @@unique([listingId])
 }
