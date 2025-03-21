@@ -112,7 +112,7 @@ async function processFile(filePath) {
 
 // Entry point
 async function main() {
-  const appDir = path.join(process.cwd(), 'prisma');
+  const appDir = path.join(process.cwd(), 'hooks');
   
   // Check if app directory exists
   try {
