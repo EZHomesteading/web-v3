@@ -1,8 +1,10 @@
-import { LocationObj } from "location-types";
+import { OutfitFont } from "@/components/fonts";
+import { Availability, Hours } from "@/types";
 import { useEffect, useRef } from "react";
 
 interface p {
-  location?: LocationObj;
+  currentConfig: "pickup" | "delivery";
+  hours: Hours;
   handleDayClick?: any;
   showSubTitle?: boolean;
   bgColor?: string;
@@ -14,8 +16,9 @@ interface p {
   editHours?: boolean;
 }
 
-const WeelkyScheduleChart = ({
-  location,
+const WeelkyScheduleChartV2 = ({
+  currentConfig = "pickup",
+  hours,
   title = "Weekly Schedule",
   handleDayClick,
   showSubTitle = false,
@@ -28,6 +31,10 @@ const WeelkyScheduleChart = ({
 }: p) => {
   const svgRef = useRef<SVGSVGElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  let hoursOnChart: Availability[] = hours.pickup;
+  if (currentConfig === "delivery") {
+    hoursOnChart = hours.delivery;
+  }
 
   const padding = 50;
   const titleHeight = 50;
@@ -75,7 +82,7 @@ const WeelkyScheduleChart = ({
     };
 
     window.addEventListener("resize", handleResize);
-    handleResize(); // Initial call
+    handleResize();
 
     return () => window.removeEventListener("resize", handleResize);
   }, [viewBoxWidth, viewBoxHeight]);
@@ -85,7 +92,7 @@ const WeelkyScheduleChart = ({
   return (
     <div
       ref={containerRef}
-      className="w-full h-full flex items-start justify-center"
+      className={`w-full h-full flex items-start justify-center ${OutfitFont.className}`}
       style={{ minHeight: "450px" }}
     >
       <svg
@@ -115,7 +122,7 @@ const WeelkyScheduleChart = ({
           </filter>
         </defs>
 
-        {/* main black background */}
+        {/* main background */}
         <rect
           x={0}
           y={0}
@@ -126,7 +133,7 @@ const WeelkyScheduleChart = ({
           ry={15}
         />
 
-        {/* applies gradient background for grid area only */}
+        {/* gradient background for grid area only */}
         <rect
           x={padding}
           y={graphTop}
@@ -233,13 +240,12 @@ const WeelkyScheduleChart = ({
           </text>
         ))}
 
-        {/*time slot rects*/}
-        {location?.hours?.pickup.map(
-          (pickup: { date: { getDay: () => any }; timeSlots: any[] }) => {
-            const dayIndex = pickup.date.getDay();
+        {hoursOnChart.map(
+          (avail: { date: { getDay: () => any }; timeSlots: any[] }) => {
+            const dayIndex = avail.date.getDay();
             const dayName = getDayNameFromSlot(dayIndex);
 
-            return pickup.timeSlots.map((slot, slotIndex) => {
+            return avail.timeSlots.map((slot, slotIndex) => {
               const startHour = Math.floor(slot.open / 60);
               const endHour = Math.ceil(slot.close / 60);
               const startY = graphTop + (startHour / 3) * hourHeight;
@@ -282,9 +288,11 @@ const WeelkyScheduleChart = ({
     </div>
   );
 };
+
 const formatHour = (hour: number) => {
   if (hour === 0 || hour === 24) return "12 AM";
   if (hour === 12) return "Noon";
   return hour > 12 ? `${hour - 12} PM` : `${hour} AM`;
 };
-export default WeelkyScheduleChart;
+
+export default WeelkyScheduleChartV2;

@@ -5,7 +5,10 @@ import prisma from "@/lib/prismadb";
 
 export async function POST(request: Request) {
   const body = await request.json();
-  const phone:
+  const {
+    name,
+    email,
+    phone,
     role,
     url,
     hasPickedRole,
@@ -14,6 +17,7 @@ export async function POST(request: Request) {
     notifications,
     stripeAccountId,
   } = body;
+
   const user = await currentUser();
   if (!user) {
     return NextResponse.error();
@@ -21,7 +25,10 @@ export async function POST(request: Request) {
   let updatedUser;
   updatedUser = await prisma.user.update({
     where: { id: user.id },
-    data: phone:
+    data: {
+      name,
+      email,
+      phone,
       image,
       role: role,
       url,

@@ -179,8 +179,8 @@ model Location {
   createdAt           DateTime    @default(now())
   updatedAt           DateTime    @updatedAt
   // not required
-  bio                 String?
-  name                String?
+  bio                 String
+  name                String
   image               String?
   baskets             Basket[]
   user                User        @relation(fields: [userId], references: [id])

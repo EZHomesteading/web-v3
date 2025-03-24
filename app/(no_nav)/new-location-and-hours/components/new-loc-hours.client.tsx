@@ -4,32 +4,47 @@ import axios from "axios";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { useRouter } from "next/navigation";
-import StepOne from "@/app/(no-nav_layout)/new-location-and-hours/_components/_steps/step1";
-import StepTwo from "@/app/(no-nav_layout)/new-location-and-hours/_components/_steps/step2";
-import StepThree from "@/app/(no-nav_layout)/new-location-and-hours/_components/_steps/step3";
-import StepFour from "@/app/(no-nav_layout)/new-location-and-hours/_components/_steps/step4";
-import { StepFive } from "@/app/(no-nav_layout)/new-location-and-hours/_components/_steps/step5";
-import StepSix from "@/app/(no-nav_layout)/new-location-and-hours/_components/_steps/step6";
-import StepSeven from "@/app/(no-nav_layout)/new-location-and-hours/_components/_steps/step7";
-import StepEight from "@/app/(no-nav_layout)/new-location-and-hours/_components/_steps/step8";
-import { HoverButton } from "@/components/ui/hover-btn";
-import { Hours, Location, UserRole } from "@prisma/client";
-import { toast } from "sonner";
-import StepNine from "@/app/(no-nav_layout)/new-location-and-hours/_components/_steps/step9";
-import OnboardHeader from "./header.onboard";
 import { UserInfo } from "next-auth";
-import { LocationObj } from "location-types";
-import { OutfitFont } from "@/components/fonts";
+import { Address, Coordinates, Hours, LocationObj, UserRole } from "@/types";
 import Toast from "@/components/ui/toast";
+import { toast } from "sonner";
+import OnboardHeader from "./header.onboard";
+import StepOne from "./steps/1.info";
+import StepTwo from "./steps/2.role";
+import StepThree from "./steps/3.address";
+import StepSeven from "./steps/7.hours";
+import StepEight from "./steps/8.review";
+import StepNine from "./steps/9.finish";
+import { HoverButton } from "@/components/ui/hover-btn";
+import { OutfitFont } from "@/components/fonts";
+import StepSix from "./steps/6.days";
 
 interface Props {
   user: UserInfo;
   index: number;
   apiKey: string;
-  // canReceivePayouts: boolean | null;
-  // session: Session;
   locations: Location[] | null;
 }
+
+export type LocationFormData = {
+  locationId?: string;
+  name?: string;
+  role: UserRole;
+  image?: string;
+  bio?: string;
+  fulfillmentStyle?: string;
+  type: string;
+  coordinates?: Coordinates;
+  address?: Address;
+  isDefault?: boolean;
+  hours?: Hours;
+  selectedMonths?: number[];
+};
+
+const initialFormData: LocationFormData = {
+  role: UserRole.CONSUMER,
+  type: "Point",
+};
 
 const NewLocHoursClient = ({
   user: initialUser,
@@ -44,34 +59,15 @@ const NewLocHoursClient = ({
   const [isEdit, setIsEdit] = useState<boolean>(false);
   const [prevHours, setPrevHours] = useState<any>();
   const [user, setUser] = useState<UserInfo>(initialUser);
-  const [formData, setFormData] = useState<{
-    locationId?: string;
-    role?: UserRole;
-    image?: string;
-    bio?: string;
-    fulfillmentStyle?: string;
-    location?: LocationObj;
-    hours?: Hours;
-    selectedMonths?: number[];
-  }>({});
+  const [formData, setFormData] = useState<LocationFormData>(initialFormData);
   const [progress, setProgress] = useState(0);
-  const updateFormData = useCallback(
-    (newData: Partial<{ location: LocationObj }>) => {
-      setFormData((prevData) => {
-        if (
-          newData.location &&
-          JSON.stringify(prevData.location) === JSON.stringify(newData.location)
-        ) {
-          return prevData;
-        }
-        return {
-          ...prevData,
-          ...newData,
-        };
-      });
-    },
-    []
-  );
+  const updateFormData = <F extends keyof LocationFormData>(
+    field: F,
+    value: LocationFormData[F]
+  ) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
   const updateFormDataMonths = useCallback(
     (newData: Partial<{ selectedMonths: number[] }>) => {
       setFormData((prevData) => {
@@ -90,24 +86,6 @@ const NewLocHoursClient = ({
     },
     []
   );
-  const updateFormDataRole = useCallback(
-    (newData: Partial<{ role: UserRole }>) => {
-      setFormData((prevData) => ({
-        ...prevData,
-        ...newData,
-      }));
-    },
-    []
-  );
-  const updateFulfillmentData = useCallback(
-    (newData: Partial<{ fulfillmentStyle: string }>) => {
-      setFormData((prevData) => ({
-        ...prevData,
-        ...newData,
-      }));
-    },
-    []
-  );
 
   const handleNext = async () => {
     try {
@@ -120,33 +98,25 @@ const NewLocHoursClient = ({
           router.push("/create");
           return;
         }
-        if (formData.location) {
+        if (formData) {
           const response = await axios.post(
             "/api/useractions/update/location-hours",
             {
-              location: [formData.location],
+              formData,
             }
           );
-          setFormData({
-            locationId: response.data.id,
-            location: formData.location,
-          });
-          setUser((prevUser: any) => ({
-            ...prevUser,
-            location: response.data || formData.location,
-          }));
+
+          updateFormData("locationId", response.data.locationId);
         }
       } else if (step === 7 && formData.locationId) {
-        if (formData.location?.hours) {
+        if (formData?.hours) {
           setUser((prevUser: any) => ({
             ...prevUser,
-            location: formData.location,
           }));
         }
         setStep((prevStep) => prevStep - 1);
         return;
       }
-      console.log(formData.location);
       setStep((prevStep) => prevStep + 1);
       setProgress((prevProgress) => prevProgress + 14.28);
     } catch (error) {
@@ -199,6 +169,7 @@ const NewLocHoursClient = ({
       setStep(6);
     }
   };
+
   const resetHoursData = async (
     hours: Hours,
     newType: "both" | "delivery" | "pickup"
@@ -209,8 +180,8 @@ const NewLocHoursClient = ({
         {
           location: [
             {
-              address: formData.location?.address,
-              coordinates: formData.location?.coordinates,
+              address: formData?.address,
+              coordinates: formData?.coordinates,
               role: formData.role,
               hours: hours,
             },
@@ -225,25 +196,6 @@ const NewLocHoursClient = ({
         setSelectedDays([]);
         setPrevSelectedDays([]);
         setIsEdit(false);
-        setFormData((prevData) => ({
-          ...prevData,
-          location: prevData.location
-            ? {
-                ...prevData.location,
-                hours: {
-                  delivery: [],
-                  pickup: [],
-                },
-              }
-            : undefined,
-          fulfillmentStyle: newType === "delivery" ? "pickup" : "delivery",
-          hours: {
-            delivery: [],
-            pickup: [],
-          },
-          selectedMonths: [],
-        }));
-        setPrevHours(hours);
         setStep(5);
       } else {
         Toast({
@@ -257,7 +209,6 @@ const NewLocHoursClient = ({
   };
 
   const handleFinish = async (newHours: Hours, type: string) => {
-    console.log(newHours, prevHours);
     try {
       let updatedHours: Hours;
 
@@ -284,8 +235,8 @@ const NewLocHoursClient = ({
         {
           location: [
             {
-              address: formData.location?.address,
-              coordinates: formData.location?.coordinates,
+              address: formData?.address,
+              coordinates: formData?.coordinates,
               role: formData.role,
               hours: updatedHours,
             },
@@ -316,7 +267,7 @@ const NewLocHoursClient = ({
       case 2:
         return !!formData.role;
       case 3:
-        return !!(formData.location?.address && formData.location?.coordinates);
+        return !!(formData?.address && formData?.coordinates);
       case 4:
         return !!formData.fulfillmentStyle;
       case 5:
@@ -334,8 +285,7 @@ const NewLocHoursClient = ({
           <Progress value={progress} className="w-full h-[6px] bg-gray-200" />
           {step > 0 && (
             <OnboardHeader
-              street={formData?.location?.address[0]}
-              formDataStreet={formData?.location?.address[0]}
+              street={formData?.address?.street}
               fulfillmentStyle={formData?.fulfillmentStyle}
             />
           )}
@@ -344,46 +294,32 @@ const NewLocHoursClient = ({
         <div className={`flex-grow py-[4.5rem]`}>
           {step === 1 && <StepOne />}
           {step === 2 && (
-            <StepTwo
-              user={user}
-              updateFormData={updateFormDataRole}
-              selectedRole={formData.role}
-            />
+            <StepTwo formData={formData} updateFormData={updateFormData} />
           )}
           {step === 3 && (
             <StepThree
-              location={formData.location}
-              role={formData.role}
               apiKey={apiKey}
+              numLocs={locations?.length}
+              formData={formData}
               updateFormData={updateFormData}
-              locations={locations}
             />
           )}
           {step === 4 && (
             <StepFour
               user={user}
-              formData={formData.role}
-              fStyle={formData.fulfillmentStyle ?? ""}
-              updateFormData={updateFulfillmentData}
+              formData={formData}
+              updateFormData={updateFormData}
             />
           )}
           {step === 5 && (
             <StepFive
-              location={formData.location}
-              fulfillmentStyle={formData.fulfillmentStyle ?? ""}
               user={user}
-              formData={formData.location?.address}
+              formData={formData}
               updateFormData={updateFormDataMonths}
-              selectedMonths={formData.selectedMonths}
             />
           )}
           {step === 6 && (
             <StepSix
-              location={formData.location}
-              user={user}
-              fulfillmentStyle={formData.fulfillmentStyle ?? ""}
-              updateFormData={updateFormData}
-              formData={formData.location?.address}
               onComplete={handleStep6Complete}
               onCompleteHours={handleCompleteHours}
               selectedDays={selectedDays}
@@ -395,8 +331,7 @@ const NewLocHoursClient = ({
             <StepSeven
               user={user}
               updateFormData={updateFormData}
-              formData={formData.location?.address}
-              location={formData.location}
+              formData={formData}
               selectedDays={selectedDays}
               onComplete={handleStep7Complete}
               onBack={handleStep7Back}
@@ -405,22 +340,17 @@ const NewLocHoursClient = ({
           )}
           {step === 8 && (
             <StepEight
-              onDayChange={handleStep8Change}
-              location={formData.location}
-              formData={formData.location?.address}
+              formData={formData}
               updateFormData={updateFormDataMonths}
-              fulfillmentStyle={formData.fulfillmentStyle}
-              selectedMonths={formData.selectedMonths}
+              onDayChange={handleStep8Change}
               onFinish={handleFinish}
               resetHoursData={resetHoursData}
             />
           )}
           {step === 9 && (
             <StepNine
-              location={formData.location}
+              formData={formData}
               updateFormData={updateFormDataMonths}
-              selectedMonths={formData.selectedMonths}
-              locationId={formData.locationId}
             />
           )}
         </div>

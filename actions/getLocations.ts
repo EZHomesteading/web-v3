@@ -1,9 +1,9 @@
 // actions/getLocations.ts
 import { auth } from "@/auth";
 import { authenticatedFetch } from "@/lib/api-utils";
-import { Location } from "@prisma/client";
 import { headers } from "next/headers";
 import prisma from "@/lib/prisma";
+import { Location } from "@prisma/client";
 
 async function getLocationsById(locationIds: string[]): Promise<{
   locations: Location[];
@@ -45,9 +45,9 @@ const getUserLocations = async ({
   userId,
 }: {
   userId?: string;
-}): Promise<Location[] | []> => {
+}): Promise<Location[] | null> => {
   if (!userId) {
-    return [];
+    return null;
   }
 
   try {
@@ -56,6 +56,10 @@ const getUserLocations = async ({
         userId: userId,
       },
     });
+
+    if (!locations) {
+      return null;
+    }
 
     return locations;
   } catch (error) {

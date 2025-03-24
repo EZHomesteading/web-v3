@@ -20,8 +20,14 @@ export async function POST(request: Request) {
       );
     }
 
-    const images:
+    const {
+      keyWords,
+      title,
+      SODT,
+      description,
+      images,
       category,
+      userId,
       quantityType,
       stock,
       shelfLife,
@@ -30,7 +36,7 @@ export async function POST(request: Request) {
       projectedStock,
       harvestFeatures,
       price,
-      subCategory,
+      subcategory,
       rating,
       review,
       reports,
@@ -45,9 +51,10 @@ export async function POST(request: Request) {
       { key: "price", type: "number" },
       { key: "description", type: "string" },
       { key: "shelfLife", type: "number" },
-      { key: "subCategory", type: "string" },
+      { key: "subcategory", type: "string" },
       { key: "minOrder", type: "number" },
       { key: "locationId", type: "string" },
+      { key: "userId", type: "string" },
     ];
 
     for (const field of requiredFields) {
@@ -72,15 +79,27 @@ export async function POST(request: Request) {
       }
     }
 
+    if (userId !== user.id) {
+      return NextResponse.json(
+        { error: "Status Unauthorized" },
+        { status: 401 }
+      );
+    }
+
     // Create listing data
-    const listingData = images:
+    const listingData = {
+      keyWords,
+      title,
+      SODT,
+      description,
+      images,
       category,
       quantityType,
       stock,
       shelfLife,
       minOrder,
       price,
-      subCategory,
+      subcategory,
       rating,
       // Connect both user and location using Prisma relations
       user: {
