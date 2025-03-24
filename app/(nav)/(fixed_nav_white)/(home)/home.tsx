@@ -7,8 +7,9 @@ import homebg2 from "@/public/images/website-images/farmers-market-home.jpg";
 import { OutfitFont } from "@/components/fonts";
 import { PiArrowRightThin } from "react-icons/pi";
 import { useRouter } from "next/navigation";
-import AskZipModal from "./modals/AskZipModal";
 import { useState } from "react";
+import AskZipModal from "./AskZipModal";
+
 const footerNavigation = {
   shop: [
     { name: "More Info", href: "/info" },
@@ -27,6 +28,7 @@ const footerNavigation = {
 interface Props {
   user: any;
 }
+
 const Home = ({ user }: Props) => {
   const router = useRouter();
   const [isZipModalOpen, setIsZipModalOpen] = useState(false);
