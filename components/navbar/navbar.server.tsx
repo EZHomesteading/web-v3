@@ -8,12 +8,6 @@ interface p {
 
 export default async function Navbar({ user, className = "bg-inherit" }: p) {
   return (
-<<<<<<< HEAD
     <NavbarClient user={user} harvestMessages={[]} className={className} />
-=======
-    <>
-      <NavbarClient user={user} harvestMessages={[]} className={className} />
-    </>
->>>>>>> origin
   );
 }
