@@ -1,6 +1,6 @@
 import { auth } from "@/auth";
 import { authenticatedFetch } from "@/lib/api-utils";
-import { Basket_ID_Page } from "basket";
+import { Basket_ID_Page } from "@/features/basket/types/types";
 import { headers } from "next/headers";
 
 export default async function getUnique({ id }: { id: string }): Promise<{

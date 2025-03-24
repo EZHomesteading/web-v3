@@ -24,7 +24,7 @@ interface GetVendorsParams {
 const getVendorLocsMap = async ({
   role,
 }: GetVendorsParams): Promise<VendorLocation[]> => {
-  const session = await authCache();
+  // const session = await authCache();
   try {
     const vendorLocs = await prisma.location.findMany({
       where: {
