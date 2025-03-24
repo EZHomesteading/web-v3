@@ -12,7 +12,7 @@ import {
 } from "react-icons/pi";
 import axios from "axios";
 import { usePathname, useRouter } from "next/navigation";
-import { LocationSelector } from "@/app/(nav)/(white_nav_layout)/my-basket/components/helper-components-calendar";
+import { LocationSelector } from "./helper-components-calendar";
 import { toast } from "sonner";
 import { Location } from "@prisma/client";
 import Link from "next/link";

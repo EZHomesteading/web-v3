@@ -11,7 +11,7 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
-import { MarketCard } from "@/app/(nav_market_layout)/market/(components)/market-components";
+import { MarketCard } from "@/features/market/components/main/market-grid";
 
 interface StorePageProps {
   params: {

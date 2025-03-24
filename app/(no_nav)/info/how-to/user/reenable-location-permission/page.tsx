@@ -1,4 +1,4 @@
-import HowToTemplate from "@/app/(info_support_layout)/info/(components)/how-to.template";
+import HowToTemplate from "../../../(components)/how-to.template";
 
 const Page = () => {
   return (
