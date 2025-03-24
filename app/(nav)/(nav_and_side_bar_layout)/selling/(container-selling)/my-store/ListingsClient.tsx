@@ -4,7 +4,7 @@ import axios from "axios";
 import { useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
 import Heading from "@/components/Heading";
-import ListingCard from "@/components/listings/ListingCardDash";
+import ListingCard from "@/app/(nav)/(nav_and_side_bar_layout)/selling/(container-selling)/my-store/ListingCardDash";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { FinalListing } from "@/actions/getListings";

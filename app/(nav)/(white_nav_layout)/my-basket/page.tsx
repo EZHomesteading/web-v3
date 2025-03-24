@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import getActiveBaskets from "@/actions/basket/get/active";
 import { getUserLocationsBasket } from "@/actions/getUser";
 import getUnique from "@/actions/basket/get/unique";
-import DetailedBasketGrid from "./components/DetailedBasketGrid";
+import DetailedBasketGrid from "@/features/basket/components/main/DetailedBasketGrid";
 import { getUserLocations } from "@/actions/getLocations";
 
 const BasketPage = async () => {

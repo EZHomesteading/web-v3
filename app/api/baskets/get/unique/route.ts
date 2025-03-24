@@ -1,6 +1,6 @@
 // get & delete route for /baskets/[id]
 import prisma from "@/lib/prisma";
-import { Basket_ID_Page } from "basket";
+import { Basket_ID_Page } from "@/features/basket/types/types";
 import { NextResponse } from "next/server";
 
 export async function GET(

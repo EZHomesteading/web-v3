@@ -3,7 +3,7 @@
 import { Dialog } from "@headlessui/react";
 import Modal from "@/features/chat/components/modals/Modal";
 import Button from "@/features/chat/components/modals/Button";
-import { CommonInputProps } from "@/types/create";
+import { CommonInputProps } from "@/features/create/types/create";
 import { FieldValues, useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
 import { OrderStatus } from "@prisma/client";

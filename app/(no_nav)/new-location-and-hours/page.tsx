@@ -18,7 +18,6 @@ export default async function Page() {
   if (!session?.user.id) {
     return;
   }
-
   const locations = await getUserLocations({
     userId: session?.user.id,
   });

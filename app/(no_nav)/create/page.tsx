@@ -1,4 +1,4 @@
-import CreateClient from "./components/CreateClient";
+import CreateClient from "@/features/create/components/main/CreateClient";
 import type { Viewport } from "next";
 import CreatePopup from "@/app/(nav)/(white_nav_layout)/info-modals/create-info-modal";
 import { getUserLocations } from "@/actions/getLocations";

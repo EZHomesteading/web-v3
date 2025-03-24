@@ -24,10 +24,15 @@ import {
 import { Card, CardContent } from "@/components/ui/card";
 import { Work_Sans } from "next/font/google";
 import { FinalListing } from "@/actions/getListings";
-import { Popover, PopoverTrigger, PopoverContent } from "./error-popover";
+import {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+} from "../../../../../../components/listings/error-popover";
 import { BiError } from "react-icons/bi";
-import StockCounter from "./StockCounter";
+import StockCounter from "../../../../../../components/listings/StockCounter";
 import { UserInfo } from "next-auth";
+import { AlertDialogTitle } from "@radix-ui/react-alert-dialog";
 
 const work = Work_Sans({
   display: "block",
@@ -278,15 +283,16 @@ const ListingCard: React.FC<ListingCardProps> = ({
             <AlertDialog>
               <AlertDialogTrigger>
                 {onAction && actionLabel && (
-                  <Button className="bg-transparent shadow-none text-red-600 text-3xl hover:bg-transparent hover:scale-105 pt-0">
+                  <span className="absolute top-1 right-1 bg-transparent shadow-none text-red-600 text-3xl hover:bg-transparent hover:scale-120 pt-0">
                     <FaDeleteLeft />
-                  </Button>
+                  </span>
                 )}
               </AlertDialogTrigger>
+
               <AlertDialogContent className="bg-black rounded-lg px-4 py-4 w-fit ">
-                <AlertDialogHeader className="text-3xl">
+                <AlertDialogTitle className="text-3xl text-white">
                   Are you sure?
-                </AlertDialogHeader>
+                </AlertDialogTitle>
                 <AlertDialogDescription className="text-white pt-2">
                   We cannot recover a listing after it has been deleted, this is
                   irreversible.
@@ -298,7 +304,7 @@ const ListingCard: React.FC<ListingCardProps> = ({
                   >
                     Yes, I&apos;m sure
                   </AlertDialogAction>
-                  <AlertDialogCancel className=" shadow-none bg-green-600 text-3xl hover:bg-green-700 text-md text-white border-none hover:text-white m-0">
+                  <AlertDialogCancel className=" rounded-md shadow-none bg-green-600 p-2 hover:bg-green-700 text-md text-white border-none hover:text-white m-0">
                     Nevermind
                   </AlertDialogCancel>
                 </AlertDialogFooter>
