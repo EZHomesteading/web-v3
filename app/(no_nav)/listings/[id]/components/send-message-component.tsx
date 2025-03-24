@@ -8,8 +8,8 @@ import { OutfitFont } from "@/components/fonts";
 import { useBasket } from "@/hooks/listing/use-basket";
 import Toast from "@/components/ui/toast";
 import Link from "next/link";
-import HoursWarningModal from "@/app/(nav_market_layout)/market/(components)/cartHoursWarning";
 import { useState } from "react";
+import HoursWarningModal from "@/features/market/components/modals/cartHoursWarning";
 
 interface SendMessageComponentProps {
   listing: any;

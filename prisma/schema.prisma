@@ -165,9 +165,9 @@ model Location {
   type                String
   coordinates         Coordinates
   address             Address
-  hours               Hours?
+  hours               Hours
   role                UserRole    @default(PRODUCER)
-  SODT                Int?
+  SODT                Int
   bio                 String
   image               String?
   isDefault           Boolean     @default(false)

@@ -1,10 +1,10 @@
 import Avatar from "@/components/Avatar";
 import { OutfitFont } from "@/components/fonts";
-import { StoreLocationCard } from "@/app/(nav_market_layout)/market/(components)/store-card";
 import { StoreLocationBio } from "../bio";
 import Link from "next/link";
 
 import { GetStoreByLocation } from "@/actions/getUser";
+import { Listing } from "@/types";
 
 interface StorePageProps {
   params: {
@@ -48,7 +48,8 @@ const StorePage = async ({ params }: StorePageProps) => {
                 </div>
                 <div className={`h-1 w-1 bg-black rounded-full`} />
                 <p className={`font-light cursor-pointer text-sm`}>
-                  {data.location?.address[1]}, {data?.location?.address[2]}
+                  {data.location?.address?.street},{" "}
+                  {data?.location?.address?.street}
                 </p>
               </div>
             </div>
@@ -69,12 +70,13 @@ const StorePage = async ({ params }: StorePageProps) => {
 
         <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
           {data.listings.map((listing: any, index: number) => (
-            <StoreLocationCard
-              location={data?.location}
-              listing={listing}
-              imageCount={index}
-              key={index}
-            />
+            // <StoreLocationCard
+            //   location={data?.location}
+            //   listing={listing}
+            //   imageCount={index}
+            //   key={index}
+            // />
+            <div></div>
           ))}
         </div>
       </div>

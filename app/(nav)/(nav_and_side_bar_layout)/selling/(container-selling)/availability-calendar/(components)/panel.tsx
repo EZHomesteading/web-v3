@@ -7,21 +7,18 @@ import {
   PiMapPin,
   PiMapTrifold,
   PiPlus,
-  PiPlusBold,
   PiTrash,
 } from "react-icons/pi";
 import axios from "axios";
 import { usePathname, useRouter } from "next/navigation";
-import { LocationSelector } from "@/app/(nav)/(white_nav_layout)/my-basket/components/helper-components-calendar";
 import { toast } from "sonner";
 import { Location } from "@prisma/client";
-import Link from "next/link";
 import SetDefaultButton from "./set-default-button";
-import { OutfitFont } from "@/components/fonts";
 import ListingMap from "@/components/map/listing-map";
 import Toast from "@/components/ui/toast";
 import Alert from "@/components/ui/custom-alert";
 import authCache from "@/auth-cache";
+import { LocationSelector } from "./helper-components-calendar";
 
 export interface PanelProps {
   content: ReactNode;
@@ -64,7 +61,7 @@ const StackingPanelLayout: React.FC<StackingPanelLayoutProps> = async ({
     state: "",
     zip: "",
   });
-  const [displayName, setDisplayName] = useState(location?.displayName);
+  const [displayName, setDisplayName] = useState(location?.name);
   const [validDisplayName, setValidDisplayName] = useState(displayName);
   const [geoResult, setGeoResult] = useState<{
     lat: number;
@@ -461,7 +458,7 @@ const StackingPanelLayout: React.FC<StackingPanelLayoutProps> = async ({
             )}
             {!location?.isDefault && (
               <SetDefaultButton
-                street={location?.address[0]}
+                street={location?.address?.street}
                 userId={userId}
                 locationId={location?.id}
                 className="!text-base  font-medium w-full my-2 border py-5 rounded-sm justify-between px-2 sm:px-4 flex relative bg-inherit text-black hover:text-white !border-black shadow-md"
@@ -481,8 +478,8 @@ const StackingPanelLayout: React.FC<StackingPanelLayoutProps> = async ({
               <div className={`relative`}>
                 <ListingMap
                   apiKey={mk}
-                  lat={geoResult?.lat || location?.coordinates[1] || 38}
-                  lng={geoResult?.lng || location?.coordinates[0] || -84}
+                  lat={geoResult?.lat || location?.coordinates.lat || 38}
+                  lng={geoResult?.lng || location?.coordinates.lng || -84}
                   scrollWheel={false}
                   gestureHandling="none"
                 />

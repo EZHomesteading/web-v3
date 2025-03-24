@@ -5,8 +5,8 @@ import { useRef, useState } from "react";
 import Toast from "@/components/ui/toast";
 import Link from "next/link";
 import { useBasket } from "@/hooks/listing/use-basket";
-import HoursWarningModal from "@/app/(nav_market_layout)/market/(components)/cartHoursWarning";
 import { PiMinusBold, PiPencilThin, PiPlusBold } from "react-icons/pi";
+import HoursWarningModal from "@/features/market/components/modals/cartHoursWarning";
 
 interface p {
   listing: any;

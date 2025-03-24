@@ -1,9 +1,9 @@
 "use client";
 import { ReviewWithReviewer } from "@/actions/getUser";
-import { StarRating } from "@/app/(nav)/(nav_market_layout)/market/(components)/market-components";
 import Avatar from "@/components/Avatar";
 import { OutfitFont } from "@/components/fonts";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { StarRating } from "@/features/market/components/main/market-grid";
 import { StarIcon } from "@heroicons/react/20/solid";
 import { Reviews, UserRole } from "@prisma/client";
 import { format } from "date-fns";

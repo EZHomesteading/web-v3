@@ -1,4 +1,5 @@
-import InfoTemplate from "@/app/(info_support_layout)/info/(components)/info-template";
+import InfoTemplate from "../../../(components)/info-template";
+
 const setOutTime = () => {
   return (
     <InfoTemplate
