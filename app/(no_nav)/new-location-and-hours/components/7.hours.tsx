@@ -8,25 +8,22 @@ import {
   convertTimeStringToMinutes,
 } from "@/app/(nav)/(nav_and_side_bar_layout)/selling/(container-selling)/availability-calendar/(components)/helper-functions-calendar";
 import TimePicker from "@/app/(nav)/(nav_and_side_bar_layout)/selling/(container-selling)/availability-calendar/(components)/time-slot";
-import { LocationObj } from "location-types";
-import OnboardContainer from "../onboard.container";
-interface StepSixProps {
-  user: any;
-  updateFormData: (newData: { location: LocationObj }) => void;
-  formData: string[] | undefined;
-  location?: LocationObj;
-  selectedDays: string[];
-  fulfillmentStyle?: string;
+import { NewLocProps } from "./index";
+import { FulfillmentType } from "./4.fufillment";
+import { Availability, Hours as HoursType, TimeSlot } from "@/types";
+import Toast from "@/components/ui/toast";
+
+interface StepSixProps extends NewLocProps {
   onComplete: () => void;
   onBack: () => void;
 }
 
-const StepSeven: React.FC<StepSixProps> = ({
+export function Hours({
   updateFormData,
-  location,
-  selectedDays,
+  formData,
+  onBack,
   onComplete,
-}) => {
+}: StepSixProps) {
   const [timeSlots, setTimeSlots] = useState([{ open: 360, close: 1080 }]);
   const containerRef = useRef<HTMLDivElement>(null);
   const [activeTab, setActiveTab] = useState<number>(0);
@@ -132,64 +129,154 @@ const StepSeven: React.FC<StepSixProps> = ({
     });
   };
 
-  const handleSaveChanges = () => {
+  const handleSaveChanges = (): void => {
+    // Validate time slots don't overlap
     if (checkOverlap([timeSlots])) {
       toast.error("Time slots overlap. Please adjust the hours.");
       return;
     }
 
-    if (!location) {
-      toast.error("Location data is missing.");
+    // Create a deep copy of current hours to avoid mutation issues
+    const newHours: HoursType = {
+      pickup: formData.hours?.pickup || [],
+      delivery: formData.hours?.delivery || [],
+    };
+
+    // CRITICAL CHANGE: Only modify the hours for the service we're currently configuring
+    // This preserves the other service's hours regardless of month/day selections
+
+    // Filter out days being reconfigured ONLY from the current service
+    if (formData.currentConfig === "pickup") {
+      // Only modify pickup hours, leave delivery alone
+      newHours.pickup = newHours.pickup.filter(
+        (avail: Availability) =>
+          !formData.selectedDays.includes(
+            weekDays[new Date(avail.date).getDay()]
+          )
+      );
+    } else if (formData.currentConfig === "delivery") {
+      newHours.delivery = newHours.delivery.filter(
+        (avail: Availability) =>
+          !formData.selectedDays.includes(
+            weekDays[new Date(avail.date).getDay()]
+          )
+      );
+    } else {
+      // For shared hours, update both services
+      newHours.pickup = newHours.pickup.filter(
+        (avail: Availability) =>
+          !formData.selectedDays.includes(
+            weekDays[new Date(avail.date).getDay()]
+          )
+      );
+      newHours.delivery = newHours.delivery.filter(
+        (avail: Availability) =>
+          !formData.selectedDays.includes(
+            weekDays[new Date(avail.date).getDay()]
+          )
+      );
+    }
+
+    // Determine which services to update
+    const updatePickup: boolean =
+      formData.currentConfig === "pickup" ||
+      formData.fulfillmentStyle === FulfillmentType.PICKUP_ONLY ||
+      formData.fulfillmentStyle === FulfillmentType.SHARED_HOURS;
+
+    const updateDelivery: boolean =
+      formData.currentConfig === "delivery" ||
+      formData.fulfillmentStyle === FulfillmentType.DELIVERY_ONLY ||
+      formData.fulfillmentStyle === FulfillmentType.SHARED_HOURS;
+
+    // Create day to timeslot mapping
+    const dayPatterns: Map<number, TimeSlot[]> = new Map();
+    formData.selectedDays.forEach((day: string) => {
+      dayPatterns.set(weekDays.indexOf(day), timeSlots);
+    });
+
+    // Generate availability entries for selected months and days
+    const currentDate: Date = new Date();
+    const currentYear: number = currentDate.getFullYear();
+
+    // Add new availabilities
+    formData.selectedMonths.forEach((monthIndex: number) => {
+      const yearToUse: number =
+        new Date(currentYear, monthIndex, 1) < currentDate
+          ? currentYear + 1
+          : currentYear;
+      const daysInMonth: number = new Date(
+        yearToUse,
+        monthIndex + 1,
+        0
+      ).getDate();
+
+      for (let day = 1; day <= daysInMonth; day++) {
+        const dateObj: Date = new Date(yearToUse, monthIndex, day);
+        const dayOfWeek: number = dateObj.getDay();
+
+        if (dayPatterns.has(dayOfWeek)) {
+          const availability: Availability = {
+            date: new Date(dateObj),
+            timeSlots: [...dayPatterns.get(dayOfWeek)!],
+            capacity: 0,
+          };
+
+          if (updatePickup) newHours.pickup.push(availability);
+          if (updateDelivery) newHours.delivery.push(availability);
+        }
+      }
+    });
+
+    const sortByDate = (a: Availability, b: Availability): number =>
+      new Date(a.date).getTime() - new Date(b.date).getTime();
+
+    newHours.pickup.sort(sortByDate);
+    newHours.delivery.sort(sortByDate);
+
+    updateFormData("hours", newHours);
+
+    // Track completed steps
+    let completedSteps: Array<"pickup" | "delivery"> = [
+      ...(formData.completedSteps || []),
+    ];
+
+    if (!formData.currentConfig) {
+      Toast({
+        message:
+          "Please decide how you would liket to fufill orders before completing this step",
+      });
       return;
     }
 
-    const updatedPickup = selectedDays.map((day) => {
-      // Find the index of the day in the weekDays array
-      const dayIndex = weekDays.indexOf(day);
-      // Create a date for the next occurrence of this day
-      const date = new Date();
-      date.setDate(date.getDate() + ((dayIndex + 7 - date.getDay()) % 7));
-      // Set the time to midnight to avoid timezone issues
-      date.setHours(0, 0, 0, 0);
+    if (formData.fulfillmentStyle === FulfillmentType.SHARED_HOURS) {
+      if (!completedSteps.includes("pickup")) completedSteps.push("pickup");
+      if (!completedSteps.includes("delivery")) completedSteps.push("delivery");
+    } else if (
+      formData.fulfillmentStyle === FulfillmentType.PICKUP_ONLY &&
+      !completedSteps.includes("pickup")
+    ) {
+      completedSteps.push("pickup");
+    } else if (
+      formData.fulfillmentStyle === FulfillmentType.DELIVERY_ONLY &&
+      !completedSteps.includes("delivery")
+    ) {
+      completedSteps.push("delivery");
+    } else if (
+      formData.fulfillmentStyle === FulfillmentType.SEPARATE_HOURS &&
+      !completedSteps.includes(formData.currentConfig)
+    ) {
+      completedSteps.push(formData.currentConfig);
+    }
 
-      return {
-        date: date,
-        timeSlots: timeSlots,
-        capacity: null,
-      };
-    });
-
-    const existingPickup = location.hours?.pickup || [];
-    const newPickup = existingPickup.filter(
-      (pickup: { date: string | number | Date }) =>
-        !selectedDays.includes(weekDays[new Date(pickup.date).getUTCDay()])
-    );
-    newPickup.push(...updatedPickup);
-
-    const updatedLocation: LocationObj = {
-      ...location,
-      hours: {
-        pickup: newPickup,
-        delivery: location.hours?.delivery || [],
-      },
-    };
-
-    updateFormData({ location: updatedLocation });
+    updateFormData("completedSteps", completedSteps);
     toast.success("Store hours updated successfully");
     onComplete();
   };
-
   return (
     <div className="flex flex-col min-h-[850px]" ref={containerRef}>
-      <OnboardContainer
-        title="Set Open & Close Hours for"
-        descriptions={[
-          `${selectedDays.join(", ")}`,
-          "Fine-tune your daily schedule later in settings",
-        ]}
-      >
-        {timeSlots.map((slot, index) =>
-          activeTab === index ? (
+      {timeSlots.map(
+        (slot, index) =>
+          activeTab === index && (
             <div
               key={index}
               className={`absolute left-1/2 transform -translate-x-1/2 bg-white 
@@ -245,11 +332,8 @@ const StepSeven: React.FC<StepSixProps> = ({
                 Save Changes
               </Button>
             </div>
-          ) : null
-        )}
-      </OnboardContainer>
+          )
+      )}
     </div>
   );
-};
-
-export default StepSeven;
+}

@@ -105,15 +105,6 @@ type notifList {
   list String[]
 }
 
-type LocationObj {
-  type        String
-  coordinates Float[]
-  address     String[]
-  hours       Hours?
-  role        UserRole @default(CONSUMER)
-  isDefault   Boolean? @default(false)
-}
-
 type Hours {
   delivery Availability[]
   pickup   Availability[]
@@ -128,6 +119,18 @@ type Availability {
   date      DateTime
   timeSlots TimeSlot[]
   capacity  Int?
+}
+
+type Address {
+  street String
+  city   String
+  state  String
+  zip    String
+}
+
+type Coordinates {
+  lat Float
+  lng Float
 }
 
 type OpenCloseTemplates {
@@ -153,24 +156,24 @@ model OrderGroup {
 }
 
 model Location {
-  id                  String    @id @default(auto()) @map("_id") @db.ObjectId
-  userId              String    @db.ObjectId
-  displayName         String?
-  user                User      @relation(fields: [userId], references: [id])
+  id                  String      @id @default(auto()) @map("_id") @db.ObjectId
+  userId              String      @db.ObjectId
+  name                String
+  user                User        @relation(fields: [userId], references: [id])
   listings            Listing[]
   orders              Order[]
   type                String
-  coordinates         Float[]
-  address             String[]
+  coordinates         Coordinates
+  address             Address
   hours               Hours?
-  role                UserRole  @default(PRODUCER)
+  role                UserRole    @default(PRODUCER)
   SODT                Int?
-  bio                 String?
+  bio                 String
   image               String?
-  isDefault           Boolean   @default(false)
-  showPreciseLocation Boolean   @default(false)
-  createdAt           DateTime  @default(now())
-  updatedAt           DateTime  @updatedAt
+  isDefault           Boolean     @default(false)
+  showPreciseLocation Boolean     @default(false)
+  createdAt           DateTime    @default(now())
+  updatedAt           DateTime    @updatedAt
   baskets             Basket[]
 }
 

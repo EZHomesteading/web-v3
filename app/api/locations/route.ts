@@ -1,9 +1,8 @@
-// app/api/locations/route.ts
 import prisma from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/auth";
+import { Prisma } from "@prisma/client";
 
-// Make sure to export the GET function
 export async function GET(req: NextRequest) {
   try {
     const session = await auth();
@@ -30,7 +29,7 @@ export async function GET(req: NextRequest) {
       },
       select: {
         id: true,
-        displayName: true,
+        name: true,
         coordinates: true,
         address: true,
         hours: true,
@@ -41,5 +40,49 @@ export async function GET(req: NextRequest) {
   } catch (error) {
     console.error("[LOCATIONS_GET]", error);
     return NextResponse.json({ error: "Internal Error" }, { status: 500 });
+  }
+}
+
+export async function POST(request: Request) {
+  try {
+    const body = await request.json();
+    const data = body.data;
+    console.log(data.hours);
+
+    const session = await auth();
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const locationCount = await prisma.location.count({
+      where: { userId: session.user.id },
+    });
+
+    const newLocation = await prisma.location.create({
+      data: {
+        userId: session.user.id,
+        name: data.name,
+        address: data.address,
+        coordinates: data.coordinates,
+        bio: data.bio,
+        type: "Point",
+        hours: data.hours,
+        isDefault: locationCount === 0,
+      },
+    });
+
+    return NextResponse.json(newLocation);
+  } catch (error) {
+    console.error("Detailed error in API route:", error);
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      console.error("Prisma error:", error.message);
+    }
+    return NextResponse.json(
+      {
+        error: "Internal server error",
+        details: "Unknown error",
+      },
+      { status: 500 }
+    );
   }
 }

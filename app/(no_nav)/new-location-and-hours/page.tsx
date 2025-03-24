@@ -3,17 +3,17 @@ import { Viewport } from "next";
 import authCache from "@/auth-cache";
 import Link from "next/link";
 import { OutfitFont } from "@/components/fonts";
-import { Location } from "@prisma/client";
-import NewLocHours from "@/app/(no_nav)/new-location-and-hours/_components/new-loc-hours.client";
 import { getUserLocations } from "@/actions/getLocations";
+import NewLocHourClientV2 from "./components/v2.client";
+import { Location } from "@/types";
 
 export const viewport: Viewport = {
   themeColor: "#fff",
 };
 
-const apiKey = process.env.MAPS_KEY;
+const apiKey = process.env.MAPS_KEY!;
 
-const Page = async () => {
+export default async function Page() {
   const session = await authCache();
   if (!session?.user.id) {
     return;
@@ -21,17 +21,6 @@ const Page = async () => {
   const locations = await getUserLocations({
     userId: session?.user.id,
   });
-
-  if (!apiKey) {
-    return;
-  }
-  const getLocationTitle = (location: Location, index: number) => {
-    if (location?.isDefault) return "Edit Default Location";
-    if (index === 1) return "Edit Second Location";
-    if (index === 2) return "Edit Third Location";
-    return "Edit Other Location";
-  };
-  let index = 1;
 
   const sortedLocations = locations
     ? [...locations].sort((a, b) => {
@@ -43,46 +32,46 @@ const Page = async () => {
 
   return (
     <>
-      {locations && Array.isArray(locations) && locations?.length < 3 ? (
-        // > 3
-        <>
-          {session?.user && (
-            <NewLocHours
-              locations={sortedLocations}
-              index={index}
-              user={session?.user}
-              apiKey={apiKey}
-            />
-          )}
-        </>
+      {Array.isArray(locations) && locations?.length < 3 ? (
+        <NewLocHourClientV2 user={session.user} apiKey={apiKey} />
       ) : (
-        <div
-          className={`${OutfitFont.className} flex flex-col items-center justify-center h-screen gap-y-2`}
-        >
-          You have reached the maximum of 3 selling locations
-          <Link
-            key={index}
-            className={` border-[1px] font-semibold rounded-xl w-[300px] h-[100px] shadow-md flex flex-col items-center justify-center`}
-            href={`/`}
-          >
-            Go to Home
-          </Link>
-          {sortedLocations?.map((location, index) => (
-            <Link
-              key={index}
-              className={` border-[1px] rounded-xl w-[300px] h-[100px] shadow-md flex flex-col items-center justify-center`}
-              href={`/selling/availability-calendar/${location.id}`}
-            >
-              <span className="font-semibold">
-                {getLocationTitle(location, index)}
-              </span>
-              {location?.address[0]}
-            </Link>
-          ))}
-        </div>
+        <MaxLocations locations={sortedLocations} />
       )}
     </>
   );
-};
+}
 
-export default Page;
+function MaxLocations({ locations }: { locations: Location[] }) {
+  return (
+    <div
+      className={`${OutfitFont.className} flex flex-col items-center justify-center h-screen gap-y-2`}
+    >
+      You have reached the maximum of 3 selling locations
+      <Link
+        className={` border-[1px] font-semibold rounded-xl w-[300px] h-[100px] shadow-md flex flex-col items-center justify-center`}
+        href={`/`}
+      >
+        Go to Home
+      </Link>
+      {locations?.map((location, index) => (
+        <Link
+          key={index}
+          className={` border-[1px] rounded-xl w-[300px] h-[100px] shadow-md flex flex-col items-center justify-center`}
+          href={`/selling/availability-calendar/${location.id}`}
+        >
+          <span className="font-semibold">
+            {getLocationTitle(location, index)}
+          </span>
+          {location?.address?.street}
+        </Link>
+      ))}
+    </div>
+  );
+}
+
+const getLocationTitle = (location: Location, index: number) => {
+  if (location?.isDefault) return "Edit Default Location";
+  if (index === 1) return "Edit Second Location";
+  if (index === 2) return "Edit Third Location";
+  return "Edit Other Location";
+};
