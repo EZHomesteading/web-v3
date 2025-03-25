@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 import { Outfit, Zilla_Slab } from "next/font/google";
 import ReactStars from "react-stars";
 import axios from "axios";
-import { Textarea } from "./textarea";
+import { Textarea } from "@/components/ui/textarea";
 
 const outfit = Outfit({
   style: ["normal"],

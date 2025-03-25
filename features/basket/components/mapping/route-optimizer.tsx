@@ -27,8 +27,6 @@ import {
 import { OutfitFont } from "@/components/fonts";
 import { Location } from "@prisma/client";
 import { formatTime } from "../../utils/utils";
-// Import the separated functions and types
-//import { optimizeRoute } from "./calcreverse";
 import {
   optimizeTimeRoute,
   timeStringToSeconds,
@@ -36,7 +34,6 @@ import {
   formatDuration,
   metersToMiles,
   isLocationOpen,
-  getLocationOpenTime,
 } from "./calcoptimal";
 import {
   RouteOptimizerProps,

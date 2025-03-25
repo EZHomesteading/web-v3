@@ -6,7 +6,7 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import Modal from "@/features/chat/components/modals/Modal";
-import Button from "@/features/chat/components/modals/Button";
+import Button from "@/features/chat/components/ui/Button";
 import { ChatOrder } from "chat-types";
 import Toast from "@/components/ui/toast";
 

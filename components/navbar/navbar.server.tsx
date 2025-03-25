@@ -1,4 +1,4 @@
-import NavbarClient from "@/components/navbar/navbar.client";
+import NavbarClient from "./navbar.client";
 import { NavUser } from "@/actions/getUser";
 
 interface p {

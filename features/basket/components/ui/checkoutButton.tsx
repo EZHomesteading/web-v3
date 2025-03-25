@@ -2,7 +2,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { addDays } from "date-fns";
-import SoonExpiryModal from "./modals/soonExpiryModal";
+import SoonExpiryModal from "../modals/soonExpiryModal";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 

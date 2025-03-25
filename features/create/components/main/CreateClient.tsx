@@ -10,7 +10,7 @@ import {
   InputProps,
   SubCategory,
 } from "@/features/create/types/create";
-import { Progress } from "@/components/ui/progress";
+import { Progress } from "../../../../components/ui/progress";
 import axios from "axios";
 import { ReactNode, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -22,9 +22,8 @@ import StepThree from "../steps/step3";
 import StepFour from "../steps/step4";
 import StepFive from "../steps/step5";
 import StepSix from "../steps/step6";
-import { Location, UserRole } from "@prisma/client";
+import { Location } from "@prisma/client";
 import { OutfitFont } from "@/components/fonts";
-import { Label } from "@/components/ui/label";
 import Help from "../modals/help";
 import CreateHeader from "./header.create";
 import Toast from "@/components/ui/toast";

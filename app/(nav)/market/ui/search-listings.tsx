@@ -15,7 +15,7 @@ import { IoIosSearch } from "react-icons/io";
 import debounce from "debounce";
 import { PiBasketThin, PiMapTrifoldThin } from "react-icons/pi";
 import Fuse from "fuse.js";
-import { OutfitFont } from "../fonts";
+import { OutfitFont } from "@/components/fonts";
 import { useSearchParams } from "next/navigation";
 
 type Listing = {

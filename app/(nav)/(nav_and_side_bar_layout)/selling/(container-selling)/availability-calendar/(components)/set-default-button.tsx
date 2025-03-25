@@ -1,7 +1,6 @@
 "use client";
 import axios from "axios";
 import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
 import { PiCheckFat } from "react-icons/pi";
 
 const SetDefaultButton = ({

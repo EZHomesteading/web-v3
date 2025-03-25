@@ -6,7 +6,7 @@ import { GetListingsByUserId } from "@/actions/getListings";
 import ListingsClient from "./ListingsClient";
 import { getUserWithSellOrders } from "@/actions/getUser";
 import Stripe from "stripe";
-import { parse } from "json5";
+
 function processOrderQuantities(orders: any) {
   const quantityMap = new Map();
 

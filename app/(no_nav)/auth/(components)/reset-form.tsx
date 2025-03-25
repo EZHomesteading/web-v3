@@ -13,11 +13,11 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
+} from "./ui/form";
 import { CardWrapper } from "./login/auth-card-wrapper";
 import { Button } from "@/components/ui/button";
-import { FormError } from "@/components/form-error";
-import { FormSuccess } from "@/components/form-success";
+import { FormError } from "./ui/form-error";
+import { FormSuccess } from "./ui/form-success";
 import axios from "axios";
 import { toast } from "sonner";
 import { OutfitFont } from "@/components/fonts";

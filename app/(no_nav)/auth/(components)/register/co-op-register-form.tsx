@@ -15,11 +15,11 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
+} from "../ui/form";
 import { Button } from "@/components/ui/button";
 import { CardWrapper } from "../login/auth-card-wrapper";
-import { FormError } from "@/components/form-error";
-import { FormSuccess } from "@/components/form-success";
+import { FormError } from "../ui/form-error";
+import { FormSuccess } from "../ui/form-success";
 import { register } from "@/actions/auth/register-vendor";
 import "react-phone-number-input/style.css";
 import PhoneInput from "react-phone-number-input";

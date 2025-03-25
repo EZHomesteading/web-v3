@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Dialog } from "@headlessui/react";
 import Modal from "@/features/chat/components/modals/Modal";
-import Button from "@/features/chat/components/modals/Button";
+import Button from "@/features/chat/components/ui/Button";
 
 interface ConfirmModalProps {
   isOpen?: boolean;

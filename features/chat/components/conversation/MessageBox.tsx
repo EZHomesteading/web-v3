@@ -7,34 +7,21 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import Image from "next/image";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { format } from "date-fns";
-//import "react-datetime-picker/dist/DateTimePicker.css";
 import axios from "axios";
-//import toast from "react-hot-toast";
 import CancelModal from "../modals/CancelModal";
 import { Listing, OrderStatus, UserRole } from "@prisma/client";
-import { UploadButton } from "@/utils/uploadthing";
-import {
-  PiCalendarBlankLight,
-  PiCalendarCheckLight,
-  PiCalendarPlusLight,
-  PiCalendarXLight,
-  PiNewspaperClippingThin,
-} from "react-icons/pi";
+import { PiNewspaperClippingThin } from "react-icons/pi";
 import {
   AlertDialog,
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
+} from "../../../../components/ui/alert-dialog";
 import DisputeModal from "../modals/DisputeModal";
 import { Button } from "@/components/ui/button";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover-msg";
-import Form from "./Form";
-import Avatar from "@/components/Avatar";
+import { Popover, PopoverContent, PopoverTrigger } from "../../ui/popover-msg";
+import Form from "../ui/Form";
+import Avatar from "../../../../components/Avatar";
 import { BiMessageSquareEdit } from "react-icons/bi";
 import ChatConfirmModal from "../modals/ChatConfirm";
 

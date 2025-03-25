@@ -2,7 +2,7 @@
 import Avatar from "@/components/Avatar";
 import { OutfitFont } from "@/components/fonts";
 import { StarIcon } from "@heroicons/react/20/solid";
-import { Reviews, User, UserRole } from "@prisma/client";
+import { Reviews, User } from "@prisma/client";
 import Link from "next/link";
 
 function classNames(...classes: string[]) {

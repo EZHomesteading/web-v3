@@ -16,11 +16,11 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
+} from "../ui/form";
 import { Button } from "@/components/ui/button";
 import { CardWrapper } from "./auth-card-wrapper";
-import { FormError } from "@/components/form-error";
-import { FormSuccess } from "@/components/form-success";
+import { FormError } from "../ui/form-error";
+import { FormSuccess } from "../ui/form-success";
 import { login } from "@/actions/auth/login";
 import { OutfitFont } from "@/components/fonts";
 

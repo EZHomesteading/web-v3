@@ -3,7 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import { debounce } from "lodash";
-import { BasketItem, useBasket } from "./main/DetailedBasketGrid";
+import { BasketItem, useBasket } from "../main/DetailedBasketGrid";
 
 interface QuantityProps {
   item: BasketItem;

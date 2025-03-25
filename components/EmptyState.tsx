@@ -2,7 +2,7 @@
 //default emptystate component
 import React from "react";
 import { usePathname, useRouter } from "next/navigation";
-import Button from "./Button";
+import { Button } from "./ui/button";
 import Heading from "./Heading";
 import { OutfitFont } from "@/components/fonts";
 
@@ -56,20 +56,16 @@ const EmptyState: React.FC<EmptyStateProps> = ({
       <Heading center title={title} subtitle={subtitle} />
       <div className="w-48 mt-4">
         {showReset && (
-          <Button
-            outline
-            label="Remove all filters"
-            onClick={() => router.push("/market")}
-          />
+          <Button variant="outline" onClick={() => router.push("/market")}>
+            Remove all filters
+          </Button>
         )}
       </div>
       <div className="w-48">
         {showShop && (
-          <Button
-            outline
-            label="Find Produce"
-            onClick={() => router.push("/market")}
-          />
+          <Button variant="outline" onClick={() => router.push("/market")}>
+            Find Produce
+          </Button>
         )}
       </div>
     </div>

@@ -1,11 +1,9 @@
 "use client";
 import React, {
-  createContext,
   useContext,
   useState,
   useMemo,
   useEffect,
-  useRef,
   useCallback,
 } from "react";
 import {
@@ -25,19 +23,19 @@ import {
   DeliveryPickupToggle,
   DeliveryPickupToggleMode,
 } from "../../utils/helper-components-calendar";
-import SpCounter from "../counter";
+import SpCounter from "../ui/counter";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import { Trash2Icon } from "lucide-react";
 import LocationModal from "../modals/LocSelect";
 import WeeklyHours from "../modals/weeklyhours";
-import CheckoutButton from "../checkoutButton";
+import CheckoutButton from "../ui/checkoutButton";
 import { Libraries, useLoadScript } from "@react-google-maps/api";
 import {
   BasketContext,
   BasketProvider,
 } from "@/features/basket/hooks/basketprovider";
-import ClientOnly from "@/components/client/ClientOnly";
+import ClientOnly from "../../../../components/client/ClientOnly";
 
 // Keep specific types where they're well-defined
 interface ListingType {

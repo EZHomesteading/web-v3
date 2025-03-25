@@ -1,4 +1,4 @@
-import { OutfitFont } from "@/components/fonts";
+import { OutfitFont } from "../../../components/fonts";
 import { Clock } from "lucide-react";
 
 interface AvailabilityScoreProps {

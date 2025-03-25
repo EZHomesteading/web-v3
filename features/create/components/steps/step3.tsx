@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Label } from "@/components/ui/label";
+import { Label } from "../../../../components/ui/label";
 import {
   Select,
   SelectContent,
@@ -8,8 +8,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Checkbox } from "@/components/ui/checkbox";
-import Input from "../inputs/listing-input";
+import { Checkbox } from "../../../../components/ui/checkbox";
+import Input from "../ui/listing-input";
 import UnitSelect, { QuantityTypeValue } from "../modals/UnitSelect";
 import { CommonInputProps, InputProps } from "../../types/create";
 import { Outfit } from "next/font/google";

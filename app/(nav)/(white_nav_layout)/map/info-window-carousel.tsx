@@ -1,4 +1,4 @@
-import Cancel from "@/components/icons/cancel-svg";
+import Cancel from "./ui/cancel-svg";
 import { Card, CardContent } from "@/components/ui/card";
 import {
   Carousel,

@@ -13,7 +13,6 @@ import {
   AlertDialogContent,
   AlertDialogDescription,
   AlertDialogFooter,
-  AlertDialogHeader,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import {
@@ -24,13 +23,9 @@ import {
 import { Card, CardContent } from "@/components/ui/card";
 import { Work_Sans } from "next/font/google";
 import { FinalListing } from "@/actions/getListings";
-import {
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-} from "../../../../../../components/listings/error-popover";
+import { Popover, PopoverTrigger, PopoverContent } from "./ui/error-popover";
 import { BiError } from "react-icons/bi";
-import StockCounter from "../../../../../../components/listings/StockCounter";
+import StockCounter from "./ui/StockCounter";
 import { UserInfo } from "next-auth";
 import { AlertDialogTitle } from "@radix-ui/react-alert-dialog";
 

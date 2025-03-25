@@ -1,12 +1,12 @@
 "use client";
 import { ReactNode, useState } from "react";
-import { OutfitFont } from "../fonts";
+import { OutfitFont } from "@/components/fonts";
 import {
   AlertDialog,
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogTrigger,
-} from "./alert-dialog";
+} from "@/components/ui/alert-dialog";
 import { cn } from "@/lib/utils";
 
 interface p {

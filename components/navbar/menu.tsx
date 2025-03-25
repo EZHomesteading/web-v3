@@ -6,17 +6,17 @@ import { signOut } from "next-auth/react";
 import { UserRole } from "@prisma/client";
 import Link from "next/link";
 import { Popover, PopoverContent, PopoverTrigger } from "./popover-navbar";
-import MenuItem from "./menu-item";
-import NotificationIcon from "./icons/notification";
-import { Sheet, SheetContent, SheetTrigger } from "../ui/sheet";
+import MenuItem from "@/components/navbar/menu-item";
+import NotificationIcon from "./notification";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { NavUser } from "@/actions/getUser";
-import { iconMap } from "./icons/icon-map";
+import { iconMap } from "./icon-map";
 import axios from "axios";
 import { toast } from "sonner";
 import { IconType } from "react-icons";
 import { OutfitFont } from "@/components/fonts";
 import { IoIosMenu } from "react-icons/io";
-import { Drawer, DrawerContent, DrawerTrigger } from "../ui/drawer";
+import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
 
 type MenuIconItem = IconItem | ComponentItem;
 

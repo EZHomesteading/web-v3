@@ -7,7 +7,7 @@ import {
   AlertDialogTrigger,
   AlertDialogContent,
   AlertDialogCancel,
-} from "@/components/ui/alert-dialog";
+} from "../../../components/ui/alert-dialog";
 
 interface ImageUploadProps {
   onImageUpload: (url: string) => Promise<void>;

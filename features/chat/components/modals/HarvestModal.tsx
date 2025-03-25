@@ -9,7 +9,7 @@ import {
   BiClinic,
 } from "react-icons/bi";
 import Modal from "@/features/chat/components/modals/HarvestModalui";
-import Button from "@/features/chat/components/modals/Button";
+import Button from "@/features/chat/components/ui/Button";
 import axios from "axios";
 import { Listing } from "@prisma/client";
 import { useRouter } from "next/navigation";

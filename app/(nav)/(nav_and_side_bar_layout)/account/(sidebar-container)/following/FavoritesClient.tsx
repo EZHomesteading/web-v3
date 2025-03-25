@@ -1,7 +1,7 @@
 //display people a user is following page
 import Heading from "@/components/Heading";
 import Container from "@/components/Container";
-import FollowCard from "@/components/follow/FollowCard";
+import FollowCard from "../../../selling/(container-selling)/followers/FollowCard";
 import { getFavCardUser } from "@/actions/getUser";
 
 interface FavoritesClientProps {

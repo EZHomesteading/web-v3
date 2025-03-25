@@ -5,7 +5,7 @@ import {
   Carousel,
   CarouselContent,
   CarouselItem,
-} from "@/components/ui/carousel";
+} from "../../../../components/ui/carousel";
 import { OutfitFont } from "@/components/fonts";
 import AvailabilityScore from "../../utils/availabilityScore";
 import { Clock } from "lucide-react";

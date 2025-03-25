@@ -5,13 +5,11 @@ import { useEffect, useRef, useState } from "react";
 import { pusherClient } from "@/lib/pusher";
 import MessageBox from "./MessageBox";
 import { FullMessageType } from "chat-types";
-import { find } from "lodash";
-import { $Enums, Order, Reviews, User } from "@prisma/client";
 import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
 import { Outfit } from "next/font/google";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { SheetCartC, SheetContentF } from "@/components/ui/review-sheet";
+import { SheetTrigger } from "@/components/ui/sheet";
+import { SheetCartC, SheetContentF } from "../../ui/review-sheet";
 
 import {
   Popover,
@@ -22,7 +20,6 @@ import Image from "next/image";
 import {
   IoMapOutline,
   IoStar,
-  IoStorefront,
   IoStorefrontOutline,
   IoTrash,
 } from "react-icons/io5";

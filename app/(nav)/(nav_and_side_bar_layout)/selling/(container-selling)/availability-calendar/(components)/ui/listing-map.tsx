@@ -2,7 +2,7 @@
 import { APIProvider } from "@vis.gl/react-google-maps";
 import { useRef, useEffect, useState } from "react";
 import { Loader } from "@googlemaps/js-api-loader";
-import { Location } from "@prisma/client";
+
 import {
   PiMagnifyingGlassMinusThin,
   PiMagnifyingGlassPlusThin,

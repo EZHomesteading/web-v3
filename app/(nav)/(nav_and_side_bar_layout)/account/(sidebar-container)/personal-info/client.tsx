@@ -5,7 +5,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import axios from "axios";
 import { toast } from "sonner";
-import LocationSearchInput from "@/components/map/LocationSearchInputSettings";
+import LocationSearchInput from "./ui/LocationSearchInputSettings";
 import AccountCard from "./account-card";
 import Input from "./input";
 import { Button } from "@/components/ui/button";

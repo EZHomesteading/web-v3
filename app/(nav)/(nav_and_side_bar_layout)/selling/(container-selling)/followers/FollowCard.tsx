@@ -1,11 +1,11 @@
 "use client";
 //following card component
 import { useRouter } from "next/navigation";
-import { Button } from "../ui/button";
+import { Button } from "@/components/ui/button";
 import FollowButton from "./followButton";
-import Avatar from "../Avatar";
-import { Card, CardContent } from "../ui/card";
-import { OutfitFont } from "../fonts";
+import Avatar from "@/components/Avatar";
+import { Card, CardContent } from "@/components/ui/card";
+import { OutfitFont } from "@/components/fonts";
 
 interface ListingCardProps {
   data: {

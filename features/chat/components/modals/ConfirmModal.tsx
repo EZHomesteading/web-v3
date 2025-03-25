@@ -6,7 +6,7 @@ import { FiAlertTriangle } from "react-icons/fi";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import Modal from "@/features/chat/components/modals/Modal";
-import Button from "@/features/chat/components/modals/Button";
+import Button from "@/features/chat/components/ui/Button";
 import useConversation from "@/features/chat/hooks/useConversation";
 import Toast from "@/components/ui/toast";
 

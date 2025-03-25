@@ -228,7 +228,7 @@ const LocationSelector = ({
       <DropdownMenuContent className="min-w-[326px] w-full zmax">
         <DropdownMenuRadioGroup
           value={id}
-          onValueChange={(value) => {
+          onValueChange={(value: any) => {
             if (value === "new") {
               router.push(
                 "/new-location-and-hours?/selling/availability-calendar"

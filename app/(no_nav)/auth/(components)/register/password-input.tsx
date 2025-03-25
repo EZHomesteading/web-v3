@@ -6,7 +6,7 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
+} from "../ui/form";
 import { Input } from "@/components/ui/input";
 import { PiEye, PiEyeClosedThin } from "react-icons/pi";
 interface p {

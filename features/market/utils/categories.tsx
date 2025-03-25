@@ -29,9 +29,9 @@ import { TbCheese, TbEggs, TbMeat, TbPig } from "react-icons/tb";
 import { IoFishOutline } from "react-icons/io5";
 import { MdOutlineSolarPower } from "react-icons/md";
 import { UserRole } from "@prisma/client";
-import Container from "@/components/Container";
+import Container from "../../../components/Container";
 import Filters from "../components/modals/filter.client";
-import { OutfitFont } from "@/components/fonts";
+import { OutfitFont } from "../../../components/fonts";
 
 export const categories = [
   {

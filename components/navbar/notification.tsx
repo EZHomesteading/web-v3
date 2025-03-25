@@ -1,13 +1,18 @@
 "use client";
-import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "../../ui/sheet";
-import { getStatusText } from "@/components/icons/notification-order-status";
+import {
+  Sheet,
+  SheetContent,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import { getStatusText } from "./notification-order-status";
 import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
 import { FaComment } from "react-icons/fa";
 import { usePathname } from "next/navigation";
 import { PiBellThin } from "react-icons/pi";
 import { navBuyOrder, navSellOrder } from "order-types";
-import { OutfitFont } from "../../fonts";
+import { OutfitFont } from "@/components/fonts";
 
 interface Props {
   bOrders?: navBuyOrder[];

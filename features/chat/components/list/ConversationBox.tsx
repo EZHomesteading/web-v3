@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { format } from "date-fns";
 import clsx from "clsx";
 import { pusherClient } from "@/lib/pusher";
-import Avatar from "@/components/Avatar";
+import Avatar from "../../../../components/Avatar";
 import useOtherUser from "@/features/chat/hooks/useOtherUser";
 import { FullConversationType, FullMessageType } from "chat-types";
 import { IoNotificationsCircle } from "react-icons/io5";

@@ -21,7 +21,6 @@ import {
 } from "react-icons/pi";
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Outfit } from "next/font/google";
 import { usePathname } from "next/navigation";
 import { CiSettings } from "react-icons/ci";
 import { OutfitFont } from "@/components/fonts";

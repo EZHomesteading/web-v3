@@ -2,7 +2,7 @@
 
 import Heading from "@/components/Heading";
 import Container from "@/components/Container";
-import FollowCard from "@/components/follow/FollowCard";
+import FollowCard from "./FollowCard";
 import { getFavCardUser } from "@/actions/getUser";
 interface FavoritesClientProps {
   followarr: {

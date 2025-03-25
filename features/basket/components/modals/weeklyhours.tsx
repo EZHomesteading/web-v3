@@ -7,7 +7,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
-import { DeliveryPickupToggleMode } from "@/app/(nav)/(white_nav_layout)/my-basket/components/helper-components-calendar";
+import { DeliveryPickupToggleMode } from "../../utils/helper-components-calendar";
 
 interface TimeSlot {
   open: number;

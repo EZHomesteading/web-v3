@@ -1,6 +1,6 @@
 "use client";
 
-import { SheetCartC, SheetContentS } from "@/components/ui/support-sheet";
+import { SheetCartC, SheetContentS } from "../ui/support-sheet";
 import { SheetTrigger } from "@/components/ui/sheet";
 
 interface StatusProps {

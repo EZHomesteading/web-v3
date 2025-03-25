@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { Textarea } from "@/components/ui/textarea";
+import { Textarea } from "../../../../components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
-import SearchClient from "../inputs/SearchClient";
+import { Checkbox } from "../../../../components/ui/checkbox";
+import { Label } from "../../../../components/ui/label";
+import SearchClient from "../ui/SearchClient";
 import { FormattedProduct } from "@/features/create/hooks/use-product";
 import useProducts from "@/features/create/hooks/use-product";
 import { FieldValues, UseFormSetValue } from "react-hook-form";

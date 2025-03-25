@@ -12,7 +12,7 @@ import { StepFive } from "./_steps/step5";
 import StepSix from "./_steps/step6";
 import StepSeven from "./_steps/step7";
 import StepEight from "./_steps/step8";
-import { HoverButton } from "@/components/ui/hover-btn";
+import { HoverButton } from "../../../../components/ui/hover-btn";
 import { Hours, Location, UserRole } from "@prisma/client";
 import { toast } from "sonner";
 import StepNine from "./_steps/step9";

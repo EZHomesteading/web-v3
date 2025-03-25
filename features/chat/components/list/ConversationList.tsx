@@ -4,7 +4,7 @@ import clsx from "clsx";
 import { FullConversationType } from "chat-types";
 import useConversation from "@/features/chat/hooks/useConversation";
 //import { pusherClient } from "@/lib/pusher";
-import SubToggle from "../notificationButton";
+import SubToggle from "../ui/notificationButton";
 import { registerServiceWorker } from "@/features/chat/services/useServiceWorker";
 import {
   getCurrentPushSubscription,
@@ -98,7 +98,7 @@ import { useRouter } from "next/navigation";
 import { format } from "date-fns";
 
 import { pusherClient } from "@/lib/pusher";
-import Avatar from "@/components/Avatar";
+import Avatar from "../../../../components/Avatar";
 import useOtherUser from "@/features/chat/hooks/useOtherUser";
 import { FullMessageType } from "chat-types";
 import { IoNotificationsCircle } from "react-icons/io5";

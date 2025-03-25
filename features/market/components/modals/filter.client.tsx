@@ -4,8 +4,8 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Slider } from "../../utils/radius-slider";
-import { Switch } from "@/components/ui/switch";
-import FiltersIcon from "@/components/navbar/icons/filters-icon";
+import { Switch } from "../../../../components/ui/switch";
+import FiltersIcon from "../../ui/filters-icon";
 import { IoStorefrontOutline } from "react-icons/io5";
 import { ClockIcon } from "@radix-ui/react-icons";
 import { BsPersonWalking } from "react-icons/bs";
@@ -17,7 +17,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "../../../../components/ui/select";
 import { UserRole } from "@prisma/client";
 import { OutfitFont } from "@/components/fonts";
 import { XIcon } from "lucide-react";

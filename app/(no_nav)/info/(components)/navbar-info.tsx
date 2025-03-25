@@ -2,21 +2,13 @@
 import Container from "@/components/Container";
 import Link from "next/link";
 import { Outfit } from "next/font/google";
-import {
-  Sheet,
-  SheetContent,
-  SheetTrigger,
-} from "../../../../components/ui/sheet";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { AiOutlineMenu } from "react-icons/ai";
-import MenuItem from "../../../../components/navbar/menu-item";
-import { GiBarn } from "react-icons/gi";
+import MenuItem from "@/components/navbar/menu-item";
 import { useRouter } from "next/navigation";
-import { CiShop } from "react-icons/ci";
-import { LiaMapMarkedSolid } from "react-icons/lia";
-import InfoSearchClient, {
-  InfoPageValue,
-} from "../../../../components/client/InfoSearchClient";
+
 import { useState } from "react";
+import InfoSearchClient, { InfoPageValue } from "./InfoSearchClient";
 
 const outfit = Outfit({
   subsets: ["latin"],

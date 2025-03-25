@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { RiUserFollowLine } from "react-icons/ri";
 import { RiUserUnfollowLine } from "react-icons/ri";
 import { toast } from "sonner";
-import { OutfitFont } from "../fonts";
+import { OutfitFont } from "@/components/fonts";
 
 interface FollowButtonProps {
   followUserId: string;

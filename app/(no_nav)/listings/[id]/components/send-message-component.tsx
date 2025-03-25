@@ -1,6 +1,10 @@
 "use client";
 
-import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
+import {
+  Drawer,
+  DrawerContent,
+  DrawerTrigger,
+} from "../../../../../components/ui/drawer";
 import useMediaQuery from "@/hooks/media-query";
 import SendMessageSection from "./send-messge-section";
 import { UserInfo } from "next-auth";

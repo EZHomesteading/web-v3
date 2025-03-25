@@ -18,7 +18,6 @@ import {
   convertTimeStringToMinutes,
   createDateKey,
   daysOfWeek,
-  week_day_mmm_dd_yy_time,
 } from "@/app/(nav)/(nav_and_side_bar_layout)/selling/(container-selling)/availability-calendar/(components)/helper-functions-calendar";
 import { OutfitFont } from "@/components/fonts";
 import {

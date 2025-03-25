@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import Input from "@/components/inputs/Input";
+import Input from "./Input";
 import Heading from "@/components/Heading";
 import { Button } from "@/components/ui/button";
 import HarvestDatesSelector from "./HarvestDatesSelector";
