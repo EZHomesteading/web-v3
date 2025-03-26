@@ -1,5 +1,5 @@
 //server layout for reset password
-import { ResetForm } from "@/app/(no_nav)/auth/(components)/reset-form";
+import { ResetForm } from "@/features/auth/reset-form";
 
 const ResetPage = () => {
   const apiUrl = process.env.API_URL!;

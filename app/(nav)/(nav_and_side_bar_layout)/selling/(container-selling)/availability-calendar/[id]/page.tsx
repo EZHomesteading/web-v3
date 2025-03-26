@@ -1,6 +1,6 @@
 import React from "react";
 import { auth } from "@/auth";
-import Calendar from "../(components)/calendar";
+import Calendar from "@/features/availability-calendar/components/main/calendar";
 import { Location } from "@prisma/client";
 
 interface EditLocationPageProps {

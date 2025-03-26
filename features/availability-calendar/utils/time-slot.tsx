@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import Wheel from "./wheel";
+import Wheel from "../components/ui/wheel";
 import { OutfitFont } from "@/components/fonts";
 
 interface TimePickerProps {

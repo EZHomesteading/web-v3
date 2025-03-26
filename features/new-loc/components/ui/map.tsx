@@ -4,7 +4,7 @@ import { GoogleMap, MarkerF, useLoadScript } from "@react-google-maps/api";
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import Loading from "@/components/secondary-loader";
 import { Libraries } from "@googlemaps/js-api-loader";
-import LocationSearchInput from "./ui/LocationSearchInput";
+import LocationSearchInput from "./LocationSearchInput";
 
 interface MapProps {
   mk: string;

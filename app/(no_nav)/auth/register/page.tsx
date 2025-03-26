@@ -1,5 +1,5 @@
 //server layout for consumer/default registration
-import RegisterForm from "@/app/(no_nav)/auth/(components)/register/register-form";
+import RegisterForm from "@/features/auth/register/register-form";
 export const metadata = {
   title: "EZH Registration",
   description:

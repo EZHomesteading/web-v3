@@ -15,7 +15,7 @@ import {
   FormLabel,
   FormMessage,
 } from "../ui/form";
-import { CardWrapper } from "@/app/(no_nav)/auth/(components)/login/auth-card-wrapper";
+import { CardWrapper } from "@/features/auth/login/auth-card-wrapper";
 import { Button } from "@/components/ui/button";
 import { FormError } from "../ui/form-error";
 import { FormSuccess } from "../ui/form-success";

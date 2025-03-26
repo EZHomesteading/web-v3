@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Hours } from "@prisma/client";
 import { useRouter } from "next/navigation";
-import WeelkyScheduleChart from "../weekly-schedule-chart";
+import WeelkyScheduleChart from "../ui/weekly-schedule-chart";
 import { Button } from "@/components/ui/button";
 import { OutfitFont } from "@/components/fonts";
 import { LocationObj } from "location-types";

@@ -2,8 +2,8 @@
 //login card parent element
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
-import { Social } from "@/app/(no_nav)/auth/(components)/social";
-import { BackButton } from "@/app/(no_nav)/auth/(components)/back-button";
+import { Social } from "@/features/auth/social";
+import { BackButton } from "@/features/auth/back-button";
 import Image from "next/image";
 import logo from "@/public/images/website-images/ezh-logo-no-text.png";
 import Link from "next/link";

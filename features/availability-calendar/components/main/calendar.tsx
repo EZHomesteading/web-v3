@@ -2,9 +2,9 @@
 import React, { useState, useEffect, useRef, useMemo } from "react";
 import { format, addMonths, isValid, isSameDay, parseISO } from "date-fns";
 import { Button } from "@/components/ui/button";
-import TimePicker from "./time-slot";
+import TimePicker from "../../utils/time-slot";
 import { toast } from "sonner";
-import StackingPanelLayout, { PanelProps } from "./panel";
+import StackingPanelLayout, { PanelProps } from "../ui/panel";
 import {
   DeliveryPickupToggle,
   DeliveryPickupToggleMode,
@@ -12,7 +12,7 @@ import {
   CustomSwitch,
   CalendarDay,
   LocationSelector,
-} from "./helper-components-calendar";
+} from "../ui/helper-components-calendar";
 import { PiGearThin } from "react-icons/pi";
 import {
   Availability,
@@ -27,7 +27,7 @@ import {
   convertTimeStringToMinutes,
   createDateKey,
   daysOfWeek,
-} from "./helper-functions-calendar";
+} from "../../utils/helper-functions-calendar";
 import { usePathname } from "next/navigation";
 import { RiArrowDownSLine } from "react-icons/ri";
 import axios from "axios";

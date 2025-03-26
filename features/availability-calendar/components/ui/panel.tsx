@@ -18,9 +18,9 @@ import { Location } from "@prisma/client";
 import Link from "next/link";
 import SetDefaultButton from "./set-default-button";
 import { OutfitFont } from "@/components/fonts";
-import ListingMap from "./ui/listing-map";
+import ListingMap from "./listing-map";
 import Toast from "@/components/ui/toast";
-import Alert from "../../../../../../../components/ui/custom-alert";
+import Alert from "@/components/ui/custom-alert";
 import authCache from "@/auth-cache";
 
 export interface PanelProps {
