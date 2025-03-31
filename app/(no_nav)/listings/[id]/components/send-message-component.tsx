@@ -12,7 +12,7 @@ import { OutfitFont } from "@/components/fonts";
 import { useBasket } from "@/hooks/listing/use-basket";
 import Toast from "@/components/ui/toast";
 import Link from "next/link";
-import HoursWarningModal from "@/features/market/components/modals/cartHoursWarning";
+import HoursWarningModal from "@/features/market/components/modals/cart-hours-warning";
 import { useState } from "react";
 
 interface SendMessageComponentProps {

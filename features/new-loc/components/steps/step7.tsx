@@ -6,8 +6,8 @@ import {
   checkOverlap,
   convertMinutesToTimeString,
   convertTimeStringToMinutes,
-} from "@/app/(nav)/(nav_and_side_bar_layout)/selling/(container-selling)/availability-calendar/(components)/helper-functions-calendar";
-import TimePicker from "@/app/(nav)/(nav_and_side_bar_layout)/selling/(container-selling)/availability-calendar/(components)/time-slot";
+} from "@/features/availability-calendar/utils/helper-functions-calendar";
+import TimePicker from "@/features/availability-calendar/utils/time-slot";
 import { LocationObj } from "location-types";
 import OnboardContainer from "../onboard.container";
 interface StepSixProps {

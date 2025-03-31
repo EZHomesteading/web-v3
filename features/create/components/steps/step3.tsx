@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/select";
 import { Checkbox } from "../../../../components/ui/checkbox";
 import Input from "../ui/listing-input";
-import UnitSelect, { QuantityTypeValue } from "../modals/UnitSelect";
+import UnitSelect, { QuantityTypeValue } from "../modals/unit-select";
 import { CommonInputProps, InputProps } from "../../types/create";
 import { Outfit } from "next/font/google";
 import { PiBasketLight, PiRulerThin } from "react-icons/pi";

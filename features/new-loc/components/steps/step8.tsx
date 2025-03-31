@@ -6,7 +6,7 @@ import { OutfitFont } from "@/components/fonts";
 import { LocationObj } from "location-types";
 import OnboardContainer from "../onboard.container";
 import { Clock } from "lucide-react";
-import AvailabilityScore from "@/features/market/utils/availabilityScore";
+import AvailabilityScore from "@/features/market/utils/availability-score";
 
 interface StepSevenProps {
   location?: LocationObj;

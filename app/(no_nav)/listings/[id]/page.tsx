@@ -1,6 +1,6 @@
 //listing page server side layout, getting users and their carts to display toggle cart options.
 import { getUnique } from "@/actions/getListings";
-import ListingHead from "./components/ListingHead";
+import ListingHead from "./components/listing-head";
 import { OutfitFont } from "@/components/fonts";
 import Link from "next/link";
 import {

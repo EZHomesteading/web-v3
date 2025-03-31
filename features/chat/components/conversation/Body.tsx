@@ -3,7 +3,7 @@
 import axios from "axios";
 import { useEffect, useRef, useState } from "react";
 import { pusherClient } from "@/lib/pusher";
-import MessageBox from "./MessageBox";
+import MessageBox from "./message-box";
 import { FullMessageType } from "chat-types";
 import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
@@ -25,11 +25,11 @@ import {
 } from "react-icons/io5";
 import { useRouter } from "next/navigation";
 //import { HoursDisplay } from "@/app/components/co-op-hours/hours-display";
-import CancelModal from "../modals/CancelModal";
-import ConfirmModal from "../modals/ConfirmModal";
-import DisputeModal from "../modals/DisputeModal";
-import EscalateModal from "../modals/EscalateModal";
-import RefundModal from "../modals/RefundModal";
+import CancelModal from "../modals/cancel-modal";
+import ConfirmModal from "../modals/confirm-modal";
+import DisputeModal from "../modals/dispute-modal";
+import EscalateModal from "../modals/escalate-modal";
+import RefundModal from "../modals/refund-modal";
 import {
   HiOutlineExclamationCircle,
   HiOutlineMinusCircle,
@@ -38,7 +38,7 @@ import { PiGavel } from "react-icons/pi";
 import { RiExchangeDollarLine } from "react-icons/ri";
 import { MdOutlineRateReview } from "react-icons/md";
 import { ChatMessage, ChatOrder, ChatUser, OtherUserChat } from "chat-types";
-import { usePageVisibility } from "@/features/chat/hooks/visibilityState";
+import { usePageVisibility } from "@/features/chat/hooks/visibility-state";
 
 interface BodyProps {
   initialMessages: ChatMessage[];

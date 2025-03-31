@@ -1,4 +1,4 @@
-import InfoTemplate from "../../../(components)/info-template";
+import InfoTemplate from "../../../components/info-template";
 const deliveryTime = () => {
   return (
     <InfoTemplate

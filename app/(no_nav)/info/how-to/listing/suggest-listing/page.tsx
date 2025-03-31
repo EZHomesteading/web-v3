@@ -1,4 +1,4 @@
-import HowToTemplate from "../../../(components)/how-to.template";
+import HowToTemplate from "../../../components/how-to.template";
 const ezhOrganicRating = () => {
   return (
     <HowToTemplate

@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { OutfitFont } from "@/components/fonts";
-import Wheel from "@/app/(nav)/(nav_and_side_bar_layout)/selling/(container-selling)/availability-calendar/(components)/wheel";
+import Wheel from "@/features/availability-calendar/components/ui/wheel";
 
 interface TimePickerProps {
   top?: boolean;

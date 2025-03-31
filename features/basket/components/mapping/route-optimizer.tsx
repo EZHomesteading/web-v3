@@ -42,7 +42,7 @@ import {
   RouteSegment,
   RouteTimings,
 } from "../../types/types";
-import DepartureTimePicker from "./departureTime";
+import DepartureTimePicker from "./departure-time";
 import { toast } from "sonner";
 import { optimizeArrivalTimeRoute, optimizeRoute } from "./calcreverse";
 interface LocationStatus {

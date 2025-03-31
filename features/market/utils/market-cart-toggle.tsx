@@ -3,7 +3,7 @@ import { useBasket } from "@/hooks/listing/use-basket";
 import Toast from "../../../components/ui/toast";
 import Link from "next/link";
 import { PiBasketThin } from "react-icons/pi";
-import HoursWarningModal from "../components/modals/cartHoursWarning";
+import HoursWarningModal from "../components/modals/cart-hours-warning";
 
 interface User {
   id: string;

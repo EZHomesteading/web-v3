@@ -1,4 +1,4 @@
-import HowToTemplate from "@/app/(no_nav)/info/(components)/how-to.template";
+import HowToTemplate from "@/app/(no_nav)/info/components/how-to.template";
 
 const AddPhoto = () => {
   return (

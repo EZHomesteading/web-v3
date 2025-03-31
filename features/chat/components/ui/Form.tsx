@@ -1,10 +1,10 @@
 "use client";
 
 import { HiPaperAirplane } from "react-icons/hi2";
-import MessageInput from "./MessageInput";
+import MessageInput from "./message-input";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import axios from "axios";
-import useConversation from "@/features/chat/hooks/useConversation";
+import useConversation from "@/features/chat/hooks/use-conversation";
 interface MessageFormProps {
   otherUsersId: string | undefined;
 }

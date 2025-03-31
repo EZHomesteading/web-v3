@@ -1,9 +1,9 @@
 "use client";
 
 import clsx from "clsx";
-import useConversation from "@/features/chat/hooks/useConversation";
+import useConversation from "@/features/chat/hooks/use-conversation";
 import EmptyState from "@/components/EmptyState";
-import MessagesPopup from "@/app/(nav)/(white_nav_layout)/info-modals/messages-info-modal";
+import MessagesPopup from "@/app/(nav)/(white_nav)/info-modals/messages-info-modal";
 import { useEffect, useRef } from "react";
 import axios from "axios";
 

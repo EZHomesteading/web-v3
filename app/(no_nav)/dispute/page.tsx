@@ -2,7 +2,7 @@
 import getDisputes from "@/actions/getDisputes";
 import authCache from "@/auth-cache";
 import { UserRole } from "@prisma/client";
-import DisputeComponent from "./(components)/dispute.client";
+import DisputeComponent from "./components/dispute.client";
 
 const DisputePage = async () => {
   const session = await authCache();
