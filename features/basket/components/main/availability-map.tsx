@@ -31,6 +31,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { useGoogleMaps } from "../../hooks/google-maps-provider";
 
 interface LocationStatus {
   isOpen: boolean;
@@ -298,14 +299,10 @@ const AvailabilityMap: React.FC<AvailabilityMapProps> = ({
     }
   })();
 
-  const googleMapsApiKey = mapsKey;
   const mapRef = useRef<google.maps.Map | null>(null);
 
   // Use the static libraries array
-  const { isLoaded } = useLoadScript({
-    googleMapsApiKey,
-    libraries, // Use the libraries constant defined outside
-  });
+  //const { isLoaded } = useGoogleMaps();
 
   const [selectedDate, setSelectedDate] = useState<string>("");
   const [selectedTime, setSelectedTime] = useState<string>("");
@@ -348,17 +345,17 @@ const AvailabilityMap: React.FC<AvailabilityMapProps> = ({
   const LocationSearchBox = useCallback(
     ({
       onPlaceSelect,
-      isLoaded,
-    }: {
+    }: //isLoaded,
+    {
       onPlaceSelect: (address: string, coordinates: [number, number]) => void;
-      isLoaded: boolean;
+      // isLoaded: boolean;
     }) => {
       const locationInputRef = useRef<HTMLInputElement>(null);
       const locationSearchBoxRef =
         useRef<google.maps.places.Autocomplete | null>(null);
 
-      if (!isLoaded)
-        return <Input type="text" placeholder="Loading..." disabled />;
+      //   if (!isLoaded)
+      //   return <Input type="text" placeholder="Loading..." disabled />;
 
       return (
         <Autocomplete
@@ -642,9 +639,9 @@ const AvailabilityMap: React.FC<AvailabilityMapProps> = ({
     []
   );
 
-  if (!isLoaded) {
-    return <div>Loading maps...</div>;
-  }
+  // if (!isLoaded) {
+  //   return <div>Loading maps...</div>;
+  // }
 
   return (
     <div className="mt-8">
@@ -712,7 +709,7 @@ const AvailabilityMap: React.FC<AvailabilityMapProps> = ({
                 <div>
                   <LocationSearchBox
                     onPlaceSelect={handlePlaceSelect}
-                    isLoaded={isLoaded}
+                    // isLoaded={isLoaded}
                   />
                 </div>
               </div>

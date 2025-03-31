@@ -9,7 +9,7 @@ import {
 } from "@/features/availability-calendar/utils/helper-functions-calendar";
 import TimePicker from "@/features/availability-calendar/utils/time-slot";
 import { LocationObj } from "location-types";
-import OnboardContainer from "../onboard.container";
+import OnboardContainer from "../main/onboard.container";
 interface StepSixProps {
   user: any;
   updateFormData: (newData: { location: LocationObj }) => void;

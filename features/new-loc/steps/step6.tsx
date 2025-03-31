@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Location } from "@prisma/client";
 import { LocationObj } from "location-types";
 
-import OnboardContainer from "../onboard.container";
+import OnboardContainer from "../main/onboard.container";
 interface StepFiveProps {
   location?: LocationObj;
   user: any;

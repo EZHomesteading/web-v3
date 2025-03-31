@@ -4,7 +4,7 @@ import authCache from "@/auth-cache";
 import Link from "next/link";
 import { OutfitFont } from "@/components/fonts";
 import { Location } from "@prisma/client";
-import NewLocHours from "@/features/new-loc/components/new-loc-hours.client";
+import NewLocHours from "@/features/new-loc/main/new-loc-hours.client";
 import { getUserLocations } from "@/actions/getLocations";
 
 export const viewport: Viewport = {

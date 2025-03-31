@@ -1,6 +1,6 @@
 import { OutfitFont } from "@/components/fonts";
 import { useState, useEffect } from "react";
-import { getFulfillmentText } from "./steps/step5";
+import { getFulfillmentText } from "../steps/step5";
 
 interface p {
   fulfillmentStyle?: string;

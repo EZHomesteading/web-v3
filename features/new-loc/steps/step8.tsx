@@ -4,7 +4,7 @@ import WeelkyScheduleChart from "../ui/weekly-schedule-chart";
 import { Button } from "@/components/ui/button";
 import { OutfitFont } from "@/components/fonts";
 import { LocationObj } from "location-types";
-import OnboardContainer from "../onboard.container";
+import OnboardContainer from "../main/onboard.container";
 import { Clock } from "lucide-react";
 import AvailabilityScore from "@/features/market/utils/availability-score";
 

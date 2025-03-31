@@ -5,7 +5,7 @@ import { useState } from "react";
 import { PiPlantThin, PiStorefrontThin } from "react-icons/pi";
 import { UserInfo } from "next-auth";
 import { OutfitFont, ZillaFont } from "@/components/fonts";
-import OnboardContainer from "../onboard.container";
+import OnboardContainer from "../main/onboard.container";
 
 interface p {
   user: UserInfo;

@@ -7,7 +7,7 @@ import {
 } from "react-icons/pi";
 import { OutfitFont, ZillaFont } from "@/components/fonts";
 
-import OnboardContainer from "../onboard.container";
+import OnboardContainer from "../main/onboard.container";
 
 interface StepFiveProps {
   user: any;

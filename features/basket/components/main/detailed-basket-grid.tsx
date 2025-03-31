@@ -36,6 +36,10 @@ import {
   BasketProvider,
 } from "@/features/basket/hooks/basket-provider";
 import ClientOnly from "../../../../components/client/client-only";
+import {
+  GoogleMapsProvider,
+  useGoogleMaps,
+} from "../../hooks/google-maps-provider";
 
 // Keep specific types where they're well-defined
 interface ListingType {
@@ -97,15 +101,17 @@ const DetailedBasketGrid: React.FC<DetailedBasketGridProps> = ({
   return (
     <ClientOnly>
       <BasketProvider>
-        <DetailedBasketGridContent
-          baskets={baskets}
-          mapsKey={mapsKey}
-          userLocs={userLocs}
-          userLoc={userLoc}
-          mk={mk}
-          userId={userId}
-          userName={userName}
-        />
+        <GoogleMapsProvider googleMapsApiKey={mapsKey}>
+          <DetailedBasketGridContent
+            baskets={baskets}
+            mapsKey={mapsKey}
+            userLocs={userLocs}
+            userLoc={userLoc}
+            mk={mk}
+            userId={userId}
+            userName={userName}
+          />
+        </GoogleMapsProvider>
       </BasketProvider>
     </ClientOnly>
   );
@@ -123,10 +129,7 @@ const DetailedBasketGridContent: React.FC<DetailedBasketGridProps> = ({
   // Get basketTotals from context ONCE at the top level
   const { basketTotals, updateBasketTotals } = useBasket();
   const [pickupTimes, setPickupTimes] = useState(null);
-  const { isLoaded } = useLoadScript({
-    googleMapsApiKey: mapsKey,
-    libraries,
-  });
+  const { isLoaded } = useGoogleMaps();
 
   const [startLoc, setStartLoc] = useState<any[]>([]);
   const [endLoc, setEndLoc] = useState<any[]>([]);

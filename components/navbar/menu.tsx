@@ -17,6 +17,7 @@ import { IconType } from "react-icons";
 import { OutfitFont } from "@/components/fonts";
 import { IoIosMenu } from "react-icons/io";
 import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
+import { DialogTitle } from "@radix-ui/react-dialog";
 
 type MenuIconItem = IconItem | ComponentItem;
 
@@ -359,6 +360,7 @@ const UserMenu: React.FC<Props> = ({
           <DrawerContent
             className={`${OutfitFont.className} pb-2 h-[75vh] ${drawerClassName}`}
           >
+            <DialogTitle className="hidden">User Menu</DialogTitle>
             {user ? (
               <>
                 {selling ? (

@@ -10,7 +10,7 @@ import PlacesAutocomplete, {
 import { Location, UserRole } from "@prisma/client";
 import { LocationObj } from "location-types";
 
-import OnboardContainer from "../onboard.container";
+import OnboardContainer from "../main/onboard.container";
 interface Props {
   locations?: Location[] | null;
   role?: UserRole;
@@ -28,7 +28,7 @@ const StepThree: React.FC<Props> = ({
   location,
   locations,
 }) => {
-  const fullAddress = location?.address.join(", ");
+  const fullAddress = location?.address?.join(", ") || "";
   const [address, setAddress] = useState(fullAddress);
   const [currentCenter, setCurrentCenter] = useState<google.maps.LatLngLiteral>(
     location?.coordinates
@@ -156,6 +156,7 @@ const StepThree: React.FC<Props> = ({
       <div className={`relative touch-none`}>
         <div className="absolute z w-full px-2 top-5">
           <PlacesAutocomplete
+            key={fullAddress || "empty"}
             value={address}
             onChange={handleChange}
             onSelect={handleSelect}
