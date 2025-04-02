@@ -1,5 +1,5 @@
 import Sidebar from "../../selling/(container-selling)/update-listing/components/sidebar";
-import BackArrow from "../../components/back-arrow";
+import BackArrow from "../../../../components/account-selling-components/back-arrow";
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
   return (

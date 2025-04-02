@@ -1,7 +1,7 @@
 //dashboard layout parent element
 import Sidebar from "./update-listing/components/sidebar";
 import { Viewport } from "next";
-import BackArrow from "../../components/back-arrow";
+import BackArrow from "../../../../components/account-selling-components/back-arrow";
 
 export const viewport: Viewport = {
   themeColor: "#ced9bb",

@@ -4,7 +4,6 @@ import React, { useState, useRef, useEffect, useCallback } from "react";
 import {
   GoogleMap,
   Circle,
-  useLoadScript,
   MarkerF,
   Autocomplete,
   Libraries,
@@ -31,7 +30,6 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { useGoogleMaps } from "../../hooks/google-maps-provider";
 
 interface LocationStatus {
   isOpen: boolean;
@@ -137,30 +135,7 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
       height: rect.height,
     };
   };
-  const over_640px = useMediaQuery("(min-width: 750px)");
-  const getAnimatePosition = () => {
-    if (!triggerRef.current) return {};
-    const rect = triggerRef.current.getBoundingClientRect();
-
-    if (over_640px) {
-      return {
-        top: rect.bottom + 8,
-        width: 450,
-        height: 450,
-        opacity: 1,
-      };
-    }
-
-    return {
-      top: "4px",
-      left: "4px",
-      right: "4px",
-      bottom: "4px",
-      width: "calc(100% - 8px)",
-      height: "calc(100% - 8px)",
-      opacity: 1,
-    };
-  };
+  //const over_640px = useMediaQuery("(min-width: 750px)");
 
   const handleBack = () => {
     if (step === "time") {
@@ -177,21 +152,30 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className={`fixed ${
-              over_640px ? "sm:bg-transparent" : "bg-white/80 backdrop-blur-md"
-            } inset-0 z-[100]`}
+              // over_640px ? "sm:bg-transparent" :
+              "bg-white/80 backdrop-blur-md"
+            } inset-0 z-[9998]`}
             onClick={onClose}
           />
 
           <motion.div
             initial={getInitialPosition()}
-            animate={getAnimatePosition()}
+            animate={{
+              top: "100px",
+              left: "4px",
+              right: "4px",
+              bottom: "4px",
+              width: "calc(100% - 8px)",
+              height: "calc(100% - 8px)",
+              opacity: 1,
+            }}
             exit={getInitialPosition()}
             transition={{
               duration: 0.3,
               ease: [0.32, 0.72, 0, 1],
               width: { duration: 0.2 },
             }}
-            className="bg-white rounded-3xl border shadow-xl z-[101] fixed w-full max-w-[700px] mx-auto inset-0 h-[550px] overflow-hidden"
+            className="bg-white rounded-3xl border shadow-xl z-[9999] fixed w-full max-w-[500px] mx-auto inset-0 max-h-[450px] overflow-hidden"
           >
             <div className="relative h-full bg-white rounded-3xl flex flex-col px-6 pb-6 pt-6">
               <button

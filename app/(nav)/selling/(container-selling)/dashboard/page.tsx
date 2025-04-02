@@ -11,7 +11,7 @@ import prisma from "@/lib/prisma";
 import Overview from "./overview";
 import DashPopover from "../update-listing/components/dashboard-popover";
 import { getFollowers } from "@/actions/getFollow";
-import DashboardPopup from "@/app/(nav)/(white_nav)/info-modals/dashboard-info-modal";
+import DashboardPopup from "@/app/(nav)/info-modals/dashboard-info-modal";
 import axios from "axios";
 import PayoutButton from "../update-listing/components/payout-button";
 

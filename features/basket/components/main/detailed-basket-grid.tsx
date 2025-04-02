@@ -484,7 +484,7 @@ const DetailedBasketCard: React.FC<DetailedBasketCardProps> = ({
 
   return (
     <div className="border rounded-xl shadow-lg p-4 bg-white">
-      <div className="flex justify-between items-start mb-4">
+      <div className="flex justify-between items-start mb-2">
         <div className="flex flex-col gap-2">
           <div className="flex items-baseline gap-4">
             <h2 className="text-xl font-semibold">
@@ -497,7 +497,7 @@ const DetailedBasketCard: React.FC<DetailedBasketCardProps> = ({
             <WeeklyHours location={basket.location} mode={deliveryPickupMode} />
           </div>
         </div>
-        <div className="flex justify-between items-start mb-4">
+        <div className="flex justify-between items-start ">
           <DeliveryPickupToggle
             panelSide={true}
             mode={deliveryPickupMode}
@@ -512,15 +512,13 @@ const DetailedBasketCard: React.FC<DetailedBasketCardProps> = ({
               onOpenChange={() => {}}
             />
           )}
-
-          {pickupTimes && pickupTimes[basket.location.id] ? (
-            <div className="flex items-center text-xs sm:text-sm justify-center rounded-full border px-3 py-2">
-              Pickup set for {formatDate(pickupTimes[basket.location.id])}
-            </div>
-          ) : null}
         </div>
       </div>
-
+      {pickupTimes && pickupTimes[basket.location.id] ? (
+        <div className="flex items-center text-xs bg-green-400 sm:text-sm justify-center rounded-full border px-3 py-2">
+          Pickup set for {formatDate(pickupTimes[basket.location.id])}
+        </div>
+      ) : null}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
         {basket.items.map((item: any, index: number) => (
           <div
@@ -587,7 +585,7 @@ const DetailedBasketCard: React.FC<DetailedBasketCardProps> = ({
               <div className="flex flex-col justify-between min-w-0">
                 <button
                   type="button"
-                  className="text-gray-400 hover:text-gray-500 z-10"
+                  className="text-gray-400 hover:text-gray-500 z-1"
                   onClick={async () => {
                     await axios.delete(`/api/baskets/itemdelete`, {
                       data: {

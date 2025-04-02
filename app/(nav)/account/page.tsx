@@ -9,8 +9,8 @@ import {
   PiUsersThreeThin,
   PiUserThin,
 } from "react-icons/pi";
-import MenuCard from "../components/menu-card";
-import UserInfoCard from "../components/user-info-card";
+import MenuCard from "../../../components/account-selling-components/menu-card";
+import UserInfoCard from "../../../components/account-selling-components/user-info-card";
 import { auth } from "@/auth";
 
 const menuItems = [
