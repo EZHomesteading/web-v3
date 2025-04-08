@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { OutfitFont } from "@/components/fonts";
 import { LocationObj } from "location-types";
 import OnboardContainer from "../main/onboard.container";
+import { months } from "../utils/time-helper";
 
 interface StepSevenProps {
   location?: LocationObj;
@@ -25,21 +26,6 @@ const StepNine = ({
   const [openMonths, setOpenMonths] = useState<number[]>([]);
   const router = useRouter();
 
-  const months = [
-    "Jan",
-    "Feb",
-    "Mar",
-    "Apr",
-    "May",
-    "Jun",
-    "Jul",
-    "Aug",
-    "Sep",
-    "Oct",
-    "Nov",
-    "Dec",
-  ];
-
   useEffect(() => {
     if (selectedMonths && selectedMonths.length > 0) {
       setOpenMonths(selectedMonths);
@@ -51,16 +37,6 @@ const StepNine = ({
       selectedMonths: openMonths,
     });
   }, [openMonths, updateFormData]);
-
-  // const formatHour = (hour: number) => {
-  //   if (hour === 0 || hour === 24) return "12 AM";
-  //   if (hour === 12) return "Noon";
-  //   return hour > 12 ? `${hour - 12} PM` : `${hour} AM`;
-  // };
-
-  // const handleDayClick = (day: string) => {
-  //   onDayChange([day]);
-  // };
 
   return (
     <>

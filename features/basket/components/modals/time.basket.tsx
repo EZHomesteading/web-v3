@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { OutfitFont } from "@/components/fonts";
 import Wheel from "@/features/availability-calendar/components/ui/wheel";
 import { DeliveryPickupToggleMode } from "../../utils/helper-components-calendar";
+import { generateHours, generateMinutes } from "@/utils/time-managers";
 interface TimePickerProps {
   value: string;
   onChange: (time: string) => void;
@@ -115,13 +116,3 @@ const TimePicker: React.FC<TimePickerProps> = ({ value, onChange, mode }) => {
 };
 
 export default TimePicker;
-
-const generateHours = (): string[] => {
-  return Array.from({ length: 12 }, (_, i) =>
-    (i + 1).toString().padStart(2, "0")
-  );
-};
-
-const generateMinutes = (): string[] => {
-  return ["00", "15", "30", "45"];
-};

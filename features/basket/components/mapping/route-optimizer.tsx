@@ -28,13 +28,14 @@ import { OutfitFont } from "@/components/fonts";
 import { Location } from "@prisma/client";
 import { formatTime } from "../../utils/utils";
 import {
-  optimizeTimeRoute,
   timeStringToSeconds,
   secondsToTimeString,
   formatDuration,
   metersToMiles,
   isLocationOpen,
-} from "./calcoptimal";
+  AVERAGE_STOP_TIME,
+  BUFFER_TIME,
+} from "../../utils/optimizer-utils";
 import {
   RouteOptimizerProps,
   ModalState,
@@ -45,6 +46,7 @@ import {
 import DepartureTimePicker from "./departure-time";
 import { toast } from "sonner";
 import { optimizeArrivalTimeRoute, optimizeRoute } from "./calcreverse";
+import { optimizeTimeRoute } from "./calcoptimal";
 interface LocationStatus {
   isOpen: boolean;
   willBeOpen: boolean;
@@ -313,9 +315,7 @@ const RouteOptimizer = ({
 
     return statuses;
   };
-  const AVERAGE_STOP_TIME = 10 * 60;
-  const BUFFER_TIME = 0 * 60;
-  const MIN_DEPARTURE_BUFFER = 30 * 60;
+
   const calculateRoute = async () => {
     const startingPoint = startLocation;
     if (!startingPoint || locations.length === 0) return;
@@ -562,23 +562,23 @@ const RouteOptimizer = ({
       "destructive"
     );
   };
-  const calculateSimpleRoute = async () => {
-    if (!userLocation || locations.length === 0) return;
-    clearMap();
-    try {
-      const bestRoute = await optimizeRoute(
-        userLocation,
-        locations,
-        endLocation || userLocation
-      );
-      setOptimizedRoute(bestRoute.route);
-      setRouteTimings(bestRoute.timings);
-    } catch (error) {
-      handleRouteError(error);
-    }
-  };
+  // const calculateSimpleRoute = async () => {
+  //   if (!userLocation || locations.length === 0) return;
+  //   clearMap();
+  //   try {
+  //     const bestRoute = await optimizeRoute(
+  //       userLocation,
+  //       locations,
+  //       endLocation || userLocation
+  //     );
+  //     setOptimizedRoute(bestRoute.route);
+  //     setRouteTimings(bestRoute.timings);
+  //   } catch (error) {
+  //     handleRouteError(error);
+  //   }
+  // };
 
-  const onStartPlaceSelected = (place: google.maps.places.PlaceResult) => {
+  const onPlaceSelected = (place: google.maps.places.PlaceResult) => {
     if (place.geometry?.location) {
       const newLocation = {
         lat: place.geometry.location.lat(),
@@ -907,7 +907,7 @@ const RouteOptimizer = ({
                               if (startSearchBoxRef.current) {
                                 const place =
                                   startSearchBoxRef.current.getPlace();
-                                onStartPlaceSelected(place);
+                                onPlaceSelected(place);
                               }
                             }}
                             options={{

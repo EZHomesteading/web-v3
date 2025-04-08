@@ -2,6 +2,7 @@ import { useState, useCallback, useEffect } from "react";
 import { LocationObj } from "location-types";
 
 import OnboardContainer from "../main/onboard.container";
+import { months } from "../utils/time-helper";
 interface StepFourProps {
   location?: LocationObj;
   user: any;
@@ -14,21 +15,6 @@ interface StepFourProps {
 const StepFive = ({ updateFormData, selectedMonths }: StepFourProps) => {
   const [openMonths, setOpenMonths] = useState<number[]>([]);
   const [isDragging, setIsDragging] = useState(false);
-
-  const months = [
-    "Jan",
-    "Feb",
-    "Mar",
-    "Apr",
-    "May",
-    "Jun",
-    "Jul",
-    "Aug",
-    "Sep",
-    "Oct",
-    "Nov",
-    "Dec",
-  ];
 
   // Initialize openMonths with selectedMonths when the component mounts
   useEffect(() => {

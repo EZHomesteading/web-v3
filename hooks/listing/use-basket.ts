@@ -137,19 +137,17 @@ export const useBasket = ({
     },
     [user?.id, fetchActiveBaskets]
   );
-
+  const next7Days = Array.from({ length: 7 }, (_, i) => {
+    const date = new Date();
+    date.setDate(date.getDate() + i);
+    return date.toISOString().split("T")[0];
+  });
   // Don't use useCallback for this function as it creates dependency issues
   const prepareShopHoursDisplay = () => {
     if (!hours) return [];
 
     const currentHours = getHoursForMethod(hours, initialOrderMethod);
     if (!currentHours?.length) return [];
-
-    const next7Days = Array.from({ length: 7 }, (_, i) => {
-      const date = new Date();
-      date.setDate(date.getDate() + i);
-      return date.toISOString().split("T")[0];
-    });
 
     return next7Days.map((date) => {
       const dayHours = currentHours.find(
@@ -211,12 +209,6 @@ export const useBasket = ({
         overlapHours: 0,
       }));
     }
-
-    const next7Days = Array.from({ length: 7 }, (_, i) => {
-      const date = new Date();
-      date.setDate(date.getDate() + i);
-      return date.toISOString().split("T")[0];
-    });
 
     const dateCompatibility: {
       date: string;

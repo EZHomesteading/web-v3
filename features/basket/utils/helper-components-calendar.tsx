@@ -18,6 +18,7 @@ import {
   PiPencilSimpleLineThin,
 } from "react-icons/pi";
 import { RiArrowDownSLine } from "react-icons/ri";
+import { convertMinutesToTimeString } from "@/utils/time-managers";
 
 export enum DeliveryPickupToggleMode {
   DELIVERY = "DELIVERY",
@@ -421,16 +422,6 @@ const CalendarDay: React.FC<CalendarDayProps> = ({
     if (day !== null) {
       onMouseEnter(day);
     }
-  };
-
-  const convertMinutesToTimeString = (minutes: number): string => {
-    const hours = Math.floor(minutes / 60);
-    const mins = minutes % 60;
-    const period = hours >= 12 ? "PM" : "AM";
-    const formattedHours = hours % 12 || 12;
-    return `${formattedHours.toString().padStart(2, "0")}:${mins
-      .toString()
-      .padStart(2, "0")} ${period}`;
   };
 
   return (

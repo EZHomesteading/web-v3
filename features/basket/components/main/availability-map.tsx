@@ -24,7 +24,7 @@ import { formatDateToMMMDDAtHourMin } from "@/features/availability-calendar/uti
 import useMediaQuery from "@/hooks/media-query";
 import { Calendar } from "../../ui/calendar";
 import TimePicker from "../modals/time.picker";
-import RouteOptimizerModal from "../mapping/route-optimizer1";
+import RouteOptimizerModal from "../mapping/route-optimizer.modal";
 import {
   Popover,
   PopoverContent,

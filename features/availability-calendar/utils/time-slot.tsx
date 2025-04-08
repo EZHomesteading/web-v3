@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import Wheel from "../components/ui/wheel";
 import { OutfitFont } from "@/components/fonts";
+import { generateHours, generateMinutes } from "@/utils/time-managers";
 
 interface TimePickerProps {
   top?: boolean;
@@ -127,13 +128,3 @@ const TimePicker: React.FC<TimePickerProps> = ({
 };
 
 export default TimePicker;
-
-const generateHours = (): string[] => {
-  return Array.from({ length: 12 }, (_, i) =>
-    (i + 1).toString().padStart(2, "0")
-  );
-};
-
-const generateMinutes = (): string[] => {
-  return ["00", "15", "30", "45"];
-};

@@ -1,16 +1,16 @@
 import { Location } from "@prisma/client";
 import { RouteTimings } from "../../types/types";
 import {
+  AVERAGE_STOP_TIME,
+  BUFFER_TIME,
   getCurrentTimeInSeconds,
   getLocationCloseTime,
   getLocationOpenTime,
+  getServiceWindow,
   hasTimePassed,
   secondsToTimeString,
   timeStringToSeconds,
-} from "./calcoptimal";
-
-const AVERAGE_STOP_TIME = 5 * 60;
-const BUFFER_TIME = 5 * 60;
+} from "../../utils/optimizer-utils";
 
 interface RouteResult {
   route: Location[];
@@ -480,29 +480,6 @@ const calculateInitialLeg = async (
       totalTime: initialTime + intermediateResult.timings.totalTime,
       totalDistance: initialDistance + intermediateResult.timings.totalDistance,
     },
-  };
-};
-
-const getServiceWindow = (
-  location: Location,
-  selectedDate: Date
-): {
-  openTime: number;
-  closeTime: number;
-  windowSize: number;
-} => {
-  const dateString = selectedDate.toISOString().split("T")[0];
-  const pickupSlot = location.hours?.pickup?.find(
-    (slot) => new Date(slot.date).toISOString().split("T")[0] === dateString
-  );
-
-  const openTime = pickupSlot?.timeSlots[0]?.open || 0;
-  const closeTime = pickupSlot?.timeSlots[0]?.close || 1440;
-
-  return {
-    openTime,
-    closeTime,
-    windowSize: closeTime - openTime,
   };
 };
 

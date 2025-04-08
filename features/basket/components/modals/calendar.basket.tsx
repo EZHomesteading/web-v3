@@ -14,7 +14,6 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { basket_time_type, orderMethod, TimeSlot } from "@prisma/client";
 import {
-  convertMinutesToTimeString,
   convertTimeStringToMinutes,
   createDateKey,
   daysOfWeek,
@@ -28,6 +27,11 @@ import { PiArrowLeftThin, PiArrowRightThin } from "react-icons/pi";
 import TimePicker from "./time.basket";
 import { Basket_Selected_Time_Type } from "../../types/types";
 import axios from "axios";
+import {
+  convertMinutesToTimeString,
+  getDaysInMonth,
+  getFirstDayOfMonth,
+} from "@/utils/time-managers";
 
 interface p {
   location: any;
@@ -149,10 +153,6 @@ const SetCustomPickupDeliveryCalendar = ({
     };
   }, [selectedDay, isBasePanelOpen]);
 
-  const getFirstDayOfMonth = (year: number, month: number): number => {
-    return new Date(year, month, 1).getDay();
-  };
-
   const getSellerHours = () => {
     if (mode === DeliveryPickupToggleMode.DELIVERY) {
       return {
@@ -230,10 +230,6 @@ const SetCustomPickupDeliveryCalendar = ({
       toast.error("Failed to update basket");
       console.error("Update error:", error);
     }
-  };
-
-  const getDaysInMonth = (year: number, month: number): number => {
-    return new Date(year, month + 1, 0).getDate();
   };
 
   const renderCalendarForMonth = (

@@ -23,7 +23,6 @@ import {
 } from "@prisma/client";
 import {
   checkOverlap,
-  convertMinutesToTimeString,
   convertTimeStringToMinutes,
   createDateKey,
   daysOfWeek,
@@ -33,6 +32,11 @@ import { RiArrowDownSLine } from "react-icons/ri";
 import axios from "axios";
 import { OutfitFont } from "@/components/fonts";
 import Toast from "@/components/ui/toast";
+import {
+  convertMinutesToTimeString,
+  getDaysInMonth,
+  getFirstDayOfMonth,
+} from "@/utils/time-managers";
 
 interface p {
   location?: Location;
@@ -172,14 +176,6 @@ const Calendar = ({ location, id, mk, locations, userId }: p) => {
       selectedDates.length
     } days`;
   }, [selectedDays, viewEditMode]);
-
-  const getDaysInMonth = (year: number, month: number): number => {
-    return new Date(year, month + 1, 0).getDate();
-  };
-
-  const getFirstDayOfMonth = (year: number, month: number): number => {
-    return new Date(year, month, 1).getDay();
-  };
 
   const selectAllDaysInMonth = (year: number, month: number) => {
     const daysInMonth = getDaysInMonth(year, month);

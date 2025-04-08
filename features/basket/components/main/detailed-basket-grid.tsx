@@ -40,6 +40,7 @@ import {
   GoogleMapsProvider,
   useGoogleMaps,
 } from "../../hooks/google-maps-provider";
+import { formatDate } from "@/utils/time-managers";
 
 // Keep specific types where they're well-defined
 interface ListingType {
@@ -439,47 +440,6 @@ const DetailedBasketCard: React.FC<DetailedBasketCardProps> = ({
       day: "numeric",
       year: "numeric",
     });
-  };
-
-  const formatDate = (date: Date) => {
-    const days = [
-      "Sunday",
-      "Monday",
-      "Tuesday",
-      "Wednesday",
-      "Thursday",
-      "Friday",
-      "Saturday",
-    ];
-    const months = [
-      "Jan",
-      "Feb",
-      "Mar",
-      "Apr",
-      "May",
-      "Jun",
-      "Jul",
-      "Aug",
-      "Sep",
-      "Oct",
-      "Nov",
-      "Dec",
-    ];
-
-    const dayName = days[date.getDay()];
-    const monthName = months[date.getMonth()];
-    const day = date.getDate();
-    const hours = date.getHours();
-    const minutes = date.getMinutes();
-
-    const daySuffix =
-      day === 1 ? "st" : day === 2 ? "nd" : day === 3 ? "rd" : "th";
-
-    const amPm = hours >= 12 ? "PM" : "AM";
-    const formattedHours = hours % 12 || 12;
-    const formattedMinutes = minutes.toString().padStart(2, "0");
-
-    return `${dayName}, ${monthName} ${day}${daySuffix}, at ${formattedHours}:${formattedMinutes}${amPm}`;
   };
 
   return (

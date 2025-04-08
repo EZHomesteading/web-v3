@@ -17,6 +17,10 @@ import { OutfitFont } from "@/components/fonts";
 import { OrderMap } from "./page";
 import { Navigation } from "lucide-react"; // Import navigation icon
 import { OverlayView } from "@react-google-maps/api";
+import {
+  formatDuration,
+  metersToMiles,
+} from "@/features/basket/utils/optimizer-utils";
 const libraries: ("places" | "geometry")[] = ["places", "geometry"];
 
 interface FixedRouteOptimizerProps {
@@ -73,9 +77,6 @@ const RouteOptimizer = ({
   const mapRef = useRef<google.maps.Map | null>(null);
   const searchBoxRef = useRef<google.maps.places.Autocomplete | null>(null);
 
-  const metersToMiles = (meters: number): number => {
-    return meters * 0.000621371;
-  };
   const toggleCollapse = () => {
     setIsCollapsed(!isCollapsed);
   };
@@ -87,11 +88,6 @@ const RouteOptimizer = ({
     });
   };
 
-  const formatDuration = (seconds: number): string => {
-    const hours = Math.floor(seconds / 3600);
-    const minutes = Math.floor((seconds % 3600) / 60);
-    return hours > 0 ? `${hours} hr ${minutes} min` : `${minutes} min`;
-  };
   const openInMaps = () => {
     if (!optimizedRoute.length || !userLocation) return;
 
