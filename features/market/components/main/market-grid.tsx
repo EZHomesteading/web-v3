@@ -1,5 +1,4 @@
 import { UserInfo } from "next-auth";
-import { MarketListing } from "./market-client";
 import Image from "next/image";
 import {
   Carousel,
@@ -13,6 +12,8 @@ import Link from "next/link";
 
 import ClientBasketButton from "../../utils/market-toggle.client";
 import { calculateAvailabilityScores } from "@/utils/avail-score-handlers";
+import { ListingWithLocAndUser } from "@/types";
+import { formatPrice } from "@/utils/listing";
 
 const MarketGrid = ({ children }: { children: any }) => {
   return (
@@ -33,7 +34,7 @@ const MarketGrid = ({ children }: { children: any }) => {
   );
 };
 interface MarketCardProps {
-  listing: MarketListing;
+  listing: ListingWithLocAndUser;
   user?: UserInfo;
   imageCount: number;
   basketItemIds: any[];
@@ -133,7 +134,7 @@ const MarketCard = ({
 
             <div className="flex items-center justify-between mt-2 w-full">
               <div className={`text-sm flex items-center gap-1`}>
-                <span className="font-semibold">${listing.price}</span>
+                <span className="font-semibold">{formatPrice(listing.price)}</span>
                 <span className="font-light">
                   per {listing.unit ? listing.unit: "item"}
                 </span>
@@ -157,7 +158,7 @@ const MarketCard = ({
               ) : (
                 <AvailabilityScore scores={scores} type="pickup" />
               )}
-              {listing.location?.hours?.delivery?.length === 0 ? (
+              {listing.location?.hours?.delivery?.length  === 0 ? (
                 <div className="text-red-500 font-medium flex items-center text-xs">
                   <Clock size={14} className="mr-1" />{" "}
                   <span className="font-medium capitalize">

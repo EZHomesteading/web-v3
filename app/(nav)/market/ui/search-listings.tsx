@@ -20,7 +20,7 @@ import { useSearchParams } from "next/navigation";
 
 type Listing = {
   title: string;
-  subCategory: string;
+  subcateory: string;
 };
 
 interface p {
@@ -287,7 +287,7 @@ const SearchLocation = ({ apiKey }: p) => {
     const preprocessedQuery = preprocessTerm(originalQuery);
     return allListings.filter((listing) => {
       const preprocessedTitle = preprocessTerm(listing.title);
-      const preprocessedSubCategory = preprocessTerm(listing.subCategory);
+      const preprocessedSubCategory = preprocessTerm(listing.subcateory);
 
       if (
         preprocessedTitle.includes(preprocessedQuery) ||

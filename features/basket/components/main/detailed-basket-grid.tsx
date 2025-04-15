@@ -534,7 +534,7 @@ const DetailedBasketCard: React.FC<DetailedBasketCardProps> = ({
                   ) : (
                     <span className="ml-1">
                       {" "}
-                      per {item.listing.subCategory}
+                      per {item.listing.subcateory}
                     </span>
                   )}
                 </div>

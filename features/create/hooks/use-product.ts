@@ -5,7 +5,7 @@ import Fuse from "fuse.js";
 
 type Product = {
   title: string;
-  subCategory: string;
+  subcateory: string;
   photo: string;
 };
 
@@ -33,7 +33,7 @@ const useProducts = () => {
       products.map((product) => ({
         value: product.title,
         label: product.title,
-        cat: product.subCategory,
+        cat: product.subcateory,
         photo: product.photo,
       })),
     [products]

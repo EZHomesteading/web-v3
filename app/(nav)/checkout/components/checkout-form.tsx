@@ -289,7 +289,7 @@ export default function CheckoutForm({
                               <p className="mt-1 text-sm text-gray-500">
                                 {item.quantity}{" "}
                                 {item.listing.unit ||
-                                  item.listing.subCategory}
+                                  item.listing.subcateory}
                               </p>
                             </div>
                             <p className="text-sm font-medium">

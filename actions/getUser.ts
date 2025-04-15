@@ -443,7 +443,7 @@ const getUserStore = async (params: IStoreParams): Promise<any | null> => {
               },
             },
             stock: true,
-            subCategory: true,
+            subcateory: true,
           },
         },
         locations: {

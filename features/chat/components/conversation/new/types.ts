@@ -26,7 +26,7 @@ export interface MessageWithListing {
     SODT: number | null;
     title: string;
     category: string;
-    subCategory: string;
+    subcateory: string;
     stock: number;
     unit: string;
     price: number;

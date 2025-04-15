@@ -63,8 +63,8 @@ interface CategorySelectionProps {
 
 interface SubCategorySelectionProps {
   category: Category;
-  subCategory: SubCategory;
-  setSubCategory: (subCategory: SubCategory) => void;
+  subcateory: SubCategory;
+  setSubCategory: (subcateory: SubCategory) => void;
   onGoBack: () => void;
 }
 const subCategoryIcons: Record<string, React.ReactNode> = {
@@ -228,9 +228,7 @@ const CategorySelection: React.FC<CategorySelectionProps> = ({
   </div>
 );
 
-const SubCategorySelection: React.FC<SubCategorySelectionProps> = ({
-  category,
-  subCategory,
+const SubCategorySelection: React.FC<SubCategorySelectionProps> = (subcateory:
   setSubCategory,
   onGoBack,
 }) => {
@@ -261,15 +259,11 @@ interface ProductCategorySelectionProps {
   category: Category;
   handlePrevious: () => void;
   setCategory: (category: Category) => void;
-  subCategory: SubCategory;
-  setSubCategory: (subCategory: SubCategory) => void;
+  subcateory: SubCategory;
+  setSubCategory: (subcateory: SubCategory) => void;
 }
 
-const ProductCategorySelection: React.FC<ProductCategorySelectionProps> = ({
-  step,
-  category,
-  setCategory,
-  subCategory,
+const ProductCategorySelection: React.FC<ProductCategorySelectionProps> = (subcateory:
   handlePrevious,
   setSubCategory,
 }) => {
@@ -292,7 +286,7 @@ const ProductCategorySelection: React.FC<ProductCategorySelectionProps> = ({
           ) : (
             <SubCategorySelection
               category={category}
-              subCategory={subCategory}
+              subcateory=subcateory:
               setSubCategory={setSubCategory}
               onGoBack={() => {
                 setCategory("");

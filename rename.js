@@ -22,6 +22,7 @@ const replacements = [
   { from: 'location.address[1]', to: 'location.address.city' },
   { from: 'location.address[2]', to: 'location.address.state' },
   { from: 'location.address[3]', to: 'location.address.zip' },
+  { from: 'subCategory', to: 'subcateory' },
 ];
 
 const fileExtensions = ['.js', '.jsx', '.ts', '.tsx', '.json'];

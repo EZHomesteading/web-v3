@@ -1,7 +1,7 @@
 import dynamic from "next/dynamic";
 import { getCurrentUser } from "@/actions/getUser";
 import { UserInfo } from "next-auth";
-import { MarketListing } from "@/features/market/components/main/market-client";
+import { ListingWithLocAndUser } from "@/types";
 
 export interface ShopProps {
   userId?: string;
@@ -40,7 +40,7 @@ const ShopPage = async ({
 
   let user = await getCurrentUser();
   let basketItemIds: any = [];
-  let listings: MarketListing[] = [];
+  let listings: ListingWithLocAndUser[] = [];
 
   const params = new URLSearchParams({
     ...(resolvedSearchParams?.lat && { lat: resolvedSearchParams.lat }),
@@ -72,7 +72,7 @@ const ShopPage = async ({
 
   return (
     <MarketComponent
-      listings={listings as unknown as MarketListing[]}
+      listings={listings}
       user={user as unknown as UserInfo}
       basketItemIds={basketItemIds || []}
       params={params.toString()}

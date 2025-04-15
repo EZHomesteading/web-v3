@@ -154,10 +154,10 @@ model OrderGroup {
 
 
 type Address {
-  street  String?
-  city String?
-  state String?
-  zip String?
+  street  String
+  city String
+  state String
+  zip String
 }
 
 model Location {
@@ -169,7 +169,7 @@ model Location {
   orders              Order[]
   type                String
   coordinates         Float[]
-  address             Address?
+  address             Address
   hours               Hours?
   role                UserRole  @default(PRODUCER)
   SODT                Int?
@@ -304,7 +304,7 @@ model Listing {
   SODT            Int? //set out and delivery time for co-ops/producers respectively expressed as an interger
   title           String
   category        String // "homemade", "unprocessed-produce", "dairy-meats", "durables" 
-  subCategory     String
+  subcategory     String
   stock           Int
   unit String
   price           Float

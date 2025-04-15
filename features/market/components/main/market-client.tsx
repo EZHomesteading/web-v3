@@ -2,20 +2,8 @@
 import { UserInfo } from "next-auth";
 import Categories from "../../utils/categories";
 import EmptyState from "@/components/EmptyState";
-import { UserRole } from "@prisma/client";
 import { MarketCard, MarketGrid } from "./market-grid";
 import { ListingWithLocAndUser } from "@/types";
-
-interface DayHours {
-  date: string;
-  timeSlots: TimeSlot[];
-  capacity: number;
-}
-
-interface TimeSlot {
-  open: number;
-  close: number;
-}
 
 interface ShopProps {
   listings: ListingWithLocAndUser[];

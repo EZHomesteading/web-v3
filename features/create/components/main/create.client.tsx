@@ -90,7 +90,7 @@ const CreateClient: React.FC<Props> = ({
     defaultValues: {
       sodt: user?.SODT,
       category: "",
-      subCategory: "",
+      subcateory: "",
       locationId: defaultLocation?.id,
       locationRole: "",
       stock: "",
@@ -459,7 +459,7 @@ const CreateClient: React.FC<Props> = ({
           projectHarvest === false ? parseInt(data.projectedStock) : null,
         harvestFeatures: projectHarvest === false ? true : null,
         price: formattedPrice,
-        subCategory: subCategory,
+        subcateory: subCategory,
         rating: rating,
         review: review === true ? true : null,
         reports: review === true ? 1 : null,
@@ -801,7 +801,7 @@ const CreateClient: React.FC<Props> = ({
           <StepOne
             handlePrevious={handlePrevious}
             step={step}
-            subCategory={subCategory}
+            subcateory=subcateory:
             setSubCategory={setSubCategory}
             category={category}
             setCategory={setCategory}
@@ -822,7 +822,7 @@ const CreateClient: React.FC<Props> = ({
             setTags={setTags}
             buildKeyWords={buildKeyWords}
             isLoading={isLoading}
-            subcat={subCategory}
+            subcat=subcateory:
             onCustomTitleSet={handleCustomTitleSet}
           />
         )}
