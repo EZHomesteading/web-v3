@@ -83,17 +83,17 @@ async function processFile(filePath) {
     
     for (const { from, to } of replacements) {
       const patterns = [
-        // Object property definitions with quotes (e.g., { "imageSrc": ... })
+        // Object property definitions with quotes (e.g., { "images": ... })
         new RegExp(`"${from}"\\s*:`, 'g'),
-        // Object property definitions without quotes (e.g., { imageSrc: ... })
+        // Object property definitions without quotes (e.g., { images: ... })
         new RegExp(`(?<![\\w$])${from}\\s*:`, 'g'),
-        // Destructuring (e.g., const { imageSrc } = obj;)
+        // Destructuring (e.g., const images: = obj;)
         new RegExp(`({\\s*[\\w$,\\s]*)${from}(\\s*[,}])`, 'g'),
-        // Dot notation (e.g., obj.imageSrc)
+        // Dot notation (e.g., obj.images)
         new RegExp(`\\.${from}(?![\\w$])`, 'g'),
-        // JSX props (e.g., <Component imageSrc={...} />)
+        // JSX props (e.g., <Component images={...} />)
         new RegExp(`(?<=\\s)${from}=`, 'g'),
-        // Bracket notation with quotes (e.g., obj["imageSrc"])
+        // Bracket notation with quotes (e.g., obj["images"])
         new RegExp(`\\["${from}"\\]`, 'g'),
         new RegExp(`\\['${from}'\\]`, 'g')
       ];

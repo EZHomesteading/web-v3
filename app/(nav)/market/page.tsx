@@ -36,7 +36,7 @@ const ShopPage = async ({
   const apiUrl = process.env.API_URL;
 
   // Await the search parameters
-  const resolvedSearchParams = await searchParams;
+  const resolvedSearchParams = searchParams;
 
   let user = await getCurrentUser();
   let basketItemIds: any = [];
@@ -68,7 +68,7 @@ const ShopPage = async ({
   const [basketItems, marketData] = await Promise.all(requests);
 
   basketItemIds = basketItems.items;
-  listings = marketData.items;
+  listings = marketData.listings;
 
   return (
     <MarketComponent

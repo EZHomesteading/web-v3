@@ -152,16 +152,24 @@ model OrderGroup {
   endLoc   Float[]
 }
 
+
+type Address {
+  street  String?
+  city String?
+  state String?
+  zip String?
+}
+
 model Location {
   id                  String    @id @default(auto()) @map("_id") @db.ObjectId
   userId              String    @db.ObjectId
-  displayName         String?
+  name                String
   user                User      @relation(fields: [userId], references: [id])
   listings            Listing[]
   orders              Order[]
   type                String
   coordinates         Float[]
-  address             String[]
+  address             Address?
   hours               Hours?
   role                UserRole  @default(PRODUCER)
   SODT                Int?
@@ -180,7 +188,7 @@ model User {
   email                 String                 @unique
   fullName              fullName?
   emailVerified         DateTime?
-  phoneNumber           String?
+  phone           String?
   locations             Location[]
   image                 String?
   role                  UserRole               @default(PRODUCER)
@@ -298,15 +306,15 @@ model Listing {
   category        String // "homemade", "unprocessed-produce", "dairy-meats", "durables" 
   subCategory     String
   stock           Int
-  quantityType    String
+  unit String
   price           Float
   description     String
   projectedStock  Int?
   harvestFeatures Boolean?
   harvestDates    String[]
-  keyWords        String[]
+  tags String[]
   minOrder        Int
-  imageSrc        String[]
+  images        String[]
   review          Boolean?
   harvestType     String?
   reports         Int?

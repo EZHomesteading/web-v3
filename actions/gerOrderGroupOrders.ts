@@ -27,7 +27,7 @@ export async function getOrderGroupWithOrders(ordergroupId: string) {
         location: {
           select: {
             user: { select: { name: true } },
-            displayName: true,
+            name: true,
             coordinates: true,
             address: true,
           },
@@ -41,12 +41,12 @@ export async function getOrderGroupWithOrders(ordergroupId: string) {
       name: order.location?.user.name,
       location: order.location
         ? {
-            displayName: order.location.displayName || "",
+            name: order.location.name || "",
             coordinates: order.location.coordinates,
             address: order.location.address,
           }
         : {
-            displayName: "",
+            name: "",
             coordinates: [0, 0],
             address: [""],
           },
