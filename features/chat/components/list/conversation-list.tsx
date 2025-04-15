@@ -1,9 +1,8 @@
 "use client";
-import { useEffect } from "react";
+import { useEffect, useCallback, useMemo, useState, ReactElement } from "react";
 import clsx from "clsx";
-import { FullConversationType } from "chat-types";
+import type { FullConversationType, FullMessageType } from "chat-types";
 import useConversation from "@/features/chat/hooks/use-conversation";
-//import { pusherClient } from "@/lib/pusher";
 import SubToggle from "../ui/notification-button";
 import { registerServiceWorker } from "@/features/chat/services/use-service-worker";
 import {
@@ -11,9 +10,14 @@ import {
   sendPushSubscriptionToServer,
 } from "@/features/chat/services/push-service";
 import axios from "axios";
-import { UserInfo } from "next-auth";
+import type { UserInfo } from "next-auth";
 import { OutfitFont } from "@/components/fonts";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { pusherClient } from "@/lib/pusher";
+import Avatar from "../../../../components/Avatar";
+import useOtherUser from "@/features/chat/hooks/use-other-user";
+import { IoNotificationsCircle } from "react-icons/io5";
+import { format } from "date-fns";
 
 interface ConversationListProps {
   initialItems: FullConversationType[];
@@ -24,7 +28,7 @@ interface ConversationListProps {
 const ConversationList: React.FC<ConversationListProps> = ({
   initialItems,
   user,
-}) => {
+}): ReactElement => {
   const items = initialItems;
   const pathname = usePathname();
   const pathSegments = pathname?.split("/").filter(Boolean) || [];
@@ -32,7 +36,7 @@ const ConversationList: React.FC<ConversationListProps> = ({
   const { conversationId, isOpen } = useConversation();
 
   useEffect(() => {
-    async function setUpServiceWorker() {
+    async function setUpServiceWorker(): Promise<void> {
       try {
         await registerServiceWorker();
         if (!user?.subscriptions)
@@ -44,10 +48,12 @@ const ConversationList: React.FC<ConversationListProps> = ({
       }
     }
     setUpServiceWorker();
-  });
+
+    // No cleanup needed for this one-time setup
+  }, [user?.subscriptions]);
 
   useEffect(() => {
-    async function syncPushSubscription() {
+    async function syncPushSubscription(): Promise<void> {
       try {
         const subscription = await getCurrentPushSubscription();
         if (subscription) {
@@ -58,19 +64,21 @@ const ConversationList: React.FC<ConversationListProps> = ({
       }
     }
     syncPushSubscription();
+
+    // No cleanup needed for this one-time sync
   }, []);
 
   return (
     <>
       <aside
         className={clsx(
-          `fixed inset-y-6 md:inset-y-20 overflow-auto  w-full pb-20 md:pb-0   md:w-80  border-r-[1px]`,
-          isOpen ? "block  left-0" : "",
+          `fixed inset-y-6 md:inset-y-20 overflow-auto w-full pb-20 md:pb-0 md:w-80 border-r-[1px]`,
+          isOpen ? "block left-0" : "",
           hasId ? "hidden lg:block" : ""
         )}
       >
         <div className="px-5">
-          <div className="flex  mb-4 items-center justify-between">
+          <div className="flex mb-4 items-center justify-between">
             <div className={`${OutfitFont.className} text-2xl font-medium`}>
               Messages
             </div>
@@ -91,18 +99,6 @@ const ConversationList: React.FC<ConversationListProps> = ({
   );
 };
 
-export default ConversationList;
-
-import { useCallback, useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
-import { format } from "date-fns";
-
-import { pusherClient } from "@/lib/pusher";
-import Avatar from "../../../../components/Avatar";
-import useOtherUser from "@/features/chat/hooks/use-other-user";
-import { FullMessageType } from "chat-types";
-import { IoNotificationsCircle } from "react-icons/io5";
-
 interface ConversationBoxProps {
   data: FullConversationType;
   selected?: boolean;
@@ -113,8 +109,8 @@ const ConversationBox: React.FC<ConversationBoxProps> = ({
   data,
   selected,
   user,
-}) => {
-  const [conversation, setConversation] = useState(data);
+}): ReactElement => {
+  const [conversation, setConversation] = useState<FullConversationType>(data);
   const otherUser = useOtherUser(conversation);
   const router = useRouter();
 
@@ -123,7 +119,7 @@ const ConversationBox: React.FC<ConversationBoxProps> = ({
   }, [data]);
 
   useEffect(() => {
-    const newHandler = (message: FullMessageType) => {
+    const newHandler = (message: FullMessageType): void => {
       if (message.conversationId === conversation.id) {
         setConversation((current: any) => ({
           ...current,
@@ -133,7 +129,7 @@ const ConversationBox: React.FC<ConversationBoxProps> = ({
       }
     };
 
-    const updateHandler = (message: FullMessageType) => {
+    const updateHandler = (message: FullMessageType): void => {
       if (message.conversationId === conversation.id) {
         setConversation((current: any) => ({
           ...current,
@@ -155,7 +151,7 @@ const ConversationBox: React.FC<ConversationBoxProps> = ({
     };
   }, [conversation.id]);
 
-  const handleClick = useCallback(() => {
+  const handleClick = useCallback((): void => {
     router.push(`/chat/${conversation.id}`);
   }, [conversation.id, router]);
 
@@ -172,6 +168,18 @@ const ConversationBox: React.FC<ConversationBoxProps> = ({
     if (!lastMessage || !userEmail) return false;
     return lastMessage.seen;
   }, [userEmail, lastMessage]);
+
+  // Refactor nested ternaries for better readability
+  const showNotificationBadge = (): boolean => {
+    if (notOwn && lastMessage?.messageOrder !== "SELLER_ACCEPTED") {
+      return true;
+    }
+    if (isOwn && lastMessage?.messageOrder === "SELLER_ACCEPTED") {
+      return true;
+    }
+    return false;
+  };
+
   return (
     <div
       onClick={handleClick}
@@ -185,10 +193,9 @@ const ConversationBox: React.FC<ConversationBoxProps> = ({
       <div className={`${OutfitFont.className} min-w-0 flex-1`}>
         <div className="focus:outline-none">
           <span className="absolute inset-0" />
-          {(notOwn && lastMessage?.messageOrder !== "SELLER_ACCEPTED") ||
-          (isOwn && lastMessage?.messageOrder === "SELLER_ACCEPTED") ? (
+          {showNotificationBadge() ? (
             <span
-              className=" bg-white w-3 h-3 rounded-[40px] absolute left-[40px] top-[43px] md:left-[50px] md:top-[45px] group"
+              className="bg-white w-3 h-3 rounded-[40px] absolute left-[40px] top-[43px] md:left-[50px] md:top-[45px] group"
               aria-label="Your turn to respond"
             >
               <IoNotificationsCircle
@@ -223,3 +230,5 @@ const ConversationBox: React.FC<ConversationBoxProps> = ({
     </div>
   );
 };
+
+export default ConversationList;

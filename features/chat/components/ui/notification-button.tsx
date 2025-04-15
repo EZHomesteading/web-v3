@@ -7,51 +7,73 @@ import {
 } from "@/features/chat/services/push-service";
 import Loading from "@/components/secondary-loader";
 import { BellOff, BellRing } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback, memo, ReactElement } from "react";
 import { toast } from "sonner";
 
-const SubToggle = () => {
+type NotificationState = boolean | undefined;
+
+const SubToggle = (): ReactElement | null => {
   const [hasActivePushSubscription, setHasActivePushSubscription] =
-    useState<boolean>();
-  const [loading, setLoading] = useState(false);
-  //const [confirmationMessage, setConfirmationMessage] = useState<string>();
+    useState<NotificationState>();
+  const [loading, setLoading] = useState<boolean>(false);
+
+  // Get active push subscription on component mount
   useEffect(() => {
-    async function getActivePushSubscription() {
-      const subscription = await getCurrentPushSubscription();
-      setHasActivePushSubscription(!!subscription);
+    let isMounted = true;
+
+    async function getActivePushSubscription(): Promise<void> {
+      try {
+        const subscription = await getCurrentPushSubscription();
+        if (isMounted) {
+          setHasActivePushSubscription(!!subscription);
+        }
+      } catch (error) {
+        console.error("Failed to get push subscription:", error);
+      }
     }
+
     getActivePushSubscription();
+
+    // Cleanup function to prevent state updates if component unmounts
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
-  async function setPushNotificationsEnabled(enabled: boolean) {
-    if (loading) return;
-    setLoading(true);
-    let confirmationMessage = undefined;
-    try {
-      if (enabled) {
-        await registerPushNotifications();
-      } else {
-        await unregisterPushNotifications();
+  // Handle enabling/disabling push notifications
+  const setPushNotificationsEnabled = useCallback(
+    async (enabled: boolean): Promise<void> => {
+      if (loading) return;
+
+      setLoading(true);
+
+      try {
+        if (enabled) {
+          await registerPushNotifications();
+        } else {
+          await unregisterPushNotifications();
+        }
+
+        setHasActivePushSubscription(enabled);
+        toast.success(`Push notifications ${enabled ? "enabled" : "disabled"}`);
+      } catch (error) {
+        console.error(error);
+        if (enabled && Notification.permission === "denied") {
+          alert("Please enable push notifications in your browser settings");
+        } else {
+          alert("Something went wrong please try again");
+        }
+      } finally {
+        setLoading(false);
       }
-      confirmationMessage =
-        "Push notifications " + (enabled ? "disabled" : "enabled");
-      setHasActivePushSubscription(enabled);
-      if (confirmationMessage) {
-        toast.success(confirmationMessage);
-      }
-    } catch (error) {
-      console.error(error);
-      if (enabled && Notification.permission === "denied") {
-        alert("Please enable push notifications in your browser settings");
-      } else {
-        alert("Something went wrong please try again");
-      }
-    } finally {
-      setLoading(false);
-    }
-  }
+    },
+    [loading]
+  );
+
+  // Don't render until we know subscription status
   if (hasActivePushSubscription === undefined) return null;
 
+  // Render notification toggle buttons
   return (
     <div className="relative">
       {loading && (
@@ -59,24 +81,51 @@ const SubToggle = () => {
           <Loading />
         </span>
       )}
+
       {hasActivePushSubscription ? (
-        <span title="Disable push notifications for this device?">
-          <BellRing
-            onClick={() => setPushNotificationsEnabled(false)}
-            className={`cursor-pointer bg-inherit ${
-              loading ? "opacity-10" : ""
-            } `}
-          />
-        </span>
+        <NotificationButton
+          active={true}
+          loading={loading}
+          onClick={() => setPushNotificationsEnabled(false)}
+        />
       ) : (
-        <span title="Enable push notifications for this device?">
-          <BellOff
-            onClick={() => setPushNotificationsEnabled(true)}
-            className={`cursor-pointer bg-chat ${loading ? "opacity-10" : ""} `}
-          />
-        </span>
+        <NotificationButton
+          active={false}
+          loading={loading}
+          onClick={() => setPushNotificationsEnabled(true)}
+        />
       )}
     </div>
   );
 };
-export default SubToggle;
+
+// Extract button to reduce nesting and improve readability
+interface NotificationButtonProps {
+  active: boolean;
+  loading: boolean;
+  onClick: () => void;
+}
+
+const NotificationButton = ({
+  active,
+  loading,
+  onClick,
+}: NotificationButtonProps): ReactElement => {
+  const baseClassName = `cursor-pointer ${loading ? "opacity-10" : ""}`;
+
+  if (active) {
+    return (
+      <span title="Disable push notifications for this device?">
+        <BellRing onClick={onClick} className={`${baseClassName} bg-inherit`} />
+      </span>
+    );
+  }
+
+  return (
+    <span title="Enable push notifications for this device?">
+      <BellOff onClick={onClick} className={`${baseClassName} bg-inherit`} />
+    </span>
+  );
+};
+
+export default memo(SubToggle);

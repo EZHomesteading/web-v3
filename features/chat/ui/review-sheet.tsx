@@ -64,7 +64,7 @@ const sheetVariants = cva(
 interface SheetContentCProps
   extends React.ComponentPropsWithoutRef<typeof SheetPrimitive.Content>,
     VariantProps<typeof sheetVariants> {
-  reviewerId: string;
+  reviewerId: string | undefined;
   reviewedId: string | undefined;
   buyer: boolean;
   orderId?: string;
@@ -126,6 +126,10 @@ const SheetContentF = React.forwardRef<
     return (
       <SheetPortalC>
         <SheetOverlayC />
+        <SheetPrimitive.Title className="hidden">
+          {" "}
+          Review Popup
+        </SheetPrimitive.Title>
         <SheetPrimitive.Content
           ref={ref}
           className={cn(sheetVariants({ side }), className)}

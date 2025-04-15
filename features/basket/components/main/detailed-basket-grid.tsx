@@ -340,7 +340,7 @@ const DetailedBasketGridContent: React.FC<DetailedBasketGridProps> = ({
               </div>
             </div>
 
-            <div className="w-full xl:w-[35%] xl:fixed xl:right-0 xl:mt-10 xl:top-6 xl:pr-4 pt-6 space-y-6">
+            <div className="w-full xl:w-[35%] xl:fixed xl:right-0 xl:mt-10 xl:top-6 xl:pr-4  space-y-6">
               <OrderSummaryCard baskets={baskets} pickupTimes={pickupTimes} />
               <AvailabilityMap
                 startDelay={startDelay}
