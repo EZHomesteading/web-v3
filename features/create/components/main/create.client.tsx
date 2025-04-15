@@ -95,8 +95,8 @@ const CreateClient: React.FC<Props> = ({
       locationRole: "",
       stock: "",
       projectedStock: "",
-      quantityType: "",
-      imageSrc: [],
+      unit: "",
+      images: [],
       price: "",
       title: "",
       description: "",
@@ -441,16 +441,16 @@ const CreateClient: React.FC<Props> = ({
         parseInt(data.shelfLifeYears || "0", 10) * 365;
 
       const formData = {
-        keyWords: tags,
+        tags: tags,
         title: title,
         SODT: parseInt(data.sodt),
         description: description,
-        imageSrc: imageSrc,
+        images: imageSrc,
         category: category,
-        quantityType:
-          data.quantityType === "none" || data.quantityType === "each"
+        unit:
+          data.unit === "none" || data.unit === "each"
             ? ""
-            : data.quantityType,
+            : data.unit,
         stock: projectHarvest === false ? 0 : parseInt(data.stock, 10),
         shelfLife: shelfLife,
         minOrder: parseInt(data.minOrder),
@@ -743,10 +743,10 @@ const CreateClient: React.FC<Props> = ({
                       }}
                       key={location?.id}
                     >
-                      {location?.displayName ? (
+                      {location?.name ? (
                         <div>
                           <p className={`text-base font-medium `}>
-                            {location?.displayName}
+                            {location?.name}
                           </p>
                           <p className={`text-xs text-neutral-700 font-medium`}>
                             {location?.address[0]}
@@ -830,7 +830,7 @@ const CreateClient: React.FC<Props> = ({
           <StepThree
             role={formLocationRole}
             title={formTitle}
-            quantityType={quantityType}
+            unit=unit:
             setQuantityType={setQuantityType}
             postSODT={postSODT}
             handleSODTCheckboxChange={handleSODTCheckboxChange}
@@ -873,7 +873,7 @@ const CreateClient: React.FC<Props> = ({
         )}
         {step === 7 && (
           <StepSix
-            imageSrc={imageSrc}
+            images=images:
             setImageSrc={setImageSrc}
             imageStates={imageStates}
             handleMouseEnter={handleMouseEnter}

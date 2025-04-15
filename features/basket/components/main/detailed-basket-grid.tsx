@@ -46,8 +46,8 @@ import { formatDate } from "@/utils/time-managers";
 interface ListingType {
   id: string;
   title: string;
-  quantityType: string;
-  imageSrc: string[];
+  unit: string;
+  images: string[];
   price: number;
   [key: string]: any; // Allow additional properties
 }
@@ -448,7 +448,7 @@ const DetailedBasketCard: React.FC<DetailedBasketCardProps> = ({
         <div className="flex flex-col gap-2">
           <div className="flex items-baseline gap-4">
             <h2 className="text-xl font-semibold">
-              {basket.location.displayName || basket.location.user.name}
+              {basket.location.name || basket.location.user.name}
             </h2>
             <span className="text-lg text-gray-600">
               ${basketTotal.toFixed(2)}
@@ -489,7 +489,7 @@ const DetailedBasketCard: React.FC<DetailedBasketCardProps> = ({
               <div className="w-32 h-32 flex-shrink-0 relative rounded-md overflow-hidden">
                 <Carousel className="w-full h-full">
                   <CarouselContent>
-                    {item.listing.imageSrc.map(
+                    {item.listing.images.map(
                       (src: string, imgIndex: number) => (
                         <CarouselItem
                           key={imgIndex}
@@ -526,10 +526,10 @@ const DetailedBasketCard: React.FC<DetailedBasketCardProps> = ({
                 </div>
                 <div className="mt-1 text-sm font-medium text-gray-900 flex flex-row">
                   ${item.listing.price}{" "}
-                  {item.listing.quantityType ? (
+                  {item.listing.unit ? (
                     <span className="ml-1">
                       {" "}
-                      per {item.listing.quantityType}
+                      per {item.listing.unit}
                     </span>
                   ) : (
                     <span className="ml-1">

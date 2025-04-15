@@ -4,7 +4,7 @@ import Select from "react-select";
 import useQuantityTypes from "@/hooks/listing/use-quantitytype";
 
 export type QuantityTypeValue = {
-  quantityType: string;
+  unit: string;
   value: string;
 };
 

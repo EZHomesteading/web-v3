@@ -84,8 +84,8 @@ export interface Basket_ID_Page {
     listing: {
       id: string;
       title: string;
-      quantityType: string;
-      imageSrc: string[];
+      unit: string;
+      images: string[];
       stock: number;
       price: number;
       minOrder: number;
@@ -96,7 +96,7 @@ export interface Basket_ID_Page {
   }[];
   location: {
     id: string;
-    displayName: string;
+    name: string;
     image: string | null;
     type: string;
     coordinates: number[] | null;

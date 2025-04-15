@@ -59,7 +59,7 @@ const DisputeModal = ({
   const [image, setImage] = useState("");
   const [reason, setReason] = useState("");
   const [comments, setComments] = useState("");
-  const [phone, setPhone] = useState(user?.phoneNumber || "");
+  const [phone, setPhone] = useState(user?.phone || "");
   const [email, setEmail] = useState(user?.email || "");
   const handleSubmit = async () => {
     const data = {

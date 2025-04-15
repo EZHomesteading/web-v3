@@ -45,7 +45,7 @@ declare module "chat-types" {
   interface Location {
     id: string;
     userId: string;
-    displayName: string | null;
+    name: string | null;
     type: string;
     coordinates: number[];
     address: string[];
@@ -85,7 +85,7 @@ declare module "chat-types" {
     name: string;
     role: UserRole;
     email: string;
-    phoneNumber: string | undefined;
+    phone: string | undefined;
     url: string | undefined;
     stripeAccountId?: string;
     location: Location[] | null;
@@ -114,7 +114,7 @@ declare module "chat-types" {
   interface Location {
     id: string;
     userId: string;
-    displayName: string | null;
+    name: string | null;
     type: string;
     coordinates: number[];
     address: string[];
@@ -169,8 +169,8 @@ declare module "chat-types" {
     id: string;
     title: string;
     price: number;
-    quantityType: string;
-    imageSrc: string[];
+    unit: string;
+    images: string[];
   }
 
   interface FullChatData {

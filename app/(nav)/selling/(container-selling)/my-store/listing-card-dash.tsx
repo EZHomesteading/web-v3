@@ -116,7 +116,7 @@ const ListingCard: React.FC<ListingCardProps> = ({
   }
   const pluralQuan = pluralizeQuantityType(
     stock,
-    data.quantityType ? data.quantityType : ""
+    data.unit ? data.unit: ""
   );
   const handleCardClick = useCallback(() => {
     if (pathname !== "/dashboard/my-store") {
@@ -158,12 +158,12 @@ const ListingCard: React.FC<ListingCardProps> = ({
         >
           <Carousel className="relative rounded-lg">
             <CarouselContent>
-              {data.imageSrc.map((_, index) => (
+              {data.images.map((_, index) => (
                 <CarouselItem key={index}>
                   <Card>
                     <CardContent className="flex items-center justify-center relative aspect-sqaure h-[16.5rem]">
                       <Image
-                        src={data.imageSrc[index]}
+                        src={data.images[index]}
                         alt={`Carousel Image ${index + 1}`}
                         fill
                         className="object-cover rounded-md hover:scale-105"
@@ -178,9 +178,9 @@ const ListingCard: React.FC<ListingCardProps> = ({
               ))}
             </CarouselContent>
 
-            {data.imageSrc.length > 1 && (
+            {data.images.length > 1 && (
               <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex space-x-2">
-                {data.imageSrc.map((_, index) => (
+                {data.images.map((_, index) => (
                   <div
                     key={index}
                     className="w-2 h-2 rounded-full bg-white opacity-90 hover:opacity-100 transition-opacity duration-200 cursor-pointer"
@@ -249,7 +249,7 @@ const ListingCard: React.FC<ListingCardProps> = ({
             <div className="font-light">
               {pluralizeQuantityType(
                 orderQuantity,
-                data.quantityType ? data.quantityType : ""
+                data.unit ? data.unit: ""
               )}
             </div>
           </div>
@@ -270,7 +270,7 @@ const ListingCard: React.FC<ListingCardProps> = ({
             >
               <div className="font-semibold"> ${data.price}</div>
 
-              <div className="font-light">per {data.quantityType}</div>
+              <div className="font-light">per {data.unit}</div>
             </div>
           </div>
 

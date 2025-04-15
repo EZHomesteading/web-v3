@@ -18,14 +18,14 @@ interface TimeSlot {
 export interface MarketListing {
   id: string;
   title: string;
-  imageSrc: string[];
+  images: string[];
   price: number;
   rating: number[];
   quantityType?: string;
   stock: number;
   location: {
     id: string;
-    displayName: string;
+    name: string;
     address: string[];
     role: UserRole;
     hours: {

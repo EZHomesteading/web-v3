@@ -16,8 +16,8 @@ export interface Listing {
   id: string;
   title: string;
   price: number;
-  quantityType: string;
-  imageSrc: string[];
+  unit: string;
+  images: string[];
 }
 
 export interface MessageWithListing {
@@ -28,15 +28,15 @@ export interface MessageWithListing {
     category: string;
     subCategory: string;
     stock: number;
-    quantityType: string;
+    unit: string;
     price: number;
     description: string;
     projectedStock: number | null;
     harvestFeatures: boolean | null;
     harvestDates: string[];
-    keyWords: string[];
+    tags: string[];
     minOrder: number;
-    imageSrc: string[];
+    images: string[];
     review: boolean | null;
     harvestType: string | null;
     reports: number | null;

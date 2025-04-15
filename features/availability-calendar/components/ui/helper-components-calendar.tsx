@@ -158,9 +158,9 @@ const LocationSelector = ({
       >
         <div className="rounded-full border bg-white p-1"></div>
       </div>
-      {location?.displayName ? (
+      {location?.name ? (
         <div className={`flex flex-col items-start`}>
-          <p>{location?.displayName}</p>
+          <p>{location?.name}</p>
           <p className={`text-neutral-500 text-xs`}>
             {formatAddress(location.address)}
           </p>
@@ -204,7 +204,7 @@ const LocationSelector = ({
         >
           {inPanel && displayName ? (
             <div className={`w-full flex flex-col items-start`}>
-              <p>{displayName}</p>
+              <p>name:</p>
               <p
                 className={`truncate max-w-[87%] text-start text-neutral-700 text-xs`}
               >

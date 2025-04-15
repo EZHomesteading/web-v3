@@ -6,16 +6,15 @@ import { CiImageOn } from "react-icons/ci";
 import { SimpleUploadButton } from "../../utils/image-upload-button";
 
 interface StepSixProps {
-  imageSrc: string[];
-  setImageSrc: (imageSrc: string[]) => void;
+  images: string[];
+  setImageSrc: (images: string[]) => void;
   imageStates: { isHovered: boolean; isFocused: boolean }[];
   handleMouseEnter: (index: number) => void;
   handleMouseLeave: (index: number) => void;
   handleClick: (index: number) => void;
 }
 
-const StepSix: React.FC<StepSixProps> = ({
-  imageSrc,
+const StepSix: React.FC<StepSixProps> = (images:
   setImageSrc,
   imageStates,
   handleMouseEnter,
@@ -23,7 +22,7 @@ const StepSix: React.FC<StepSixProps> = ({
   handleClick,
 }) => {
   const handleImageUpload = (url: string) => {
-    const newImageSrc = [...imageSrc];
+    const newImageSrc = [...images];
     const emptyIndex = newImageSrc.findIndex((src) => !src);
     if (emptyIndex !== -1) {
       newImageSrc[emptyIndex] = url;
@@ -32,7 +31,7 @@ const StepSix: React.FC<StepSixProps> = ({
     }
     setImageSrc(newImageSrc);
     console.log("Image uploaded:", url);
-    console.log("Updated imageSrc:", newImageSrc);
+    console.log("Updated images:", newImageSrc);
   };
 
   const handleImageDelete = (index: number) => {
@@ -42,10 +41,10 @@ const StepSix: React.FC<StepSixProps> = ({
     }
     setImageSrc(newImageSrc);
     console.log("Image deleted at index:", index);
-    console.log("Updated imageSrc:", newImageSrc);
+    console.log("Updated images:", newImageSrc);
   };
 
-  console.log("Current imageSrc:", imageSrc);
+  console.log("Current images:", imageSrc);
 
   return (
     <div className="flex flex-col gap-4 min-h-screen fade-in pt-[10%]">

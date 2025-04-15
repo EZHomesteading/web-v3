@@ -46,7 +46,7 @@ export type Dispute = {
       createdAt: Date;
       email: string;
       fullName: fullName | null;
-      phoneNumber: string | null;
+      phone: string | null;
       role: $Enums.UserRole;
     } | null;
     seller: {
@@ -54,7 +54,7 @@ export type Dispute = {
       createdAt: Date;
       email: string;
       fullName: fullName | null;
-      phoneNumber: string | null;
+      phone: string | null;
       role: $Enums.UserRole;
     } | null;
   };
@@ -236,7 +236,7 @@ const DisputeComponent = ({ disputes }: p) => {
                     className={`${outfit.className} rounded-lg text-black p-2 sheet`}
                   >
                     <p>Email: {dispute.order.buyer.email}</p>
-                    <p>Phone: {dispute.order.buyer.phoneNumber}</p>
+                    <p>Phone: {dispute.order.buyer.phone}</p>
                     <p>
                       Joined:{" "}
                       {formatDistanceToNow(
@@ -260,7 +260,7 @@ const DisputeComponent = ({ disputes }: p) => {
                     className={`${outfit.className} rounded-lg text-black p-2 sheet`}
                   >
                     <p>Email: {dispute?.order?.seller?.email}</p>
-                    <p>Phone: {dispute?.order?.seller?.phoneNumber}</p>
+                    <p>Phone: {dispute?.order?.seller?.phone}</p>
                     <p>
                       Joined:{" "}
                       {formatDistanceToNow(
@@ -287,7 +287,7 @@ const DisputeComponent = ({ disputes }: p) => {
                     className={`${outfit.className} rounded-lg text-black p-2 sheet`}
                   >
                     <p>Email: {dispute.order.seller?.email}</p>
-                    <p>Phone: {dispute.order.seller?.phoneNumber}</p>
+                    <p>Phone: {dispute.order.seller?.phone}</p>
                     <p>
                       Joined:{" "}
                       {formatDistanceToNow(
@@ -311,7 +311,7 @@ const DisputeComponent = ({ disputes }: p) => {
                     className={`${outfit.className} rounded-lg text-black p-2 sheet`}
                   >
                     <p>Email: {dispute.order.buyer?.email}</p>
-                    <p>Phone: {dispute.order.buyer?.phoneNumber}</p>
+                    <p>Phone: {dispute.order.buyer?.phone}</p>
                     <p>
                       Joined:{" "}
                       {formatDistanceToNow(

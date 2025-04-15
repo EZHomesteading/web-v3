@@ -153,11 +153,11 @@ export default async function ListingPage({
                   className={`flex items-center justify-start space-x-1 text-sm mb-3`}
                 >
                   <div>
-                    {listing.stock} {listing.quantityType} remaining
+                    {listing.stock} {listing.unit} remaining
                   </div>
                   <div className={`bg-black h-1 w-1 rounded-full`} />
                   <div>
-                    ${listing.price} per {listing.quantityType}
+                    ${listing.price} per {listing.unit}
                   </div>
                 </div>
                 <Link
@@ -171,7 +171,7 @@ export default async function ListingPage({
                   />
                   <div className={`flex flex-col items-center `}>
                     <div className={`text-xl`}>
-                      {listing.location?.displayName || listing.user.name}
+                      {listing.location?.name || listing.user.name}
                     </div>
                     <div>{listing.user?.fullName?.first}</div>
                   </div>

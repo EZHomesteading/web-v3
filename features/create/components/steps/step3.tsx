@@ -29,7 +29,7 @@ const outfit = Outfit({
 
 interface StepThreeProps {
   role: string;
-  quantityType: QuantityTypeValue | undefined;
+  unit: QuantityTypeValue | undefined;
   setQuantityType: (value: QuantityTypeValue | undefined) => void;
   postSODT: boolean;
   handleSODTCheckboxChange: (checked: boolean, index: number) => void;
@@ -44,10 +44,7 @@ interface StepThreeProps {
   //setHarvestDates: (newDates: string[]) => void;
 }
 
-const StepThree: React.FC<StepThreeProps> = ({
-  role,
-  title,
-  quantityType,
+const StepThree: React.FC<StepThreeProps> = (unit:
   setQuantityType,
   postSODT,
   handleSODTCheckboxChange,
@@ -177,7 +174,7 @@ const StepThree: React.FC<StepThreeProps> = ({
 
             <div className="relative">
               <UnitSelect
-                value={quantityType}
+                value=unit:
                 onChange={(value) => {
                   setQuantityType(value);
                   if (value) {
