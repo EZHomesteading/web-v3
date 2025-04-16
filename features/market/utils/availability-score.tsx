@@ -1,4 +1,4 @@
-import {getTextColor,  getColor } from "@/utils/avail-score-handlers";
+import { getTextColor, getColor } from "@/utils/avail-score-handlers";
 import { OutfitFont } from "../../../components/fonts";
 import { Clock } from "lucide-react";
 

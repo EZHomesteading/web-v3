@@ -14,7 +14,7 @@ export interface DayHours {
 export interface LocationHours {
   // [key: string]: DayHours[] | undefined;
   pickup?: Availability[];
-  delivery?: Availability[]
+  delivery?: Availability[];
 }
 
 export interface ScoreResult {
@@ -31,7 +31,7 @@ export interface ScoreResult {
 }
 
 export const getColor = (score: number) => {
-	console.log(score, "score in get color")
+  console.log(score, "score in get color");
   switch (score) {
     case 3:
       return "bg-green-500";
@@ -44,9 +44,8 @@ export const getColor = (score: number) => {
   }
 };
 
-
 export const getTextColor = (score: number) => {
-	console.log(score, "score in get color")
+  console.log(score, "score in get color");
   switch (score) {
     case 3:
       return "text-green-500";
@@ -59,9 +58,7 @@ export const getTextColor = (score: number) => {
   }
 };
 
-export function calculateAvailabilityScores(
-  hours: Hours
-): ScoreResult {
+export function calculateAvailabilityScores(hours: Hours): ScoreResult {
   return {
     pickup: calculateServiceScores(hours.pickup || []),
     delivery: calculateServiceScores(hours.delivery || []),
@@ -72,7 +69,6 @@ function calculateServiceScores(hours: Availability[]) {
   let workingmanScore = 0;
   let retireeScore = 0;
   hours.forEach((hour) => {
-
     if (!hour.timeSlots) return;
 
     const dayOfWeek = new Date(hour.date).getDay();
