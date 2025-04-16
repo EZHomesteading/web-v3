@@ -4,17 +4,18 @@ import { toast } from "sonner";
 import { PiTrashThin } from "react-icons/pi";
 import {
   checkOverlap,
-  convertMinutesToTimeString,
   convertTimeStringToMinutes,
 } from "@/features/availability-calendar/utils/helper-functions-calendar";
 import TimePicker from "@/features/availability-calendar/utils/time-slot";
-import { LocationObj } from "location-types";
+
 import OnboardContainer from "../main/onboard.container";
+import { Location } from "@/types";
+import { convertMinutesToTimeString } from "@/utils/time-managers";
 interface StepSixProps {
   user: any;
-  updateFormData: (newData: { location: LocationObj }) => void;
+  updateFormData: (newData: { location: Location }) => void;
   formData: string[] | undefined;
-  location?: LocationObj;
+  location?: Location;
   selectedDays: string[];
   fulfillmentStyle?: string;
   onComplete: () => void;
@@ -155,7 +156,6 @@ const StepSeven: React.FC<StepSixProps> = ({
       return {
         date: date,
         timeSlots: timeSlots,
-        capacity: null,
       };
     });
 
@@ -166,7 +166,7 @@ const StepSeven: React.FC<StepSixProps> = ({
     );
     newPickup.push(...updatedPickup);
 
-    const updatedLocation: LocationObj = {
+    const updatedLocation: Location = {
       ...location,
       hours: {
         pickup: newPickup,

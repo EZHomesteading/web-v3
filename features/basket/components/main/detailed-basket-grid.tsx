@@ -527,15 +527,9 @@ const DetailedBasketCard: React.FC<DetailedBasketCardProps> = ({
                 <div className="mt-1 text-sm font-medium text-gray-900 flex flex-row">
                   ${item.listing.price}{" "}
                   {item.listing.unit ? (
-                    <span className="ml-1">
-                      {" "}
-                      per {item.listing.unit}
-                    </span>
+                    <span className="ml-1"> per {item.listing.unit}</span>
                   ) : (
-                    <span className="ml-1">
-                      {" "}
-                      per {item.listing.subcateory}
-                    </span>
+                    <span className="ml-1"> per {item.listing.subcateory}</span>
                   )}
                 </div>
                 <div className="mt-auto">
