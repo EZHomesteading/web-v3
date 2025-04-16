@@ -19,8 +19,7 @@ export const register = async (
     return { error: "Invalid fields!" };
   }
 
-  const phone: =
-    validatedFields.data;
+  const { email, password, name, role, phone } = validatedFields.data;
 
   const hashedPassword = await bcrypt.hash(password, 10);
   const url = await generateUniqueUrl(name);
@@ -31,7 +30,9 @@ export const register = async (
   }
 
   const user = await prisma.user.create({
-    data: phone:
+    data: {
+      name,
+      email,
       password: hashedPassword,
       role: role as UserRole,
       url,
@@ -68,7 +69,7 @@ export const register = async (
   return { user: updatedUser };
 };
 
-async function generateUniqueUrl(name: string): Promise<string> {
+async function generateUniqueUrl(displayName: string): Promise<string> {
   let url = convertToUrl(displayName);
   let uniqueUrl = url;
 
@@ -132,7 +133,7 @@ async function generateUniqueUrl(name: string): Promise<string> {
   return uniqueUrl;
 }
 
-function convertToUrl(name: string): string {
+function convertToUrl(displayName: string): string {
   return displayName
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
