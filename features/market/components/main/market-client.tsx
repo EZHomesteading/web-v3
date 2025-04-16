@@ -2,47 +2,11 @@
 import { UserInfo } from "next-auth";
 import Categories from "../../utils/categories";
 import EmptyState from "@/components/EmptyState";
-import { UserRole } from "@prisma/client";
 import { MarketCard, MarketGrid } from "./market-grid";
-
-interface DayHours {
-  date: string;
-  timeSlots: TimeSlot[];
-  capacity: number;
-}
-interface TimeSlot {
-  open: number;
-  close: number;
-}
-
-export interface MarketListing {
-  id: string;
-  title: string;
-  imageSrc: string[];
-  price: number;
-  rating: number[];
-  quantityType?: string;
-  stock: number;
-  location: {
-    id: string;
-    displayName: string;
-    address: string[];
-    role: UserRole;
-    hours: {
-      pickup?: DayHours[];
-      delivery?: DayHours[];
-      [key: string]: DayHours[] | undefined;
-    };
-  } | null;
-  minOrder?: number;
-  user: {
-    id: string;
-    name: string;
-  };
-}
+import { ListingWithLocAndUser } from "@/types";
 
 interface ShopProps {
-  listings: MarketListing[];
+  listings: ListingWithLocAndUser[];
   user?: UserInfo;
   basketItemIds: any[];
   params?: string;

@@ -3,86 +3,6 @@ import prisma from "@/lib/prismadb";
 import { Location, UserRole } from "@prisma/client";
 import axios from "axios";
 
-export type FinalListing = {
-  id: string;
-  title: string;
-  price: number;
-  stock: number;
-  rating: number[];
-  reports: number | null;
-  SODT: number | null;
-  quantityType: string | null;
-  shelfLife: number;
-  harvestFeatures: boolean | null;
-  projectedStock: number | null;
-  harvestDates: string[];
-  createdAt: Date;
-  location: Location | null;
-  keyWords: string[];
-  imageSrc: string[];
-  userId: string;
-  subCategory: string;
-  minOrder: number | null;
-  review: boolean | null;
-  user: {
-    id: string;
-    name: string;
-    role: UserRole;
-  };
-};
-
-export type FinalListing1 = {
-  id: string;
-  title: string;
-  price: number;
-  stock: number;
-  rating: number[];
-  quantityType: string | null;
-  createdAt: Date;
-  location: {
-    id: string;
-    userId: string;
-    displayName: string | null;
-    type: string;
-    coordinates: number[];
-    address: string[];
-    role: UserRole;
-    isDefault: boolean;
-    showPreciseLocation: boolean;
-    createdAt: Date;
-    updatedAt: Date;
-    hours: {
-      delivery: ({
-        date: Date;
-        capacity: number | null;
-      } & {
-        timeSlots: {
-          open: number;
-          close: number;
-        }[];
-      })[];
-      pickup: ({
-        date: Date;
-        capacity: number | null;
-      } & {
-        timeSlots: {
-          open: number;
-          close: number;
-        }[];
-      })[];
-    } | null;
-  } | null;
-  keyWords: string[];
-  imageSrc: string[];
-  subCategory: string;
-  minOrder: number | null;
-  review: boolean | null;
-  user: {
-    id: string;
-    name: string;
-    role: UserRole;
-  };
-};
 interface IParams {
   listingId?: string;
 }
@@ -142,8 +62,8 @@ export async function getListingsByIdsChat(listingIds: string[]) {
         id: true,
         title: true,
         price: true,
-        imageSrc: true,
-        quantityType: true,
+        images: true,
+        unit: true,
       },
       orderBy: {
         price: "asc",
@@ -227,11 +147,11 @@ export async function getUnique(params: { id?: string }) {
         title: true,
         id: true,
         description: true,
-        imageSrc: true,
+        images: true,
         shelfLife: true,
         stock: true,
         createdAt: true,
-        quantityType: true,
+        unit: true,
         price: true,
         rating: true,
         minOrder: true,
@@ -267,6 +187,7 @@ export async function getUnique(params: { id?: string }) {
     return null;
   }
 }
+
 export async function getListingStockById(params: { listingId?: string }) {
   try {
     const { listingId } = params;
@@ -279,7 +200,7 @@ export async function getListingStockById(params: { listingId?: string }) {
       },
       select: {
         stock: true,
-        quantityType: true,
+        // unit: true,
         title: true,
       },
     });

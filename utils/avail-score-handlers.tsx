@@ -1,3 +1,5 @@
+import { Availability, Hours } from "@/types";
+
 export interface TimeSlot {
   open: number; // Hour in 24-hour format
   close: number; // Hour in 24-hour format
@@ -10,9 +12,9 @@ export interface DayHours {
 }
 
 export interface LocationHours {
-  [key: string]: DayHours[] | undefined;
-  pickup?: DayHours[];
-  delivery?: DayHours[];
+  // [key: string]: DayHours[] | undefined;
+  pickup?: Availability[];
+  delivery?: Availability[]
 }
 
 export interface ScoreResult {
@@ -29,6 +31,22 @@ export interface ScoreResult {
 }
 
 export const getColor = (score: number) => {
+	console.log(score, "score in get color")
+  switch (score) {
+    case 3:
+      return "bg-green-500";
+    case 2:
+      return "bg-yellow-500";
+    case 1:
+      return "bg-red-500";
+    default:
+      return "bg-gray-300";
+  }
+};
+
+
+export const getTextColor = (score: number) => {
+	console.log(score, "score in get color")
   switch (score) {
     case 3:
       return "text-green-500";
@@ -40,58 +58,35 @@ export const getColor = (score: number) => {
       return "text-gray-300";
   }
 };
-export function calculateAvailabilityScores(
-  hours: LocationHours | null | undefined
-): ScoreResult {
-  if (!hours) {
-    return {
-      pickup: { workingmanScore: 1, retireeScore: 1, combinedScore: 1 },
-      delivery: { workingmanScore: 1, retireeScore: 1, combinedScore: 1 },
-    };
-  }
 
+export function calculateAvailabilityScores(
+  hours: Hours
+): ScoreResult {
   return {
     pickup: calculateServiceScores(hours.pickup || []),
     delivery: calculateServiceScores(hours.delivery || []),
   };
 }
-function calculateServiceScores(hours: DayHours[]) {
-  const today = new Date();
-  const next7Days = Array.from({ length: 7 }, (_, i) => {
-    const date = new Date(today);
-    date.setDate(date.getDate() + i);
-    return date.toISOString().split("T")[0];
-  });
 
-  const relevantHours = hours.filter((hour) => {
-    const hourDate = new Date(hour.date).toISOString().split("T")[0];
-    return next7Days.includes(hourDate);
-  });
-
+function calculateServiceScores(hours: Availability[]) {
   let workingmanScore = 0;
   let retireeScore = 0;
+  hours.forEach((hour) => {
 
-  next7Days.forEach((date) => {
-    const dayHours = relevantHours.find(
-      (h) => new Date(h.date).toISOString().split("T")[0] === date
-    );
+    if (!hour.timeSlots) return;
 
-    if (!dayHours) return;
-
-    const dayOfWeek = new Date(date).getDay();
+    const dayOfWeek = new Date(hour.date).getDay();
     const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
     const isSunday = dayOfWeek === 0;
 
-    if (!dayHours.timeSlots || dayHours.timeSlots.length === 0) return;
-
     const workingCoverage = calculateTimeSlotCoverage(
-      dayHours.timeSlots,
+      hour.timeSlots,
       960,
       1200
     );
 
     const retireeCoverage = calculateTimeSlotCoverage(
-      dayHours.timeSlots,
+      hour.timeSlots,
       600,
       1200
     );

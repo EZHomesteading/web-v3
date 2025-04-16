@@ -64,7 +64,7 @@ const StackingPanelLayout: React.FC<StackingPanelLayoutProps> = async ({
     state: "",
     zip: "",
   });
-  const [displayName, setDisplayName] = useState(location?.displayName);
+  const [displayName, setDisplayName] = useState(location?.name);
   const [validDisplayName, setValidDisplayName] = useState(displayName);
   const [geoResult, setGeoResult] = useState<{
     lat: number;
@@ -268,7 +268,7 @@ const StackingPanelLayout: React.FC<StackingPanelLayoutProps> = async ({
         location: [
           {
             ...location,
-            displayName: displayName,
+            name: displayName,
           },
         ],
         locationId: location?.id,
@@ -281,7 +281,7 @@ const StackingPanelLayout: React.FC<StackingPanelLayoutProps> = async ({
 
       if (response.status === 200) {
         Toast({ message: "Updated Location Display Name" });
-        setValidDisplayName(response.data.displayName);
+        setValidDisplayName(response.data.name);
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -313,7 +313,7 @@ const StackingPanelLayout: React.FC<StackingPanelLayoutProps> = async ({
           )}
           <div className="flex flex-col justify-between">
             <LocationSelector
-              displayName={validDisplayName}
+              name={validDisplayName}
               id={id}
               address={location?.address}
               locations={locations}

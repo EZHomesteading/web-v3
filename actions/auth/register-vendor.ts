@@ -19,8 +19,7 @@ export const register = async (
     return { error: "Invalid fields!" };
   }
 
-  const { firstName, email, password, name, role, phoneNumber } =
-    validatedFields.data;
+  const { email, password, name, role, phone } = validatedFields.data;
 
   const hashedPassword = await bcrypt.hash(password, 10);
   const url = await generateUniqueUrl(name);
@@ -34,7 +33,6 @@ export const register = async (
     data: {
       name,
       email,
-      phoneNumber,
       password: hashedPassword,
       role: role as UserRole,
       url,

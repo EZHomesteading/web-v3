@@ -27,7 +27,7 @@ const SheetOverlayC = React.forwardRef<
     ref={ref}
   />
 ));
-SheetOverlayC.displayName = SheetPrimitive.Overlay.displayName;
+SheetOverlayC.name = SheetPrimitive.Overlay.name;
 
 const sheetVariants = cva(
   "fixed z-50 gap-4 bg-background py-6 shadow-lg transition ease-in-out data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:duration-300 data-[state=open]:duration-500",
@@ -144,7 +144,7 @@ const SheetContentS = React.forwardRef<
     </SheetPortalC>
   );
 });
-SheetContentS.displayName = SheetPrimitive.Content.displayName;
+SheetContentS.name = SheetPrimitive.Content.name;
 
 export {
   SheetCartC,

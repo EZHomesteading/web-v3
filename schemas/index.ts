@@ -134,7 +134,7 @@ export const RegisterVendorSchema = z
         },
         { message: "Name must contain at least 80% letters" }
       ),
-    phoneNumber: z.string().min(10).max(16),
+    phone: z.string().min(10).max(16),
     role: z.nativeEnum(UserRole),
   })
   .refine((data) => data.password === data.confirmPassword, {
@@ -180,7 +180,7 @@ export const RegisterRoleSchema = z
     name: z.string().min(1, {
       message: "Name is required",
     }),
-    phoneNumber: z.string().min(6, { message: "Phone number is required" }),
+    phone: z.string().min(6, { message: "Phone number is required" }),
     location: z.object(locationDef),
     role: z.nativeEnum(UserRole),
   })
@@ -196,7 +196,7 @@ export const UpdateSchema = z.object({
     .optional(),
   name: z.string().min(1, { message: "Name is required" }).optional(),
   email: z.string().email({ message: "Email is required" }).optional(),
-  phoneNumber: z.any().optional(),
+  phone: z.any().optional(),
   location: z.object(locationDef).optional(),
 
   role: z.nativeEnum(UserRole).optional(),

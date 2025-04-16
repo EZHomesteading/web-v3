@@ -1,4 +1,4 @@
-import { getColor } from "@/utils/avail-score-handlers";
+import {getTextColor,  getColor } from "@/utils/avail-score-handlers";
 import { OutfitFont } from "../../../components/fonts";
 import { Clock } from "lucide-react";
 
@@ -23,7 +23,7 @@ const AvailabilityScore = ({ scores, type }: AvailabilityScoreProps) => {
   return (
     <div className="flex items-center justify-between space-x-1">
       <div
-        className={`flex items-center text-xs ${getColor(
+        className={`flex items-center text-xs ${getTextColor(
           typeScores.combinedScore
         )}`}
       >
@@ -32,7 +32,7 @@ const AvailabilityScore = ({ scores, type }: AvailabilityScoreProps) => {
           {type === "pickup" ? "Pickup Availability" : "Delivery Availability"}
         </span>
       </div>
-      <div className="flex space-x-1">
+      <div className="flex flex-row space-x-1">
         {[0, 1, 2].map((dotIndex) => (
           <div
             key={dotIndex}

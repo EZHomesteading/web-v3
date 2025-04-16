@@ -26,7 +26,7 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
 
         // Extended user info
         session.user.fullName = token.fullName as fullName;
-        session.user.phoneNumber = token.phoneNumber as string | undefined;
+        session.user.phone = token.phone as string | undefined;
         session.user.image = token.image as string | undefined;
         session.user.stripeAccountId = token.stripeAccountId as
           | string
@@ -72,7 +72,7 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
         name: existingUser.name,
         email: existingUser.email,
         emailVerified: existingUser.emailVerified,
-        phoneNumber: existingUser.phoneNumber ?? undefined,
+        phone: existingUser.phone ?? undefined,
         image: existingUser.image ?? undefined,
         hasPickedRole: existingUser.hasPickedRole ?? false,
         url: existingUser.url ?? "",

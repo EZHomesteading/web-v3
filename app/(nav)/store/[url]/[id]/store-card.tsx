@@ -33,7 +33,7 @@ const StoreLocationCard = ({
         <div className="relative overflow-hidden rounded-xl w-full z-0 aspect-square">
           <Carousel className="h-full w-full relative rounded-lg z-0">
             <CarouselContent className="h-full z-0">
-              {listing.imageSrc.map((src, index) => (
+              {listing.images.map((src, index) => (
                 <CarouselItem
                   key={index}
                   className="flex items-center justify-center relative aspect-square h-full"
@@ -51,9 +51,9 @@ const StoreLocationCard = ({
                 </CarouselItem>
               ))}
             </CarouselContent>
-            {listing.imageSrc.length > 1 && (
+            {listing.images.length > 1 && (
               <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex space-x-2">
-                {listing.imageSrc.map((_, index) => (
+                {listing.images.map((_, index) => (
                   <div
                     key={index}
                     className="w-2 h-2 rounded-full bg-white opacity-90 hover:opacity-100 transition-opacity duration-200 cursor-pointer"
@@ -78,7 +78,7 @@ const StoreLocationCard = ({
         <div className="flex items-center justify-between mt-1 w-full">
           <div className={`${WorkFont.className} text-xs`}>
             <span className="font-semibold">${listing.price}</span>
-            <span className="font-light pl-1">per {listing.quantityType}</span>
+            <span className="font-light pl-1">per {listing.unit}</span>
           </div>
 
           <StarRating

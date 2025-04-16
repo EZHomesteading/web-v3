@@ -8,8 +8,8 @@ export interface StepProps {
   step: number;
   category: Category;
   setCategory: (category: Category) => void;
-  subCategory: SubCategory;
-  setSubCategory: (subCategory: SubCategory) => void;
+  subcateory: SubCategory;
+  setSubCategory: (subcateory: SubCategory) => void;
 }
 
 export interface CommonInputProps {

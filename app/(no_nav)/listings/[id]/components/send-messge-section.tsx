@@ -88,7 +88,7 @@ const SendMessageSection = ({
 
     if (quantity < listing.minOrder) {
       Toast({
-        message: `Quantity must be ${listing.minOrder} ${listing.quantityType} or more`,
+        message: `Quantity must be ${listing.minOrder} ${listing.unit} or more`,
       });
       return;
     }
@@ -121,9 +121,9 @@ const SendMessageSection = ({
       <div className="border shadow-sm mt-3 rounded-md h-fit pb-6 pt-2 px-2">
         <div className="text-xl font-semibold">Add to your Basket</div>
         <div className={`${!isInBasket && "pb-4"} flex items-center gap-x-1`}>
-          ${listing.price} per {listing.quantityType}{" "}
+          ${listing.price} per {listing.unit}{" "}
           <div className={`h-1 w-1 rounded-full bg-black`} />
-          {listing.minOrder || 1} {listing.quantityType || ""} Minimum Order
+          {listing.minOrder || 1} {listing.unit || ""} Minimum Order
         </div>
         {!isInBasket && (
           <div className="flex items-center justify-center space-x-4 relative">
@@ -174,10 +174,10 @@ const SendMessageSection = ({
         >
           {isInBasket
             ? `Remove ${quantity ? quantity : 0} ${
-                listing?.quantityType
+                listing?.unit
               } from Basket`
             : `Add ${quantity ? quantity : 0} ${
-                listing?.quantityType
+                listing?.unit
               } to Basket`}
         </button>
 

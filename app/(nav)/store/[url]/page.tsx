@@ -95,7 +95,7 @@ const StorePage = async ({ params }: StorePageProps) => {
                             className={`flex items-center justify-center gap-x-2 text-sm`}
                             key={index}
                           >
-                            {location.displayName || `Location ${index + 1}`}
+                            {location.name || `Location ${index + 1}`}
                             <div
                               className={`w-1 h-1 rouded-full bg-black rounded-full`}
                             />
@@ -139,7 +139,7 @@ const StorePage = async ({ params }: StorePageProps) => {
                     className={`flex items-center justify-center gap-x-2 text-sm`}
                     key={index}
                   >
-                    {location.displayName || `Location ${index + 1}`}
+                    {location.name || `Location ${index + 1}`}
                     <div
                       className={`w-1 h-1 rouded-full bg-black rounded-full`}
                     />

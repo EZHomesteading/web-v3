@@ -1,5 +1,4 @@
 import { UserInfo } from "next-auth";
-import { MarketListing } from "./market-client";
 import Image from "next/image";
 import {
   Carousel,
@@ -13,6 +12,8 @@ import Link from "next/link";
 
 import ClientBasketButton from "../../utils/market-toggle.client";
 import { calculateAvailabilityScores } from "@/utils/avail-score-handlers";
+import { ListingWithLocAndUser } from "@/types";
+import { formatPrice } from "@/utils/listing";
 
 const MarketGrid = ({ children }: { children: any }) => {
   return (
@@ -33,7 +34,7 @@ const MarketGrid = ({ children }: { children: any }) => {
   );
 };
 interface MarketCardProps {
-  listing: MarketListing;
+  listing: ListingWithLocAndUser;
   user?: UserInfo;
   imageCount: number;
   basketItemIds: any[];
@@ -91,7 +92,7 @@ const MarketCard = ({
           <div className="relative overflow-hidden rounded-xl w-full z-0 aspect-square">
             <Carousel className="h-full w-full relative rounded-lg z-0">
               <CarouselContent className="h-full z-0">
-                {listing?.imageSrc?.map((src, index) => (
+                {listing?.images?.map((src:string, index:number) => (
                   <CarouselItem
                     key={index}
                     className="flex items-center justify-center relative aspect-square h-full"
@@ -109,9 +110,9 @@ const MarketCard = ({
                   </CarouselItem>
                 ))}
               </CarouselContent>
-              {listing?.imageSrc?.length > 1 && (
+              {listing?.images?.length > 1 && (
                 <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex space-x-2">
-                  {listing.imageSrc.map((_, index) => (
+                  {listing.images.map((_:string, index:number) => (
                     <div
                       key={index}
                       className="w-2 h-2 rounded-full bg-white opacity-90 hover:opacity-100 transition-opacity duration-200 cursor-pointer"
@@ -124,18 +125,18 @@ const MarketCard = ({
           <div className={`mt-1 w-full ${OutfitFont.className}`}>
             <h3 className={`font-semibold`}>{listing.title}</h3>
             <h2 className={`text-xs font-normal`}>
-              {listing.location?.displayName || listing?.user?.name}
+              {listing.location.name}
             </h2>
             <p className={` text-xs font-light text-neutral-500`}>
-              {listing?.location?.address?.[1]},{" "}
-              {listing?.location?.address?.[2]}
+              {listing.location.address.state},{" "}
+              {listing.location.address.city}
             </p>
 
             <div className="flex items-center justify-between mt-2 w-full">
               <div className={`text-sm flex items-center gap-1`}>
-                <span className="font-semibold">${listing.price}</span>
+                <span className="font-semibold">{formatPrice(listing.price)}</span>
                 <span className="font-light">
-                  per {listing.quantityType ? listing.quantityType : "item"}
+                  per {listing.unit ? listing.unit: "item"}
                 </span>
               </div>
 
@@ -157,7 +158,7 @@ const MarketCard = ({
               ) : (
                 <AvailabilityScore scores={scores} type="pickup" />
               )}
-              {listing.location?.hours?.delivery?.length === 0 ? (
+              {listing.location?.hours?.delivery?.length  === 0 ? (
                 <div className="text-red-500 font-medium flex items-center text-xs">
                   <Clock size={14} className="mr-1" />{" "}
                   <span className="font-medium capitalize">

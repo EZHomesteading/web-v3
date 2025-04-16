@@ -9,7 +9,7 @@ export interface AddressFields {
   export interface FormValues extends AddressFields {
     name: string | null | undefined;
     email: string | null | undefined;
-    phoneNumber: string | undefined;
+    phone: string | undefined;
     oldPass?: string;
     newPass?: string;
     verifPass?: string;

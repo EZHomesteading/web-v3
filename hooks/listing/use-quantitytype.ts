@@ -1,58 +1,58 @@
 const quantityTypes = [
   {
-    quantityType: "lb",
+    unit: "lb",
   },
   {
-    quantityType: "oz",
+    unit: "oz",
   },
   {
-    quantityType: "pint",
+    unit: "pint",
   },
   {
-    quantityType: "quart",
+    unit: "quart",
   },
   {
-    quantityType: "gallon",
+    unit: "gallon",
   },
   {
-    quantityType: "bushel",
+    unit: "bushel",
   },
   {
-    quantityType: "peck",
+    unit: "peck",
   },
   {
-    quantityType: "crate",
+    unit: "crate",
   },
   {
-    quantityType: "basket",
+    unit: "basket",
   },
   {
-    quantityType: "bag",
+    unit: "bag",
   },
   {
-    quantityType: "box",
+    unit: "box",
   },
   {
-    quantityType: "bunch",
+    unit: "bunch",
   },
   {
-    quantityType: "dozen",
+    unit: "dozen",
   },
   {
-    quantityType: "bulb",
+    unit: "bulb",
   },
   {
-    quantityType: "each",
+    unit: "each",
   },
 
   {
-    quantityType: "none",
+    unit: "none",
   },
 ];
 
 const formattedTypes = quantityTypes.map((product) => ({
-  value: product.quantityType,
-  label: product.quantityType,
+  value: product.unit,
+  label: product.unit,
 }));
 const useQuantityTypes = () => {
   const getAll = () => formattedTypes;

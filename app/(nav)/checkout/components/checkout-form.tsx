@@ -232,7 +232,7 @@ export default function CheckoutForm({
                   <div className="flex flex-col gap-2">
                     <div className="flex items-baseline gap-4">
                       <h3 className="text-base font-semibold">
-                        {basket.location.displayName ||
+                        {basket.location.name ||
                           basket.location.user.name}
                       </h3>
                       <span className="text-sm text-gray-600">
@@ -272,7 +272,7 @@ export default function CheckoutForm({
                       <li key={item.listing.id} className="flex py-4 gap-4">
                         <div className="h-20 w-20 flex-none relative">
                           <Image
-                            src={item.listing.imageSrc[0]}
+                            src={item.listing.images[0]}
                             alt={item.listing.title}
                             fill
                             className="rounded-md object-cover"
@@ -288,8 +288,8 @@ export default function CheckoutForm({
                               </h4>
                               <p className="mt-1 text-sm text-gray-500">
                                 {item.quantity}{" "}
-                                {item.listing.quantityType ||
-                                  item.listing.subCategory}
+                                {item.listing.unit ||
+                                  item.listing.subcateory}
                               </p>
                             </div>
                             <p className="text-sm font-medium">

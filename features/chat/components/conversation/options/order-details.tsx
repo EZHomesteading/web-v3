@@ -20,7 +20,7 @@ export const OrderDetails: React.FC<OrderDetailsProps> = memo(
           >
             <div className="flex-shrink-0">
               <Image
-                src={listing.imageSrc[0] || "/placeholder.jpg"}
+                src={listing.images[0] || "/placeholder.jpg"}
                 alt={listing.title}
                 width={64}
                 height={64}
@@ -30,10 +30,10 @@ export const OrderDetails: React.FC<OrderDetailsProps> = memo(
             <div className="flex-grow">
               <p className="font-normal">{listing.title}</p>
               <p className="text-xs font-extralight text-gray-700">
-                ${listing.price} per {listing.quantityType}
+                ${listing.price} per {listing.unit}
               </p>
               <p className="text-xs font-extralight text-gray-700">
-                {getQuantity(listing.id)} {listing.quantityType} for $
+                {getQuantity(listing.id)} {listing.unit} for $
                 {(getQuantity(listing.id) || 0) * listing.price}
               </p>
             </div>

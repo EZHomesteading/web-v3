@@ -264,7 +264,7 @@ const StoreLocationBio = ({ reviews, location }: p) => {
         >
           <div className="flex flex-col items-start gap-x-2">
             <div className="font-bold text-2xl lg:text-4xl">
-              {location?.displayName}
+              {location?.name}
             </div>
 
             <div className="text-sm text-gray-600 flex items-center gap-x-1">
@@ -286,7 +286,7 @@ const StoreLocationBio = ({ reviews, location }: p) => {
             >
               <div className="flex flex-col items-start gap-x-2">
                 <div className="font-bold text-xl lg:text-2xl">
-                  {location?.displayName}
+                  {location?.name}
                 </div>
                 <div>
                   EZH{" "}

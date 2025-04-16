@@ -430,26 +430,26 @@ const getUserStore = async (params: IStoreParams): Promise<any | null> => {
         role: true,
         listings: {
           select: {
-            imageSrc: true,
+            images: true,
             title: true,
             price: true,
             minOrder: true,
             rating: true,
             id: true,
-            quantityType: true,
+            unit: true,
             location: {
               select: {
                 address: true,
               },
             },
             stock: true,
-            subCategory: true,
+            subcateory: true,
           },
         },
         locations: {
           select: {
             id: true,
-            displayName: true,
+            name: true,
             address: true,
           },
         },

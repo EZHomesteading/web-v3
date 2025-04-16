@@ -6,8 +6,6 @@ import Link from "next/link";
 import {
   PiArrowLeftThin,
   PiBasketThin,
-  PiCheckThin,
-  PiInfoThin,
 } from "react-icons/pi";
 import { auth } from "@/auth";
 import Avatar from "@/components/Avatar";
@@ -26,36 +24,36 @@ export default async function ListingPage({
   params: { id: string };
   searchParams?: { [key: string]: string | string[] | undefined };
 }) {
-  function createSearchParamsString(
-    params: Record<string, string | string[] | undefined> | null | undefined
-  ): string {
-    if (!params) return "";
+  // function createSearchParamsString(
+  //   params: Record<string, string | string[] | undefined> | null | undefined
+  // ): string {
+    // if (!params) return "";
 
-    const searchParams = new URLSearchParams();
+    // const searchParams = new URLSearchParams();
 
-    // Iterate over the object and add each valid key-value pair
-    Object.entries(params).forEach(([key, value]) => {
-      if (value !== undefined) {
-        if (Array.isArray(value)) {
-          // Handle array values
-          value.forEach((val) => {
-            searchParams.append(key, val);
-          });
-        } else if (typeof value === "string") {
-          // Handle string values
-          searchParams.append(key, value);
-        }
-        // Skip undefined or symbol values
-      }
-    });
-
-    return searchParams.toString();
-  }
+    // // Iterate over the object and add each valid key-value pair
+    // Object.entries(params).forEach(([key, value]) => {
+    //   if (value !== undefined) {
+    //     if (Array.isArray(value)) {
+    //       // Handle array values
+    //       value.forEach((val) => {
+    //         searchParams.append(key, val);
+    //       });
+    //     } else if (typeof value === "string") {
+    //       // Handle string values
+    //       searchParams.append(key, value);
+    //     }
+    //     // Skip undefined or symbol values
+    //   }
+    // });
+    //
+    // return searchParams.toString();
+  // }
 
   // Use the function in your code
-  const marketCallback = searchParams
-    ? createSearchParamsString(searchParams)
-    : "";
+  // const marketCallback = searchParams && createSearchParamsString(searchParams)
+    
+
   const session = await auth();
   try {
     const listing = await getUnique({ id: params.id });
@@ -99,6 +97,7 @@ export default async function ListingPage({
         console.error("Error fetching basket items:", error);
       }
     }
+    console.log(listing)
 
     return (
       <>
@@ -112,7 +111,8 @@ export default async function ListingPage({
             >
               <div className={`flex items-center justify-start space-x-3 `}>
                 <Link
-                  href={`/market${marketCallback && `?${marketCallback}`}`}
+                  // href={`/market${marketCallback && `?${marketCallback}`}`}
+		  href="/"
                   prefetch={true}
                   className={`rounded-full border text-black p-3`}
                 >
@@ -147,17 +147,17 @@ export default async function ListingPage({
                   {listing.title}
                 </div>
                 <div className={`text-sm sm:text-2xl mt-[-5px]`}>
-                  {listing.location?.address[1]}, {listing.location?.address[2]}
+                  {listing.location.address.city}, {listing.location.address.state}
                 </div>
                 <div
                   className={`flex items-center justify-start space-x-1 text-sm mb-3`}
                 >
                   <div>
-                    {listing.stock} {listing.quantityType} remaining
+                    {listing.stock} {listing.unit} remaining
                   </div>
                   <div className={`bg-black h-1 w-1 rounded-full`} />
                   <div>
-                    ${listing.price} per {listing.quantityType}
+                    ${listing.price} per {listing.unit}
                   </div>
                 </div>
                 <Link
@@ -171,7 +171,7 @@ export default async function ListingPage({
                   />
                   <div className={`flex flex-col items-center `}>
                     <div className={`text-xl`}>
-                      {listing.location?.displayName || listing.user.name}
+                      {listing.location?.name || listing.user.name}
                     </div>
                     <div>{listing.user?.fullName?.first}</div>
                   </div>

@@ -119,7 +119,7 @@ const getFullChatData = async (
           select: {
             id: true,
             userId: true,
-            displayName: true,
+            name: true,
             type: true,
             coordinates: true,
             address: true,
@@ -145,7 +145,7 @@ const getFullChatData = async (
           select: {
             id: true,
             userId: true,
-            displayName: true,
+            name: true,
             type: true,
             coordinates: true,
             address: true,
@@ -196,8 +196,8 @@ const getFullChatData = async (
               id: true,
               title: true,
               price: true,
-              quantityType: true,
-              imageSrc: true,
+              unit: true,
+              images: true,
             },
           })
         : [];
@@ -219,7 +219,7 @@ const getFullChatData = async (
         id: user.id,
         name: user.name,
         role: user.role,
-        phoneNumber: user.phoneNumber || undefined,
+        phone: user.phone || undefined,
         email: user.email,
         url: user.url || undefined,
         location: null, // Add this if it's required by your ChatUser type
