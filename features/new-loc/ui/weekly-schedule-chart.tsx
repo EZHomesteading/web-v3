@@ -1,8 +1,8 @@
-import { LocationObj } from "location-types";
+import { Location } from "@/types";
 import { useEffect, useRef } from "react";
 
 interface p {
-  location?: LocationObj;
+  location?: Location;
   handleDayClick?: any;
   showSubTitle?: boolean;
   bgColor?: string;

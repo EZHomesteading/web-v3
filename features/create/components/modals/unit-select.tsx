@@ -1,20 +1,21 @@
 "use client";
 
 import Select from "react-select";
-import useQuantityTypes from "@/hooks/listing/use-quantitytype";
+import useunits from "@/hooks/listing/use-unit";
 
-export type QuantityTypeValue = {
+export type unitValue = {
   unit: string;
   value: string;
+  label?: string; // Add label to match react-select's expected format
 };
 
 interface ProductSelectProps {
-  value?: QuantityTypeValue;
-  onChange: (value: QuantityTypeValue) => void;
+  value?: unitValue;
+  onChange: (value: unitValue | undefined) => void; // Allow undefined as input
 }
 
 const UnitSelect: React.FC<ProductSelectProps> = ({ value, onChange }) => {
-  const { getAll } = useQuantityTypes();
+  const { getAll } = useunits();
 
   return (
     <div className="relative peer">
@@ -22,9 +23,7 @@ const UnitSelect: React.FC<ProductSelectProps> = ({ value, onChange }) => {
         placeholder="Unit"
         options={getAll()}
         value={value}
-        onChange={(value: QuantityTypeValue) =>
-          onChange(value as QuantityTypeValue)
-        }
+        onChange={(newValue) => onChange(newValue as unitValue)}
         formatOptionLabel={(option: any) => (
           <div className="rounded-lg text-black">{option.label}</div>
         )}
@@ -71,6 +70,7 @@ const UnitSelect: React.FC<ProductSelectProps> = ({ value, onChange }) => {
             neutral80: "black",
           },
         })}
+        isClearable={true} // Allow clearing the selection
       />
     </div>
   );

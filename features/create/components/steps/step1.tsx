@@ -1,3 +1,4 @@
+"use client";
 import { Card, CardContent } from "../../../../components/ui/card";
 import {
   GiAppleCore,
@@ -31,6 +32,7 @@ import {
 } from "react-icons/gi";
 import { FaTools } from "react-icons/fa";
 import { IoFastFoodOutline } from "react-icons/io5";
+import { category } from "../../types/create";
 // import NotSureModal from "../notSureModal";
 export type Category =
   | "unprocessed-produce"
@@ -38,7 +40,7 @@ export type Category =
   | "durables"
   | "dairy-meat"
   | "";
-type SubCategory = string;
+type subcategory = string;
 
 interface CategoryCardProps {
   icon: React.ReactNode;
@@ -56,18 +58,17 @@ interface SubCategoryCardProps {
 
 interface CategorySelectionProps {
   category: Category;
-
-  setCategory: (category: Category) => void;
+  setcategory: (category: Category) => void;
   onGoBack: () => void;
 }
 
 interface SubCategorySelectionProps {
-  category: Category;
-  subcateory: SubCategory;
-  setSubCategory: (subcateory: SubCategory) => void;
+  category: category;
+  subcategory: subcategory;
+  setsubcategory: (subcateory: subcategory) => void;
   onGoBack: () => void;
 }
-const subCategoryIcons: Record<string, React.ReactNode> = {
+const subcategoryIcons: Record<string, React.ReactNode> = {
   fruit: <GiAppleCore size={30} />,
   vegetables: <GiCarrot size={30} />,
   nuts: <GiCoconuts size={30} />,
@@ -178,7 +179,7 @@ const SubCategoryCard: React.FC<SubCategoryCardProps> = ({
   >
     <CardContent className={`rounded-xl p-4 flex justify-between items-center`}>
       <div className="text-lg font-extralight">{capitalizeWords(title)}</div>
-      <div className="mb-1">{subCategoryIcons[title]}</div>
+      <div className="mb-1">{subcategoryIcons[title]}</div>
     </CardContent>
   </Card>
 );
@@ -193,8 +194,7 @@ const GoBackButton: React.FC<{ onClick: () => void }> = ({ onClick }) => (
 );
 
 const CategorySelection: React.FC<CategorySelectionProps> = ({
-  category,
-  setCategory,
+  setcategory,
   onGoBack,
 }) => (
   <div className="w-full max-w-[1000px] mx-auto">
@@ -204,32 +204,34 @@ const CategorySelection: React.FC<CategorySelectionProps> = ({
         icon={<CiApple size={40} />}
         title="Unprocessed Produce"
         description="Apples, Peaches & Tomatoes"
-        onClick={() => setCategory("unprocessed-produce")}
+        onClick={() => setcategory("unprocessed-produce")}
       />
       <CategoryCard
         icon={<CiHome size={40} />}
         title="Homemade"
         description="Apple Pie & Beeswax Candles"
-        onClick={() => setCategory("homemade")}
+        onClick={() => setcategory("homemade")}
       />
       <CategoryCard
         icon={<GiRopeCoil size={40} />}
         title="Durables"
         description="Canned Food & Solar Panels"
-        onClick={() => setCategory("durables")}
+        onClick={() => setcategory("durables")}
       />
       <CategoryCard
         icon={<LuBeef size={40} />}
         title="Dairy & Meat"
         description="Milk Shares & Free-Range Chicken"
-        onClick={() => setCategory("dairy-meat")}
+        onClick={() => setcategory("dairy-meat")}
       />
     </div>
   </div>
 );
 
-const SubCategorySelection: React.FC<SubCategorySelectionProps> = (subcateory:
-  setSubCategory,
+const SubCategorySelection: React.FC<SubCategorySelectionProps> = ({
+  category,
+  subcategory,
+  setsubcategory,
   onGoBack,
 }) => {
   if (!isValidCategory(category)) {
@@ -240,12 +242,12 @@ const SubCategorySelection: React.FC<SubCategorySelectionProps> = (subcateory:
     <div className="w-full max-w-[1000px] mx-auto">
       <GoBackButton onClick={onGoBack} />
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 w-full">
-        {subCategories[category].map((sub) => (
+        {subCategories[category].map((sub: string) => (
           <SubCategoryCard
             key={sub}
             title={sub.replace("-", " ")}
-            isSelected={subCategory === sub}
-            onClick={() => setSubCategory(sub)}
+            isSelected={subcategory === sub}
+            onClick={() => setsubcategory(sub)}
             icon
           />
         ))}
@@ -258,27 +260,30 @@ interface ProductCategorySelectionProps {
   step: number;
   category: Category;
   handlePrevious: () => void;
-  setCategory: (category: Category) => void;
-  subcateory: SubCategory;
-  setSubCategory: (subcateory: SubCategory) => void;
+  setcategory: (category: Category) => void;
+  subcategory: subcategory;
+  setsubcategory: (subcateory: subcategory) => void;
 }
 
-const ProductCategorySelection: React.FC<ProductCategorySelectionProps> = (subcateory:
+const ProductCategorySelection: React.FC<ProductCategorySelectionProps> = ({
+  subcategory,
+  category,
   handlePrevious,
-  setSubCategory,
+  setsubcategory,
+  setcategory,
 }) => {
   return (
     <div className="flex  justify-center items-start min-h-screen w-full">
       <div className="flex flex-col gap-5 fade-in  w-full max-w-[700px] px-4">
         <p className="text-xl w-full font-light m-0 !leading-0 mb-2 px-2 text-center">
-          Select a {category !== "" ? <>Subcategory</> : <>Category</>} for your
-          Product
+          Select a {subcategory !== "" ? <>subcategory</> : <>Category</>} for
+          your Product
         </p>
         <div className="w-full px-2">
           {!category ? (
             <CategorySelection
               category={category}
-              setCategory={setCategory}
+              setcategory={setcategory}
               onGoBack={() => {
                 handlePrevious();
               }}
@@ -286,11 +291,11 @@ const ProductCategorySelection: React.FC<ProductCategorySelectionProps> = (subca
           ) : (
             <SubCategorySelection
               category={category}
-              subcateory=subcateory:
-              setSubCategory={setSubCategory}
+              subcategory={subcategory}
+              setsubcategory={setsubcategory}
               onGoBack={() => {
-                setCategory("");
-                setSubCategory("");
+                setcategory("");
+                setsubcategory("");
               }}
             />
           )}

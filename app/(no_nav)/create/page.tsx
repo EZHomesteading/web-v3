@@ -4,6 +4,7 @@ import CreatePopup from "@/app/(nav)/info-modals/create-info-modal";
 import { getUserLocations } from "@/actions/getLocations";
 import { auth } from "@/auth";
 import { UserRole } from "@prisma/client";
+import { redirect } from "next/navigation";
 
 export const viewport: Viewport = {
   themeColor: "#fff",
@@ -17,7 +18,7 @@ const Page = async ({
   const resolvedparams = await searchParams;
   const session = await auth();
   if (!session) {
-    window.location.replace("/");
+    redirect("/");
   }
   let locations = await getUserLocations({ userId: session?.user?.id });
 

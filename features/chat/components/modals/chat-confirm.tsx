@@ -2,7 +2,7 @@
 
 import { Dialog } from "@headlessui/react";
 import Modal from "@/features/chat/components/modals/modal";
-import Button from "@/features/chat/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { CommonInputProps } from "@/features/create/types/create";
 import { FieldValues, useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
@@ -95,11 +95,11 @@ const ChatConfirmModal: React.FC<ConfirmModalProps> = ({
       </div>
 
       <div className="mt-5 flex justify-between w-full">
-        <Button danger onClick={onCancel} disabled={isLoading}>
+        <Button onClick={onCancel} disabled={isLoading}>
           Cancel
         </Button>
 
-        <Button secondary onClick={handleConfirm} disabled={isLoading}>
+        <Button onClick={handleConfirm} disabled={isLoading}>
           {isLoading ? "Confirming..." : "Confirm"}
         </Button>
       </div>
