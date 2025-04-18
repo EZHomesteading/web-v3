@@ -1,27 +1,23 @@
 import { UserRole } from "@prisma/client";
-<<<<<<< HEAD
 
 export enum LocRole {
   COOP = "COOP",
   PRODUCER = "PRODUCER",
 }
-=======
->>>>>>> main
 
 export type Location = {
-  //mandatory
   id: string;
   userId: string;
-  type: string; // "Point"
+  type: string;
   coordinates: Coordinates;
   address: Address;
-  name: string; // if (!location.name) use user name in things like market page
+  name: string;
   role: UserRole;
   bio: string;
-  hours: Hours | null; // nullable to easily check if a user has hours but ensure its not undefined
-  SODT: number | null; // nullable to differeniate between who has and hasnt set SODT, and if its null set it a default value when another user tries to buy like 24 hours
+  hours: Hours | null;
+  SODT: number | null;
   isDefault: boolean;
-  image: string | null; // if (!location.image) use user.image in things like market page
+  image: string | null;
   createdAt: Date;
   updatedAt: Date;
 };
@@ -62,3 +58,24 @@ export type LocationObj = {
   role: UserRole;
   isDefault: boolean;
 };
+
+export interface AddressFields {
+  street: string;
+  city: string;
+  state: string;
+  zip: string;
+  apt?: string;
+}
+
+export interface FormValues extends AddressFields {
+  name: string | null | undefined;
+  email: string | null | undefined;
+  phone: string | undefined;
+  oldPass?: string;
+  newPass?: string;
+  verifPass?: string;
+  id?: string;
+  url?: string;
+  location?: any;
+  image?: string;
+}
