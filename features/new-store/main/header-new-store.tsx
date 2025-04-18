@@ -1,5 +1,5 @@
 import { OutfitFont } from "@/components/fonts";
-import { NewStoreFormData } from "../utils/utils";
+import { NewStoreFormData } from "../utils";
 
 export default function HeaderNewStore({
   step,

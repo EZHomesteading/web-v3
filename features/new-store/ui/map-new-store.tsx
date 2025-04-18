@@ -42,7 +42,6 @@ const MapNewStore = ({
   wishlistStyle,
   proposedLoc,
 }: MapProps) => {
-  console.log(proposedLoc);
   const [address, setAddress] = useState("");
   const [currentCenter, setCurrentCenter] =
     useState<google.maps.LatLngLiteral>(center);

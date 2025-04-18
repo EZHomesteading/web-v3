@@ -1,7 +1,7 @@
 import { Dispatch, SetStateAction } from "react";
 import { NewStoreCoreProps, ValidateFormDataNewStore } from "../utils";
 import { OutfitFont } from "@/components/fonts";
-import ActionButtonsNewStore from "./action-buttons-new-store";
+import ActionButtonsNewStore from "../ui/action-buttons-new-store";
 
 interface FooterProps extends NewStoreCoreProps {
   step: number;
