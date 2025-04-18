@@ -1,50 +1,48 @@
-//onboarding parent element
 import { Viewport } from "next";
 import authCache from "@/auth-cache";
 import Link from "next/link";
 import { OutfitFont } from "@/components/fonts";
-import { Location } from "@prisma/client";
 import NewLocHours from "@/features/new-loc/main/new-loc-hours.client";
 import { getUserLocations } from "@/actions/getLocations";
+import { Location } from "@/types/location";
 
 export const viewport: Viewport = {
   themeColor: "#fff",
 };
 
-const apiKey = process.env.MAPS_KEY;
+const apiKey = process.env.MAPS_KEY!;
 
 const Page = async () => {
   const session = await authCache();
-  if (!session?.user.id) {
+
+  if (!session) {
     return;
   }
+
   const locations = await getUserLocations({
     userId: session?.user.id,
   });
 
-  if (!apiKey) {
-    return;
-  }
   const getLocationTitle = (location: Location, index: number) => {
     if (location?.isDefault) return "Edit Default Location";
     if (index === 1) return "Edit Second Location";
     if (index === 2) return "Edit Third Location";
     return "Edit Other Location";
   };
+
   let index = 1;
 
   const sortedLocations = locations
     ? [...locations].sort((a, b) => {
-        if (a.isDefault) return -1;
-        if (b.isDefault) return 1;
-        return 0;
-      })
+      if (a.isDefault) return -1;
+      if (b.isDefault) return 1;
+      return 0;
+    })
     : [];
 
   return (
     <>
       {locations && Array.isArray(locations) && locations?.length < 3 ? (
-        // > 3
         <>
           {session?.user && (
             <NewLocHours
@@ -76,7 +74,7 @@ const Page = async () => {
               <span className="font-semibold">
                 {getLocationTitle(location, index)}
               </span>
-              {location?.address[0]}
+              {location.address.street}
             </Link>
           ))}
         </div>
