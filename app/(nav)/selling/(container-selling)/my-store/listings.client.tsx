@@ -7,14 +7,15 @@ import Heading from "@/components/Heading";
 import ListingCard from "./listing-card-dash";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { FinalListing } from "@/actions/getListings";
+
 import { AlertCircle } from "lucide-react";
 import { UserInfo } from "next-auth";
 import Toast from "@/components/ui/toast";
+import { Listing } from "@/types";
 
 interface ListingsClientProps {
   canReceivePayouts: boolean;
-  listings: FinalListing[];
+  listings: Listing[];
   user: UserInfo | null;
   orderQuantities: {
     listingId: any;
@@ -29,12 +30,12 @@ const ListingsClient: React.FC<ListingsClientProps> = ({
   canReceivePayouts,
 }) => {
   // Function to filter out listings with harvestFeatures set to true
-  function filterOutHarvestFeatures(listings: FinalListing[]): FinalListing[] {
+  function filterOutHarvestFeatures(listings: Listing[]): Listing[] {
     return listings.filter((listing) => !listing.harvestFeatures);
   }
 
   // Function to return only listings with harvestFeatures set to true
-  function getOnlyHarvestFeatures(listings: FinalListing[]): FinalListing[] {
+  function getOnlyHarvestFeatures(listings: Listing[]): Listing[] {
     return listings.filter((listing) => listing.harvestFeatures);
   }
 
@@ -167,10 +168,10 @@ const ListingsClient: React.FC<ListingsClientProps> = ({
             gap-8
           "
           >
-            {listingMap.map((listing: FinalListing) => (
+            {listingMap.map((listing: Listing) => (
               <ListingCard
                 orderQuantities={orderQuantities}
-                review={listing.review}
+                //review={listing.review}
                 key={listing.id}
                 data={listing}
                 actionId={listing.id}

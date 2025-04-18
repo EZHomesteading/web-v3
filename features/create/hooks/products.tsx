@@ -1,3 +1,4 @@
+"use client";
 const defaultProducts = [
   {
     title: "Beefsteak Tomatoes",

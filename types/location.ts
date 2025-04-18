@@ -1,16 +1,19 @@
 import { UserRole } from "@prisma/client";
+<<<<<<< HEAD
 
 export enum LocRole {
   COOP = "COOP",
   PRODUCER = "PRODUCER",
 }
+=======
+>>>>>>> main
 
 export type Location = {
   //mandatory
   id: string;
   userId: string;
   type: string; // "Point"
-  coordinates: number[];
+  coordinates: Coordinates;
   address: Address;
   name: string; // if (!location.name) use user name in things like market page
   role: UserRole;
@@ -44,4 +47,18 @@ export type Address = {
   city: string;
   state: string;
   zip: string;
+};
+
+export type Coordinates = {
+  lat: number;
+  lng: number;
+};
+
+export type LocationObj = {
+  type: string;
+  coordinates: Coordinates;
+  address: Address;
+  hours?: Hours;
+  role: UserRole;
+  isDefault: boolean;
 };

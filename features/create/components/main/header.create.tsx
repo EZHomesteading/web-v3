@@ -1,3 +1,4 @@
+"use client";
 import { OutfitFont } from "@/components/fonts";
 import { useState, useEffect, Dispatch, SetStateAction } from "react";
 

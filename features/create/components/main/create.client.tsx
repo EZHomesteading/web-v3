@@ -4,16 +4,16 @@ import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { UserInfo } from "next-auth";
 import { Button } from "@/components/ui/button";
 import {
-  Category,
+  category,
   CommonInputProps,
   InputProps,
-  SubCategory,
+  subcategory,
 } from "@/features/create/types/create";
 import { Progress } from "../../../../components/ui/progress";
 import axios from "axios";
 import { ReactNode, useEffect, useState, useCallback, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import { QuantityTypeValue } from "../modals/unit-select";
+import { unitValue } from "../modals/unit-select";
 import { addDays, format } from "date-fns";
 import StepOne from "../steps/step1";
 import StepTwo from "../steps/step2";
@@ -54,11 +54,9 @@ const CreateClient: React.FC<Props> = ({
   const [checkbox4Checked, setCheckbox4Checked] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [step, setStep] = useState<number>(1);
-  const [quantityType, setQuantityType] = useState<
-    QuantityTypeValue | undefined
-  >(undefined);
-  const [category, setCategory] = useState<Category>("");
-  const [subCategory, setSubCategory] = useState<SubCategory>("");
+  const [unit, setunit] = useState<unitValue | undefined>(undefined);
+  const [category, setcategory] = useState<category>("");
+  const [subcategory, setsubcategory] = useState<subcategory>("");
   const [projectHarvest, setProjectHarvest] = useState<boolean>(true);
   const [description, setDescription] = useState<string>("");
   const [title, setTitle] = useState<string>("");
@@ -68,7 +66,7 @@ const CreateClient: React.FC<Props> = ({
   const [selectedLoc, setSelectedLoc] = useState<Location | undefined>(
     defaultLocation
   );
-  const [imageSrc, setImageSrc] = useState<string[]>([]);
+  const [image, setimage] = useState<string[]>([]);
   const [imageStates, setImageStates] = useState<ImageState[]>(
     [...Array(3)].map(() => ({
       isHovered: false,
@@ -90,12 +88,12 @@ const CreateClient: React.FC<Props> = ({
     defaultValues: {
       sodt: user?.SODT,
       category: "",
-      subcateory: "",
+      subcategory: "",
       locationId: defaultLocation?.id,
       locationRole: "",
       stock: "",
       projectedStock: "",
-      unit: "",
+      unit: null, // Changed from empty string to null to match UnitSelect's behavior
       images: [],
       price: "",
       title: "",
@@ -112,7 +110,7 @@ const CreateClient: React.FC<Props> = ({
 
   const formLocationId = watch("locationId");
   const formLocationRole = watch("locationRole");
-  const subcat = watch("subCategory");
+  const formUnit = watch("unit");
   const formTitle = watch("title");
   const shelfLifeDays = watch("shelfLifeDays");
   const shelfLifeWeeks = watch("shelfLifeWeeks");
@@ -173,14 +171,14 @@ const CreateClient: React.FC<Props> = ({
     if (step === 1 && !selectedLoc) {
       return true;
     }
-    if (step === 2 && (!category || !subCategory)) {
+    if (step === 2 && (!category || !subcategory)) {
       return true;
     }
     if (step === 3 && (!title || !description)) {
       return true;
     }
     return false;
-  }, [step, selectedLoc, category, subCategory, title, description]);
+  }, [step, selectedLoc, category, subcategory, title, description]);
 
   // Memoized callback functions
   const setCustomValue = useCallback(
@@ -195,8 +193,8 @@ const CreateClient: React.FC<Props> = ({
   );
 
   const handleCustomTitleSet = useCallback((): void => {
-    setImageSrc([]);
-    setValue("imageSrc", []);
+    setimage([]);
+    setValue("image", []);
   }, [setValue]);
 
   const handleCheckboxChange = useCallback(
@@ -445,12 +443,9 @@ const CreateClient: React.FC<Props> = ({
         title: title,
         SODT: parseInt(data.sodt),
         description: description,
-        images: imageSrc,
+        images: image,
         category: category,
-        unit:
-          data.unit === "none" || data.unit === "each"
-            ? ""
-            : data.unit,
+        unit: data.unit === "none" || data.unit === "each" ? "" : data.unit,
         stock: projectHarvest === false ? 0 : parseInt(data.stock, 10),
         shelfLife: shelfLife,
         minOrder: parseInt(data.minOrder),
@@ -459,7 +454,7 @@ const CreateClient: React.FC<Props> = ({
           projectHarvest === false ? parseInt(data.projectedStock) : null,
         harvestFeatures: projectHarvest === false ? true : null,
         price: formattedPrice,
-        subcateory: subCategory,
+        subcategory: subcategory,
         rating: rating,
         review: review === true ? true : null,
         reports: review === true ? 1 : null,
@@ -477,12 +472,12 @@ const CreateClient: React.FC<Props> = ({
 
         [
           "category",
-          "subCategory",
+          "subcategory",
           "locationId",
           "locationRole",
           "stock",
-          "quantityType",
-          "imageSrc",
+          "unit",
+          "image",
           "price",
           "title",
           "description",
@@ -504,6 +499,8 @@ const CreateClient: React.FC<Props> = ({
               ? 1
               : field === "sodt"
               ? 60
+              : field === "unit" // Handle unit differently
+              ? null
               : ""
           )
         );
@@ -511,7 +508,7 @@ const CreateClient: React.FC<Props> = ({
         setRating([]);
         setTags([]);
         setCertificationChecked(false);
-        setQuantityType(undefined);
+        setunit(undefined);
 
         router.push("/selling/my-store");
 
@@ -533,9 +530,9 @@ const CreateClient: React.FC<Props> = ({
       tags,
       title,
       description,
-      imageSrc,
+      image,
       category,
-      subCategory,
+      subcategory,
       projectHarvest,
       rating,
       review,
@@ -554,7 +551,7 @@ const CreateClient: React.FC<Props> = ({
       ],
       2: [
         { condition: () => category === "", message: "Set a category!" },
-        { condition: () => subCategory === "", message: "Set a Subcategory!" },
+        { condition: () => subcategory === "", message: "Set a subcategory!" },
       ],
       3: [
         {
@@ -568,7 +565,7 @@ const CreateClient: React.FC<Props> = ({
       ],
       4: [
         {
-          condition: () => !quantityType,
+          condition: () => !unit,
           message: "Please enter a unit for your listing",
         },
         {
@@ -616,7 +613,7 @@ const CreateClient: React.FC<Props> = ({
       ],
       7: [
         {
-          condition: () => Array.isArray(imageSrc) && imageSrc.length === 0,
+          condition: () => Array.isArray(image) && image.length === 0,
           message: "Please upload at least one photo",
         },
       ],
@@ -636,10 +633,10 @@ const CreateClient: React.FC<Props> = ({
     step,
     formLocationId,
     category,
-    subCategory,
+    subcategory,
     title,
     description,
-    quantityType,
+    unit,
     projectHarvest,
     minOrder,
     quantity,
@@ -650,7 +647,7 @@ const CreateClient: React.FC<Props> = ({
     shelfLifeMonths,
     shelfLifeYears,
     certificationChecked,
-    imageSrc,
+    image,
     locations,
     checkField,
     handleSubmit,
@@ -713,7 +710,10 @@ const CreateClient: React.FC<Props> = ({
       <div className="w-full fixed top-0 left-0 zmid">
         <Progress value={progress} className="w-full h-[6px] bg-gray-200" />
         {step > 0 && (
-          <CreateHeader setStep={setStep} street={selectedLoc?.address[0]} />
+          <CreateHeader
+            setStep={setStep}
+            street={selectedLoc?.address.street}
+          />
         )}
       </div>
       {/* content container */}
@@ -749,12 +749,12 @@ const CreateClient: React.FC<Props> = ({
                             {location?.name}
                           </p>
                           <p className={`text-xs text-neutral-700 font-medium`}>
-                            {location?.address[0]}
+                            {location?.address.street}
                           </p>
                         </div>
                       ) : (
                         <p className={`text-base font-medium `}>
-                          {location?.address[0]}
+                          {location?.address.street}
                         </p>
                       )}
                     </button>
@@ -801,10 +801,10 @@ const CreateClient: React.FC<Props> = ({
           <StepOne
             handlePrevious={handlePrevious}
             step={step}
-            subcateory=subcateory:
-            setSubCategory={setSubCategory}
+            subcategory={subcategory}
+            setsubcategory={setsubcategory}
             category={category}
-            setCategory={setCategory}
+            setcategory={setcategory}
           />
         )}
         {step === 3 && (
@@ -813,7 +813,7 @@ const CreateClient: React.FC<Props> = ({
             title={title}
             setValue={setValue}
             setTitle={setTitle}
-            setImageSrc={setImageSrc}
+            setimage={setimage}
             description={description}
             setDescription={setDescription}
             tag={tag}
@@ -822,7 +822,7 @@ const CreateClient: React.FC<Props> = ({
             setTags={setTags}
             buildKeyWords={buildKeyWords}
             isLoading={isLoading}
-            subcat=subcateory:
+            subcat={subcategory}
             onCustomTitleSet={handleCustomTitleSet}
           />
         )}
@@ -830,8 +830,8 @@ const CreateClient: React.FC<Props> = ({
           <StepThree
             role={formLocationRole}
             title={formTitle}
-            unit=unit:
-            setQuantityType={setQuantityType}
+            unit={formUnit}
+            setunit={setunit}
             postSODT={postSODT}
             handleSODTCheckboxChange={handleSODTCheckboxChange}
             usersodt={user?.SODT ?? null}
@@ -873,8 +873,8 @@ const CreateClient: React.FC<Props> = ({
         )}
         {step === 7 && (
           <StepSix
-            images=images:
-            setImageSrc={setImageSrc}
+            image={image}
+            setimage={setimage}
             imageStates={imageStates}
             handleMouseEnter={handleMouseEnter}
             handleMouseLeave={handleMouseLeave}

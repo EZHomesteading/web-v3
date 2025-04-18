@@ -1,12 +1,12 @@
-import { Location } from "@/types";
+import { Availability } from "@/types";
 import { useEffect, useRef } from "react";
 
 interface p {
-  location?: Location;
   handleDayClick?: any;
   showSubTitle?: boolean;
   bgColor?: string;
   fontColors?: string;
+  hours: Availability[];
   barColor?: string;
   viewBoxWidth?: number;
   viewBoxHeight?: number;
@@ -15,8 +15,8 @@ interface p {
 }
 
 const WeelkyScheduleChart = ({
-  location,
   title = "Weekly Schedule",
+  hours,
   handleDayClick,
   showSubTitle = false,
   bgColor = "#fff",
@@ -234,7 +234,7 @@ const WeelkyScheduleChart = ({
         ))}
 
         {/*time slot rects*/}
-        {location?.hours?.pickup.map(
+        {hours.map(
           (pickup: { date: { getDay: () => any }; timeSlots: any[] }) => {
             const dayIndex = pickup.date.getDay();
             const dayName = getDayNameFromSlot(dayIndex);

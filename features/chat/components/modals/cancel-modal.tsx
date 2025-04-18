@@ -6,7 +6,7 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import Modal from "@/features/chat/components/modals/modal";
-import Button from "@/features/chat/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { ChatOrder } from "chat-types";
 import Toast from "@/components/ui/toast";
 
@@ -181,10 +181,10 @@ const CancelModal: React.FC<ConfirmModalProps> = ({
         </div>
       </div>
       <div className="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse ">
-        <Button disabled={isLoading} danger onClick={onDelete}>
+        <Button disabled={isLoading} onClick={onDelete}>
           Cancel Order
         </Button>
-        <Button disabled={isLoading} secondary onClick={onClose}>
+        <Button disabled={isLoading} onClick={onClose}>
           Go back
         </Button>
       </div>

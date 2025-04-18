@@ -1,3 +1,4 @@
+"use client";
 import React, { useState, useEffect } from "react";
 import { Textarea } from "../../../../components/ui/textarea";
 import { Button } from "@/components/ui/button";
@@ -13,7 +14,7 @@ interface StepTwoProps {
   title: string;
   setTitle: (value: string) => void;
   setReview: (value: boolean) => void;
-  setImageSrc: (images: string[]) => void;
+  setimage: (images: string[]) => void;
   description: string;
   setDescription: (value: string) => void;
   tag: string;
@@ -38,7 +39,7 @@ const StepTwo: React.FC<StepTwoProps> = ({
   buildKeyWords,
   isLoading,
   subcat,
-  setImageSrc,
+  setimage,
   setReview,
   onCustomTitleSet,
   setValue,
@@ -117,12 +118,12 @@ const StepTwo: React.FC<StepTwoProps> = ({
     setProduct(value);
     if (value) {
       setTitle(value.label);
-      setImageSrc(value.photo ? [value.photo] : []);
+      setimage(value.photo ? [value.photo] : []);
       setValue("title", value.label);
     } else {
       setValue("title", "");
       setTitle("");
-      setImageSrc([]);
+      setimage([]);
     }
   };
 

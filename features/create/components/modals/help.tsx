@@ -1,4 +1,5 @@
 //help button handler
+"use client";
 import Heading from "../../../../components/Heading";
 import { Card, CardContent } from "../../../../components/ui/card";
 import {
