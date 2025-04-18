@@ -9,10 +9,10 @@ import {
   NewStoreFormData,
   ValidateFormDataNewStore,
 } from "../utils";
-import ContainerNewStore from "../ui/container-new-store";
-import RenderStepNewStore from "../ui/render-step-new-store";
-import FooterNewStore from "../ui/footer-new-store";
 import { toast } from "sonner";
+import RenderStepNewStore from "./render-step-new-store";
+import FooterNewStore from "./footer-new-store";
+import ContainerNewStore from "./container-new-store";
 
 export default function NewStoreClient({
   apiKey,
