@@ -1,15 +1,26 @@
-import { FieldErrors, FieldValues, UseFormRegister, UseFormSetValue, UseFormWatch } from "react-hook-form";
+import {
+  FieldErrors,
+  FieldValues,
+  UseFormRegister,
+  UseFormSetValue,
+  UseFormWatch,
+} from "react-hook-form";
 
-export type Category = 'unprocessed-produce' | 'homemade' | 'durables' | 'dairy-meat' | '';
-export type SubCategory = string;
+export type category =
+  | "unprocessed-produce"
+  | "homemade"
+  | "durables"
+  | "dairy-meat"
+  | "";
+export type subcategory = string;
 export type QuantityTypeValue = string | undefined;
 
 export interface StepProps {
   step: number;
-  category: Category;
-  setCategory: (category: Category) => void;
-  subcateory: SubCategory;
-  setSubCategory: (subcateory: SubCategory) => void;
+  category: category;
+  setcategory: (category: category) => void;
+  subcateory: subcategory;
+  setsubcategory: (subcateory: subcategory) => void;
 }
 
 export interface CommonInputProps {

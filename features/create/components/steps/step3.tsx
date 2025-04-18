@@ -1,3 +1,4 @@
+"use client";
 import React, { useState } from "react";
 import { Label } from "../../../../components/ui/label";
 import {
@@ -10,17 +11,12 @@ import {
 } from "@/components/ui/select";
 import { Checkbox } from "../../../../components/ui/checkbox";
 import Input from "../ui/listing-input";
-import UnitSelect, { QuantityTypeValue } from "../modals/unit-select";
+import UnitSelect, { unitValue } from "../modals/unit-select";
 import { CommonInputProps, InputProps } from "../../types/create";
 import { Outfit } from "next/font/google";
 import { PiBasketLight, PiRulerThin } from "react-icons/pi";
 import { HiOutlineExclamationTriangle } from "react-icons/hi2";
-import {
-  UseFormRegister,
-  UseFormWatch,
-  FieldValues,
-  UseFormSetValue,
-} from "react-hook-form";
+import { UseFormSetValue, FieldValues } from "react-hook-form";
 
 const outfit = Outfit({
   display: "swap",
@@ -29,8 +25,8 @@ const outfit = Outfit({
 
 interface StepThreeProps {
   role: string;
-  unit: QuantityTypeValue | undefined;
-  setQuantityType: (value: QuantityTypeValue | undefined) => void;
+  unit: unitValue | undefined;
+  setunit: (value: unitValue | undefined) => void;
   postSODT: boolean;
   handleSODTCheckboxChange: (checked: boolean, index: number) => void;
   handleProjectHarvestCheckboxChange: (checked: boolean, index: number) => void;
@@ -39,13 +35,12 @@ interface StepThreeProps {
   inputProps: InputProps;
   projectHarvest: boolean;
   setValue: UseFormSetValue<FieldValues>;
-  //harvestDates: string[];
   title: string;
-  //setHarvestDates: (newDates: string[]) => void;
 }
 
-const StepThree: React.FC<StepThreeProps> = (unit:
-  setQuantityType,
+const StepThree: React.FC<StepThreeProps> = ({
+  unit,
+  setunit,
   postSODT,
   handleSODTCheckboxChange,
   handleProjectHarvestCheckboxChange,
@@ -54,6 +49,8 @@ const StepThree: React.FC<StepThreeProps> = (unit:
   commonInputProps,
   inputProps,
   setValue,
+  title,
+  role,
 }) => {
   const [harvestDates, setHarvestDates] = useState<string[]>([]);
 
@@ -78,20 +75,33 @@ const StepThree: React.FC<StepThreeProps> = (unit:
         ? prevDates.filter((date) => date !== month)
         : [...prevDates, month];
       setValue("harvestDates", newDates);
-      console.log(newDates);
       return newDates;
     });
   };
 
-  let label = "Price";
+  // Determine the price label based on unit
+  const getPriceLabel = () => {
+    if (!unit) return "Price";
 
-  if (quantityType) {
-    if (quantityType.value === "each" || quantityType.value === "none") {
-      label = "Price per";
+    if (unit.value === "each" || unit.value === "none") {
+      return "Price per";
     } else {
-      label = `Price per ${quantityType.value}`;
+      return `Price per ${unit.value}`;
     }
-  }
+  };
+
+  // Handle unit selection
+  const handleUnitChange = (selectedUnit: unitValue | undefined) => {
+    // Update the local state
+    setunit(selectedUnit);
+
+    // Update the form value if a unit is selected, otherwise set to null
+    if (selectedUnit) {
+      setValue("unit", selectedUnit.value);
+    } else {
+      setValue("unit", null);
+    }
+  };
 
   return (
     <div className="flex flex-col gap-4 min-h-screen fade-in">
@@ -173,26 +183,18 @@ const StepThree: React.FC<StepThreeProps> = (unit:
             </div>
 
             <div className="relative">
-              <UnitSelect
-                value=unit:
-                onChange={(value) => {
-                  setQuantityType(value);
-                  if (value) {
-                    inputProps.setValue("quantityType", value.value);
-                  }
-                }}
-              />{" "}
+              <UnitSelect value={unit} onChange={handleUnitChange} />
               <PiRulerThin
                 className="text-neutral-900 absolute top-5 right-2"
                 size={25}
-              />{" "}
+              />
             </div>
           </div>
           <div className="flex flex-col gap-2 mt-2">
             <Input
               {...commonInputProps}
               id="price"
-              label={label}
+              label={getPriceLabel()}
               type="number"
               step="0.01"
               formatPrice
@@ -225,7 +227,7 @@ const StepThree: React.FC<StepThreeProps> = (unit:
               <div className="relative">
                 <Select
                   onValueChange={(value: string) => {
-                    inputProps.setValue("sodt", value);
+                    setValue("sodt", value);
                   }}
                 >
                   <div className="flex flex-col items-start gap-y-3">

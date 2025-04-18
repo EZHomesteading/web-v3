@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 import Image from "next/image";
 import { BsBucket } from "react-icons/bs";
@@ -6,45 +7,46 @@ import { CiImageOn } from "react-icons/ci";
 import { SimpleUploadButton } from "../../utils/image-upload-button";
 
 interface StepSixProps {
-  images: string[];
-  setImageSrc: (images: string[]) => void;
+  image: string[];
+  setimage: (images: string[]) => void;
   imageStates: { isHovered: boolean; isFocused: boolean }[];
   handleMouseEnter: (index: number) => void;
   handleMouseLeave: (index: number) => void;
   handleClick: (index: number) => void;
 }
 
-const StepSix: React.FC<StepSixProps> = (images:
-  setImageSrc,
+const StepSix: React.FC<StepSixProps> = ({
+  image,
+  setimage,
   imageStates,
   handleMouseEnter,
   handleMouseLeave,
   handleClick,
 }) => {
   const handleImageUpload = (url: string) => {
-    const newImageSrc = [...images];
-    const emptyIndex = newImageSrc.findIndex((src) => !src);
+    const newimage = [...image];
+    const emptyIndex = newimage.findIndex((src) => !src);
     if (emptyIndex !== -1) {
-      newImageSrc[emptyIndex] = url;
+      newimage[emptyIndex] = url;
     } else {
-      newImageSrc.push(url);
+      newimage.push(url);
     }
-    setImageSrc(newImageSrc);
+    setimage(newimage);
     console.log("Image uploaded:", url);
-    console.log("Updated images:", newImageSrc);
+    console.log("Updated images:", newimage);
   };
 
   const handleImageDelete = (index: number) => {
-    const newImageSrc = imageSrc.filter((src, i) => i !== index && src !== "");
-    while (newImageSrc.length < 3) {
-      newImageSrc.push("");
+    const newimage = image.filter((src, i) => i !== index && src !== "");
+    while (newimage.length < 3) {
+      newimage.push("");
     }
-    setImageSrc(newImageSrc);
+    setimage(newimage);
     console.log("Image deleted at index:", index);
-    console.log("Updated images:", newImageSrc);
+    console.log("Updated images:", newimage);
   };
 
-  console.log("Current images:", imageSrc);
+  console.log("Current images:", image);
 
   return (
     <div className="flex flex-col gap-4 min-h-screen fade-in pt-[10%]">
@@ -69,10 +71,10 @@ const StepSix: React.FC<StepSixProps> = (images:
                   onMouseLeave={() => handleMouseLeave(index)}
                   onClick={() => handleClick(index)}
                 >
-                  {imageSrc[index] ? (
+                  {image[index] ? (
                     <>
                       <Image
-                        src={imageSrc[index]}
+                        src={image[index]}
                         fill
                         alt={`Listing Image ${index + 1}`}
                         className="object-cover rounded-xl"

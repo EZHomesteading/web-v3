@@ -4,7 +4,7 @@ import authCache from "@/auth-cache";
 import Link from "next/link";
 import { OutfitFont } from "@/components/fonts";
 import { Location } from "@prisma/client";
-import NewLocHours from "@/features/new-loc/main/new-loc-hours.client";
+import NewLocHours from "@/features/new-loc/main/v2.client";
 import { getUserLocations } from "@/actions/getLocations";
 
 export const viewport: Viewport = {
@@ -47,12 +47,7 @@ const Page = async () => {
         // > 3
         <>
           {session?.user && (
-            <NewLocHours
-              locations={sortedLocations}
-              index={index}
-              user={session?.user}
-              apiKey={apiKey}
-            />
+            <NewLocHours user={session?.user} apiKey={apiKey} />
           )}
         </>
       ) : (
@@ -76,7 +71,7 @@ const Page = async () => {
               <span className="font-semibold">
                 {getLocationTitle(location, index)}
               </span>
-              {location?.address[0]}
+              {location?.address.street}
             </Link>
           ))}
         </div>

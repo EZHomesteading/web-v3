@@ -55,7 +55,7 @@ interface UpdateListingProps {
 
 const UpdateClient = ({ listing }: UpdateListingProps) => {
   const [isLoading, setIsLoading] = useState(false);
-  const [quantityType, setQuantityType] = useState<QuantityTypeValue>();
+  const [unit, setUnit] = useState<QuantityTypeValue>();
   const [certificationChecked, setCertificationChecked] = useState(false);
   const [harvestDates, setHarvestDates] = useState<Month[]>(
     (listing.harvestDates as Month[]) || []
@@ -251,10 +251,7 @@ const UpdateClient = ({ listing }: UpdateListingProps) => {
       harvestFeatures: data.harvestFeatures,
       harvestDates: harvestDates,
       projectedStock: data.projectedStock,
-      unit:
-        data.unit === "none" || data.unit === "each"
-          ? ""
-          : data.unit,
+      unit: data.unit === "none" || data.unit === "each" ? "" : data.unit,
     };
     axios
       .post("/api/listing/updateListing", formData)
@@ -441,9 +438,9 @@ const UpdateClient = ({ listing }: UpdateListingProps) => {
             </ul>
             <div className="flex justify-end">
               <UnitSelect
-                value=unit:
+                value={unit}
                 onChange={(value) => {
-                  setQuantityType(value as QuantityTypeValue);
+                  setUnit(value as QuantityTypeValue);
                   setValue("quantityType", value?.value);
                 }}
               />

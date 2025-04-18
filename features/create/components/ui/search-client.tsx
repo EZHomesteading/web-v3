@@ -1,3 +1,4 @@
+"use client";
 import React, { useCallback, useState, useEffect, useRef } from "react";
 import AsyncSelect from "react-select/async";
 import { FormattedProduct } from "@/features/create/hooks/use-product";

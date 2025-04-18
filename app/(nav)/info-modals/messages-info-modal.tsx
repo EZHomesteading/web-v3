@@ -125,7 +125,7 @@ const MessagesPopupContent = memo(() => {
   );
 });
 
-MessagesPopupContent.name = "MessagesPopupContent";
+MessagesPopupContent.displayName = "MessagesPopupContent";
 
 const MessagesPopup = () => {
   return <MessagesPopupContent />;

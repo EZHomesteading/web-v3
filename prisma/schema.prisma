@@ -104,10 +104,14 @@ enum Notification {
 type notifList {
   list String[]
 }
+type coordinates{
+  lat Float
+  lng Float
+}
 
 type LocationObj {
   type        String
-  coordinates Float[]
+  coordinates coordinates
   address     String[]
   hours       Hours?
   role        UserRole @default(CONSUMER)
@@ -168,7 +172,7 @@ model Location {
   listings            Listing[]
   orders              Order[]
   type                String
-  coordinates         Float[]
+  coordinates         coordinates
   address             Address
   hours               Hours?
   role                UserRole  @default(PRODUCER)

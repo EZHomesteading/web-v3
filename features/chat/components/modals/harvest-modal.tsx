@@ -9,7 +9,7 @@ import {
   BiClinic,
 } from "react-icons/bi";
 import Modal from "@/features/chat/components/modals/harvest-modal.ui";
-import Button from "@/features/chat/components/ui/button";
+import { Button } from "@/components/ui/button";
 import axios from "axios";
 import { Listing } from "@prisma/client";
 import { useRouter } from "next/navigation";
@@ -243,9 +243,7 @@ const HarvestModal: React.FC<ConfirmModalProps> = ({
         </div>
       </div>
       <div className="mt-5 sm:mt-4 flex justify-center">
-        <Button secondary onClick={onClose}>
-          Cancel
-        </Button>
+        <Button onClick={onClose}>Cancel</Button>
       </div>
     </Modal>
   );

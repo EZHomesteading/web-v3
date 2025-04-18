@@ -1,4 +1,5 @@
 //parent input field component
+"use client";
 interface InputFieldProps {
   id: string;
   placeholder: string;

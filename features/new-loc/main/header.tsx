@@ -1,14 +1,13 @@
 import { OutfitFont } from "@/components/fonts";
 import { useState, useEffect } from "react";
-import { getFulfillmentText } from "../steps/step5";
+import { getFulfillmentText } from "../steps/4.fufillment";
 
 interface p {
   fulfillmentStyle?: string;
   street?: string;
-  formDataStreet?: string;
 }
 
-const OnboardHeader = ({ fulfillmentStyle, street, formDataStreet }: p) => {
+const OnboardHeader = ({ fulfillmentStyle, street }: p) => {
   const [isAtTop, setIsAtTop] = useState(true);
 
   useEffect(() => {
@@ -36,7 +35,7 @@ const OnboardHeader = ({ fulfillmentStyle, street, formDataStreet }: p) => {
     >
       <div className="w-full max-w-[306.88px] sm:max-w-[402.88px] text-sm font-semibold flex border-b z-100">
         <div className="pr-2 w-1/2 overflow-hidden">
-          <div className="truncate h-6">{formDataStreet || street || ""}</div>
+          <div className="truncate h-6">{street || ""}</div>
         </div>
         {fulfillmentStyle && (
           <div className="border-l pl-2 w-1/2">
