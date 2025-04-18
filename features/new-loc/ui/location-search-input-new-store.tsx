@@ -1,4 +1,3 @@
-import React from "react";
 import { LiaMapMarkedSolid } from "react-icons/lia";
 import PlacesAutocomplete, {
   Suggestion,
@@ -14,13 +13,13 @@ interface LocationSearchInputProps {
   showIcon?: boolean;
 }
 
-const LocationSearchInput: React.FC<LocationSearchInputProps> = ({
+const LocationSearchInputNewStore = ({
   address,
   setAddress,
   onLocationSelect,
   className,
   showIcon = true,
-}) => {
+}: LocationSearchInputProps) => {
   const handleChange = (address: string) => {
     setAddress(address);
   };
@@ -103,4 +102,4 @@ const LocationSearchInput: React.FC<LocationSearchInputProps> = ({
   );
 };
 
-export default LocationSearchInput;
+export default LocationSearchInputNewStore;
