@@ -1,30 +1,8 @@
-import { useEffect, useState } from "react";
 import { OutfitFont } from "@/components/fonts";
-import { months } from "../utils/time-helper";
-import { NewStoreCoreProps, NewStoreFormData } from "../utils/utils";
+import { NewStoreFormData, monthsOfTheYear } from "../utils";
 import WeelkyScheduleChart from "../ui/weekly-schedule-chart-new-store";
 
-interface FinishNewStoreStepProps extends NewStoreCoreProps {
-  selectedMonths: number[] | undefined;
-}
-
-const FinishNewStoreStep = ({
-  formData,
-  updateFormData,
-  selectedMonths,
-}: FinishNewStoreStepProps) => {
-  const [openMonths, setOpenMonths] = useState<number[]>([]);
-
-  useEffect(() => {
-    if (selectedMonths && selectedMonths.length > 0) {
-      setOpenMonths(selectedMonths);
-    }
-  }, [selectedMonths]);
-
-  useEffect(() => {
-    updateFormData("selectedMonths", openMonths);
-  }, [openMonths, updateFormData]);
-
+const FinishNewStoreStep = ({ formData }: { formData: NewStoreFormData }) => {
   return (
     <div
       className={`grid grid-cols-1 lg:grid-cols-2 gap-4 ${OutfitFont.className}`}
@@ -32,7 +10,7 @@ const FinishNewStoreStep = ({
       <MonthsSection formData={formData} />
       <div className="h-[600px]">
         <WeelkyScheduleChart
-          location={location}
+          location={formData}
           barColor={`rgb(148 163 184)`}
           showSubTitle={false}
           viewBoxHeight={600}
@@ -54,7 +32,7 @@ function MonthsSection({ formData }: { formData: NewStoreFormData }) {
       <div className="rounded-lg px-0 sm:px-8">
         <div className="flex flex-col items-center">
           <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
-            {months.map((month, index) => (
+            {monthsOfTheYear.map((month, index) => (
               <button
                 key={month}
                 className={`p-8 2xl:p-[3.75rem] hover:cursor-auto text-sm border-[1px] shadow-md rounded-md ${formData.selectedMonths.includes(index)

@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { NewStoreCoreProps } from "../utils/utils";
+import { NewStoreCoreProps } from "../utils";
 
 interface StepFiveProps extends NewStoreCoreProps {
   onComplete: (selectedDays: string[]) => void;

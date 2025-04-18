@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useState } from "react";
 import { OutfitFont } from "@/components/fonts";
 import { Hours } from "@/types";
-import { NewStoreCoreProps } from "../utils/utils";
+import { NewStoreCoreProps } from "../utils";
 
-export function MonthsNewStoreStep({
+export default function MonthsNewStoreStep({
   updateFormData,
   formData,
 }: NewStoreCoreProps) {

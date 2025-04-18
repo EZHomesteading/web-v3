@@ -1,10 +1,13 @@
-import { Viewport } from "next";
-import authCache from "@/auth-cache";
-import Link from "next/link";
 import { OutfitFont } from "@/components/fonts";
-import { getUserLocations } from "@/actions/getLocations";
-import NewLocHourClientV2 from "./components/v2.client";
+
+import { Viewport } from "next";
 import { Location } from "@/types";
+
+import Link from "next/link";
+import NewStoreClient from "@/features/new-store/main/new-store-client";
+
+import authCache from "@/auth-cache";
+import { getUserLocations } from "@/actions/getLocations";
 
 export const viewport: Viewport = {
   themeColor: "#fff",
@@ -14,12 +17,9 @@ const apiKey = process.env.MAPS_KEY!;
 
 export default async function Page() {
   const session = await authCache();
-  if (!session?.user.id) {
-    return;
-  }
-  const locations = await getUserLocations({
-    userId: session?.user.id,
-  });
+  if (!session) return;
+
+  const locations = await getUserLocations({ userId: session?.user.id });
 
   const sortedLocations = locations
     ? [...locations].sort((a, b) => {
@@ -32,7 +32,7 @@ export default async function Page() {
   return (
     <>
       {Array.isArray(locations) && locations?.length < 3 ? (
-        <NewLocHourClientV2 user={session.user} apiKey={apiKey} />
+        <NewStoreClient startingStep={1} user={session.user} apiKey={apiKey} />
       ) : (
         <MaxLocations locations={sortedLocations} />
       )}

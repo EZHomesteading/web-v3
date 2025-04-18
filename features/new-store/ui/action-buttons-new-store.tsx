@@ -1,3 +1,5 @@
+import { FulfillmentType } from "../steps/step4.fulfillment";
+
 interface ActionButtonsProps {
   fulfillmentStyle: FulfillmentType;
   handleFinish: () => void;

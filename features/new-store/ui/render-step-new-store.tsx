@@ -1,6 +1,15 @@
 import { Dispatch, SetStateAction } from "react";
-import { NewStoreCoreProps } from "../utils/utils";
-import { HoursNewStoreStep } from "../steps/step7.hours";
+import { NewStoreCoreProps } from "../utils";
+
+import InfoNewStoreStep from "../steps/step1.info";
+import RoleNewStoreStep from "../steps/step2.role";
+import LocationNewStoreStep from "../steps/step3.location";
+import FulfillmentNewStoreStep from "../steps/step4.fulfillment";
+import MonthsNewStoreStep from "../steps/step5.months";
+import DaysNewStoreStep from "../steps/step6.days";
+import HoursNewStoreStep from "../steps/step7.hours";
+import ReviewNewStoreStep from "../steps/step8.review";
+import FinishNewStoreStep from "../steps/step9.finish";
 
 interface stepProps extends NewStoreCoreProps {
   step: number;

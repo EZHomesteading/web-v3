@@ -2,8 +2,9 @@ import { Clock } from "lucide-react";
 import { Dispatch, SetStateAction, useCallback, useState } from "react";
 import { Availability, Hours, TimeSlot } from "@/types";
 import { OutfitFont } from "@/components/fonts";
-import { NewStoreCoreProps } from "../utils/utils";
-import WeelkyScheduleChart from "../ui/new-store-weekly-schedule-chart";
+import { NewStoreCoreProps } from "../utils";
+import WeelkyScheduleChart from "../ui/weekly-schedule-chart-new-store";
+import AvailabilityScore from "@/features/market/utils/availability-score";
 
 interface ReviewLocProps extends NewStoreCoreProps {
   onFinish: (hours: any, fulfillmentStyle: string) => void;
@@ -29,16 +30,6 @@ export default function ReviewNewStoreStep({
   onFinish,
   setStep,
 }: ReviewLocProps) {
-  const weekDays = [
-    "Sunday",
-    "Monday",
-    "Tuesday",
-    "Wednesday",
-    "Thursday",
-    "Friday",
-    "Saturday",
-  ];
-
   const [isDragging, setIsDragging] = useState<boolean>(false);
 
   const months = [
@@ -243,14 +234,15 @@ export default function ReviewNewStoreStep({
         handleMouseUp={handleMouseUp}
         handleDayClick={() => { }}
       />
-      <ActionButtonsNewLoc
-        fulfillmentStyle={formData.fulfillmentStyle}
-        handleFinish={handleFinish}
-        handleFinishBoth={handleFinishBoth}
-      />
     </>
   );
 }
+
+// <ActionButtonsNewStore
+//   fulfillmentStyle={formData.fulfillmentStyle}
+//   handleFinish={handleFinish}
+//   handleFinishBoth={handleFinishBoth}
+// />
 
 interface ScoreResult {
   pickup: {
@@ -326,7 +318,7 @@ function AvailabilityFeedback({
   );
 }
 
-interface ScheduleDisplayProps extends NewLocProps {
+interface ScheduleDisplayProps extends NewStoreCoreProps {
   months: string[];
   handleMouseDown: (index: number) => void;
   handleMouseEnter: (index: number) => void;
@@ -378,7 +370,7 @@ function ScheduleDisplay({
       </div>
       <div className="h-[600px]">
         <WeelkyScheduleChart
-          location={formData.location}
+          location={formData}
           handleDayClick={handleDayClick}
           barColor={`rgb(148 163 184)`}
           showSubTitle={true}

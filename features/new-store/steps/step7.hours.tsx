@@ -1,18 +1,25 @@
 import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { toast } from "sonner";
 import { PiTrashThin } from "react-icons/pi";
+import { toast } from "sonner";
+
+import { NewStoreCoreProps } from "../utils";
+import { FulfillmentType } from "./step4.fulfillment";
+
 import { Availability, Hours as HoursType, TimeSlot } from "@/types";
-import Toast from "@/components/ui/toast";
-import { NewStoreCoreProps } from "../utils/utils";
-import { checkOverlap } from "@/features/availability-calendar/utils/helper-functions-calendar";
+import TimePicker from "@/features/availability-calendar/utils/time-slot";
+import { convertMinutesToTimeString } from "@/utils/time-managers";
+import {
+  checkOverlap,
+  convertTimeStringToMinutes,
+} from "@/features/availability-calendar/utils/helper-functions-calendar";
 
 interface StepSixProps extends NewStoreCoreProps {
   onComplete: () => void;
   onBack: () => void;
 }
 
-export function HoursNewStoreStep({
+export default function HoursNewStoreStep({
   updateFormData,
   formData,
   onBack,
@@ -230,16 +237,14 @@ export function HoursNewStoreStep({
 
     updateFormData("hours", newHours);
 
-    // Track completed steps
     let completedSteps: Array<"pickup" | "delivery"> = [
       ...(formData.completedSteps || []),
     ];
 
     if (!formData.currentConfig) {
-      Toast({
-        message:
-          "Please decide how you would liket to fufill orders before completing this step",
-      });
+      toast.error(
+        "Please decide how you would liket to fufill orders before completing this step",
+      );
       return;
     }
 

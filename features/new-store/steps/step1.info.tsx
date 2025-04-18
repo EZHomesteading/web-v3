@@ -1,6 +1,6 @@
 import { OutfitFont } from "@/components/fonts";
 
-const StepOne = () => {
+const InfoNewStoreStep = () => {
   return (
     <div className="flex flex-col justify-center items-center h-full px-20">
       <div
@@ -18,4 +18,4 @@ const StepOne = () => {
   );
 };
 
-export default StepOne;
+export default InfoNewStoreStep;

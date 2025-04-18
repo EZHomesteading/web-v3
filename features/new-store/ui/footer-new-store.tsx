@@ -1,14 +1,14 @@
 import { Dispatch, SetStateAction } from "react";
-import { NewStoreCoreProps } from "../utils/utils";
-import ActionButtons from "./new-store-action-buttons";
+import { NewStoreCoreProps, ValidateFormDataNewStore } from "../utils";
 import { OutfitFont } from "@/components/fonts";
+import ActionButtonsNewStore from "./action-buttons-new-store";
 
 interface FooterProps extends NewStoreCoreProps {
   step: number;
   setStep: Dispatch<SetStateAction<number>>;
-  canProceed: boolean;
-  nextEnabled: boolean;
   submit: () => void;
+  isLastStep: boolean;
+  canProceed: boolean;
 }
 
 export default function FooterNewStore({
@@ -16,8 +16,8 @@ export default function FooterNewStore({
   setStep,
   formData,
   updateFormData,
+  isLastStep,
   canProceed,
-  nextEnabled,
   submit,
 }: FooterProps) {
   const renderNextButton = () => {
@@ -26,7 +26,7 @@ export default function FooterNewStore({
         return (
           <button
             onClick={submit}
-            disabled={!canProceed || !nextEnabled}
+            disabled={!canProceed}
             className={`text-white bg-black px-4 py-2  rounded disabled:bg-gray-300`}
           >
             Create Store
@@ -34,7 +34,7 @@ export default function FooterNewStore({
         );
       case 8:
         return (
-          <ActionButtons
+          <ActionButtonsNewStore
             fulfillmentStyle={formData.fulfillmentStyle}
             handleFinish={() => {
               setStep(9);
@@ -75,29 +75,42 @@ export default function FooterNewStore({
             onClick={() => {
               setStep((prev) => Math.max(prev + 1));
             }}
-            disabled={!canProceed}
-            className={`px-4 py-2 text-base text-white bg-black rounded disabled:text-gray-300`}
+            disabled={!ValidateFormDataNewStore(formData, step)}
+            className={`disabled:opacity-50 px-4 py-2 text-base text-white bg-black rounded disabled:text-gray-300`}
           >
             Next
           </button>
         );
     }
   };
+
   return (
     <div
       className={`h-20 fixed bottom-0 zmax border-t w-full px-2 bg-white border-[#e4e4e7] ${OutfitFont.className}`}
     >
       <div className={`flex items-center flex-row h-full justify-between`}>
-        <button
-          onClick={() => {
-            setStep((prev) => Math.max(1, prev - 1));
-          }}
-          className={`px-4 py-2 text-base underline text-black disabled:text-gray-300`}
-        >
-          Back
-        </button>
+        <BackButton step={step} setStep={setStep} />
         {renderNextButton()}
       </div>
     </div>
+  );
+}
+function BackButton({
+  step,
+  setStep,
+}: {
+  step: number;
+  setStep: Dispatch<SetStateAction<number>>;
+}) {
+  return (
+    <button
+      disabled={step === 1}
+      onClick={() => {
+        setStep((prev) => Math.max(1, prev - 1));
+      }}
+      className={`disabled:opacity-20 px-4 py-2 text-base underline text-black disabled:text-gray-300`}
+    >
+      Back
+    </button>
   );
 }

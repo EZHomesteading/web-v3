@@ -1,6 +1,6 @@
-import { FormDataAddress, Hours, UserRole } from "@/types";
-import { Address } from "@prisma/client";
+import { Hours, UserRole, Address } from "@/types";
 import { toast } from "sonner";
+import { FulfillmentType } from "./steps/step4.fulfillment";
 
 export interface NewStoreCoreProps {
   formData: NewStoreFormData;
@@ -25,8 +25,8 @@ export type NewStoreFormData = {
   bio: string;
 };
 
-export const NewStoreInitialFormData: NewStoreFormData = {
-  name: "",
+export const InitialFormDataNewStore: NewStoreFormData = {
+  name: "test",
   address: { street: "", state: "", city: "", zip: "" },
   coordinates: [],
   type: "Point",
@@ -37,10 +37,10 @@ export const NewStoreInitialFormData: NewStoreFormData = {
   hours: { delivery: [], pickup: [] },
   completedSteps: [],
   currentConfig: undefined,
-  bio: "",
+  bio: "test",
 };
 
-export const validateFormData = (
+export const ValidateFormDataNewStore = (
   formData: NewStoreFormData,
   step: number,
 ): boolean => {
@@ -52,10 +52,11 @@ export const validateFormData = (
     return false;
   }
 
-  if (step >= 4 && !formData.coordinates) {
+  if (step >= 4 && !formData.fulfillmentStyle) {
     return false;
   }
-  if (step >= 4 && (formData.name.length < 4 || formData.bio.length === 0)) {
+
+  if (step >= 5 && formData.selectedMonths.length === 0) {
     return false;
   }
 
@@ -106,10 +107,7 @@ export const getHeaderContent = (step: number) => {
 
 export const getCoordinatesFromAddress = async (
   formData: NewStoreFormData,
-  formatAddress: (
-    address: FormDataAddress,
-    options?: { delimiter: string },
-  ) => string,
+  formatAddress: (address: Address, options?: { delimiter: string }) => string,
   updateFormData: (field: "coordinates", value: number[]) => void,
   onSuccess: () => void,
   setIsLoading: (loading: boolean) => void,
@@ -229,3 +227,27 @@ const tryGoogleMapsGeocodingService = async (
     return null;
   }
 };
+
+export const monthsOfTheYear = [
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "May",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec",
+];
+export const daysOfTheWeek = [
+  "Sunday",
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
+];

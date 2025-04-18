@@ -1,3 +1,5 @@
+import { UserRole } from "@prisma/client";
+
 export enum LocRole {
   COOP = "COOP",
   PRODUCER = "PRODUCER",
@@ -11,12 +13,12 @@ export type Location = {
   coordinates: number[];
   address: Address;
   name: string; // if (!location.name) use user name in things like market page
-  role: LocRole;
+  role: UserRole;
   bio: string;
-  hours: Hours; // nullable to easily check if a user has hours but ensure its not undefined
+  hours: Hours | null; // nullable to easily check if a user has hours but ensure its not undefined
   SODT: number | null; // nullable to differeniate between who has and hasnt set SODT, and if its null set it a default value when another user tries to buy like 24 hours
   isDefault: boolean;
-  image?: string; // if (!location.image) use user.image in things like market page
+  image: string | null; // if (!location.image) use user.image in things like market page
   createdAt: Date;
   updatedAt: Date;
 };
@@ -29,7 +31,7 @@ export type TimeSlot = {
 export type Availability = {
   date: Date;
   timeSlots: TimeSlot[];
-  capacity?: number;
+  capacity: number | null;
 };
 
 export type Hours = {
