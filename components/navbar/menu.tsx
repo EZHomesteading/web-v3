@@ -1,5 +1,5 @@
 "use client";
-
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { signOut } from "next-auth/react";
@@ -8,7 +8,7 @@ import Link from "next/link";
 import { Popover, PopoverContent, PopoverTrigger } from "./popover-navbar";
 import MenuItem from "@/components/navbar/menu-item";
 import NotificationIcon from "./notification";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { NavUser } from "@/actions/getUser";
 import { iconMap } from "./icon-map";
 import axios from "axios";
@@ -48,6 +48,15 @@ const UserMenu: React.FC<Props> = ({
   const isMdOrLarger = useMediaQuery("(min-width: 640px)");
   const pathname = usePathname();
   const selling = pathname?.startsWith("/selling");
+  const [isPopoverOpen, setIsPopoverOpen] = useState(false);
+  const [isSignUpSheetOpen, setIsSignUpSheetOpen] = useState(false);
+
+  useEffect(() => {
+    if (isSignUpSheetOpen) {
+      setIsPopoverOpen(false);
+    }
+  }, [isSignUpSheetOpen]);
+
   const MenuIcon = () => {
     return (
       <>
@@ -74,7 +83,7 @@ const UserMenu: React.FC<Props> = ({
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({ userId: user?.id }),
-            }
+            },
           ),
           axios.post("/api/useractions/update", {
             role: UserRole.PRODUCER,
@@ -91,7 +100,7 @@ const UserMenu: React.FC<Props> = ({
       } catch (error) {
         console.error("Error in consumer API calls:", error);
         toast.warning(
-          "Some account setup steps failed. Please contact support."
+          "Some account setup steps failed. Please contact support.",
         );
       }
     }
@@ -103,7 +112,7 @@ const UserMenu: React.FC<Props> = ({
     ) {
       router.push("/create");
     } else {
-      router.push("/new-location-and-hours");
+      router.push("/new-store");
     }
   };
 
@@ -158,7 +167,7 @@ const UserMenu: React.FC<Props> = ({
 
     return icons
       .filter(
-        (icon) => "component" in icon || (user ? true : icon.key !== "create")
+        (icon) => "component" in icon || (user ? true : icon.key !== "create"),
       )
       .slice(0, isMdOrLarger ? 6 : 5)
       .map((icon) => {
@@ -177,10 +186,65 @@ const UserMenu: React.FC<Props> = ({
       });
   };
 
+  const SignUpSheet = () => (
+    <Sheet open={isSignUpSheetOpen} onOpenChange={setIsSignUpSheetOpen}>
+      <VisuallyHidden asChild>
+        <DialogTitle>Signup Sheet</DialogTitle>
+      </VisuallyHidden>
+      <SheetContent className={`${OutfitFont.className} min-h-screen w-screen`}>
+        <div className="h-full flex flex-col items-center justify-center px-10">
+          <ul className="w-full max-w-3xl">
+            {[
+              {
+                href: "/auth/register",
+                text: "Sign Up",
+                icon: iconMap.CiUser,
+              },
+              {
+                href: "/auth/register-co-op",
+                text: ["Become a co-op &", "sell to anyone"],
+                icon: iconMap.IoStorefrontOutline,
+              },
+              {
+                href: "/auth/register-producer",
+                text: ["Become a grower &", "sell only to co-ops"],
+                icon: iconMap.GiFruitTree,
+              },
+            ].map((item, index) => (
+              <li
+                key={item.href}
+                className={`w-full ${index === 1 &&
+                  "border-t-[1px] border-b-[1px] my-10 py-10 border-black"
+                  }`}
+              >
+                <Link
+                  href={item.href}
+                  className="flex items-center justify-between w-full hover:text-neutral-600 hover:italic"
+                >
+                  <div className="flex flex-col">
+                    {Array.isArray(item.text)
+                      ? item.text.map((line, i) => <div key={i}>{line}</div>)
+                      : item.text}
+                  </div>
+                  <item.icon className="text-4xl sm:text-7xl" />
+                </Link>
+              </li>
+            ))}
+          </ul>
+          <div className="pt-10 text-xs text-center">
+            You can switch your account type to either seller role at any time
+          </div>
+        </div>
+      </SheetContent>
+    </Sheet>
+  );
+
   return (
     <>
+      {isSignUpSheetOpen && <SignUpSheet />}
+
       {isMdOrLarger ? (
-        <Popover>
+        <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
           {renderIcons()}
           <MenuIcon />
           <PopoverContent
@@ -202,7 +266,7 @@ const UserMenu: React.FC<Props> = ({
                       label="Messages"
                       onClick={() => router.push("/chat")}
                     />
-                    <div className={`border-t w-full my-2`} />
+                    <div className="border-t w-full my-2" />
                     <MenuItem
                       label="My Listings"
                       onClick={() => router.push("selling/my-store")}
@@ -211,7 +275,7 @@ const UserMenu: React.FC<Props> = ({
                       label="Create New Listing"
                       onClick={() => router.push("/create")}
                     />
-                    <div className={`border-t w-full my-2`} />
+                    <div className="border-t w-full my-2" />
                     <MenuItem
                       label="Store Settings"
                       onClick={() => router.push("/selling/my-store/settings")}
@@ -222,7 +286,7 @@ const UserMenu: React.FC<Props> = ({
                         router.push("/selling/availability-calendar")
                       }
                     />
-                    <div className={`border-t w-full my-2`} />
+                    <div className="border-t w-full my-2" />
                     <MenuItem
                       label="Switch to Buying"
                       onClick={() => router.push("/account")}
@@ -239,7 +303,7 @@ const UserMenu: React.FC<Props> = ({
                       label="Messages"
                       onClick={() => router.push("/chat")}
                     />
-                    <div className={`border-t w-full my-2`} />
+                    <div className="border-t w-full my-2" />
                     <MenuItem
                       label="Purchase Orders"
                       onClick={() =>
@@ -254,7 +318,7 @@ const UserMenu: React.FC<Props> = ({
                       label="My Account"
                       onClick={() => router.push("/account")}
                     />
-                    <div className={`border-t w-full my-2`} />
+                    <div className="border-t w-full my-2" />
                     <MenuItem
                       label="Switch to Selling"
                       onClick={() => router.push("/selling")}
@@ -273,74 +337,24 @@ const UserMenu: React.FC<Props> = ({
                     />
                   </div>
                 )}
-                <div className={`border-t my-2`} />
+                <div className="border-t my-2" />
                 <MenuItem label="Sign Out" onClick={() => signOut()} />
               </>
             ) : (
               <>
-                <Sheet>
-                  <SheetTrigger asChild>
-                    <MenuItem onClick={() => {}} label="Sign Up" />
-                  </SheetTrigger>
-                  <SheetContent
-                    className={`${OutfitFont.className} min-h-screen w-screen `}
-                  >
-                    <div className="h-full flex flex-col items-center justify-center px-10">
-                      <ul className="w-full max-w-3xl">
-                        {[
-                          {
-                            href: "/auth/register",
-                            text: "Sign Up",
-                            icon: iconMap.CiUser,
-                          },
-                          {
-                            href: "/auth/register-co-op",
-                            text: ["Become a co-op &", "sell to anyone"],
-                            icon: iconMap.IoStorefrontOutline,
-                          },
-                          {
-                            href: "/auth/register-producer",
-                            text: ["Become a grower &", "sell only to co-ops"],
-                            icon: iconMap.GiFruitTree,
-                          },
-                        ].map((item, index) => (
-                          <li
-                            key={item.href}
-                            className={`w-full ${
-                              index === 1 &&
-                              "border-t-[1px] border-b-[1px] my-10 py-10 border-black"
-                            }`}
-                          >
-                            <Link
-                              href={item.href}
-                              className="flex items-center justify-between w-full hover:text-neutral-600 hover:italic"
-                            >
-                              <div className="flex flex-col">
-                                {Array.isArray(item.text)
-                                  ? item.text.map((line, i) => (
-                                      <div key={i}>{line}</div>
-                                    ))
-                                  : item.text}
-                              </div>
-                              <item.icon className="text-4xl sm:text-7xl" />
-                            </Link>
-                          </li>
-                        ))}
-                      </ul>
-                      <div className="pt-10 text-xs  text-center">
-                        You can switch your account type to either seller role
-                        at any time
-                      </div>
-                    </div>
-                  </SheetContent>
-                </Sheet>
+                <MenuItem
+                  label="Sign Up"
+                  onClick={() => {
+                    setIsSignUpSheetOpen(true);
+                  }}
+                />
                 <MenuItem
                   label="Sign In"
                   onClick={() => {
                     let callbackUrl = window.location.href;
                     const encodedCallbackUrl = encodeURIComponent(callbackUrl);
                     router.push(
-                      `/auth/login?callbackUrl=${encodedCallbackUrl}`
+                      `/auth/login?callbackUrl=${encodedCallbackUrl}`,
                     );
                   }}
                 />
@@ -360,7 +374,9 @@ const UserMenu: React.FC<Props> = ({
           <DrawerContent
             className={`${OutfitFont.className} pb-2 h-[75vh] ${drawerClassName}`}
           >
-            <DialogTitle className="hidden">User Menu</DialogTitle>
+            <VisuallyHidden asChild>
+              <DialogTitle>User Menu</DialogTitle>
+            </VisuallyHidden>
             {user ? (
               <>
                 {selling ? (
@@ -375,7 +391,7 @@ const UserMenu: React.FC<Props> = ({
                       label="Messages"
                       onClick={() => router.push("/chat")}
                     />
-                    <div className={`border-t w-full my-2`} />
+                    <div className="border-t w-full my-2" />
                     <MenuItem
                       label="My Listings"
                       onClick={() => router.push("selling/my-store")}
@@ -384,7 +400,7 @@ const UserMenu: React.FC<Props> = ({
                       label="Create New Listing"
                       onClick={() => router.push("/create")}
                     />
-                    <div className={`border-t w-full my-2`} />
+                    <div className="border-t w-full my-2" />
                     <MenuItem
                       label="Store Settings"
                       onClick={() => router.push("/selling/my-store/settings")}
@@ -395,7 +411,7 @@ const UserMenu: React.FC<Props> = ({
                         router.push("/selling/availability-calendar")
                       }
                     />
-                    <div className={`border-t w-full my-2`} />
+                    <div className="border-t w-full my-2" />
                     <MenuItem
                       label="Switch to Buying"
                       onClick={() => router.push("/account")}
@@ -412,7 +428,7 @@ const UserMenu: React.FC<Props> = ({
                       label="Messages"
                       onClick={() => router.push("/chat")}
                     />
-                    <div className={`border-t w-full my-2`} />
+                    <div className="border-t w-full my-2" />
                     <MenuItem
                       label="Purchase Orders"
                       onClick={() =>
@@ -427,7 +443,7 @@ const UserMenu: React.FC<Props> = ({
                       label="My Account"
                       onClick={() => router.push("/account")}
                     />
-                    <div className={`border-t w-full my-2`} />
+                    <div className="border-t w-full my-2" />
                     <MenuItem
                       label="Switch to Selling"
                       onClick={() => router.push("/selling")}
@@ -446,74 +462,22 @@ const UserMenu: React.FC<Props> = ({
                     />
                   </div>
                 )}
-                <div className={`border-t my-2`} />
+                <div className="border-t my-2" />
                 <MenuItem label="Sign Out" onClick={() => signOut()} />
               </>
             ) : (
               <>
-                <Sheet>
-                  <SheetTrigger asChild>
-                    <MenuItem onClick={() => {}} label="Sign Up" />
-                  </SheetTrigger>
-                  <SheetContent
-                    className={`${OutfitFont.className} min-h-screen w-screen `}
-                  >
-                    <div className="h-full flex flex-col items-center justify-center px-10">
-                      <ul className="w-full max-w-3xl">
-                        {[
-                          {
-                            href: "/auth/register",
-                            text: "Sign Up",
-                            icon: iconMap.CiUser,
-                          },
-                          {
-                            href: "/auth/register-co-op",
-                            text: ["Become a co-op &", "sell to anyone"],
-                            icon: iconMap.IoStorefrontOutline,
-                          },
-                          {
-                            href: "/auth/register-producer",
-                            text: ["Become a grower &", "sell only to co-ops"],
-                            icon: iconMap.GiFruitTree,
-                          },
-                        ].map((item, index) => (
-                          <li
-                            key={item.href}
-                            className={`w-full ${
-                              index === 1 &&
-                              "border-t-[1px] border-b-[1px] my-10 py-10 border-black"
-                            }`}
-                          >
-                            <Link
-                              href={item.href}
-                              className="flex items-center justify-between w-full hover:text-neutral-600 hover:italic"
-                            >
-                              <div className="flex flex-col">
-                                {Array.isArray(item.text)
-                                  ? item.text.map((line, i) => (
-                                      <div key={i}>{line}</div>
-                                    ))
-                                  : item.text}
-                              </div>
-                              <item.icon className="text-4xl sm:text-7xl" />
-                            </Link>
-                          </li>
-                        ))}
-                      </ul>
-                      <div className="pt-10 text-xs  text-center">
-                        You can switch your account type to either seller role
-                        at any time
-                      </div>
-                    </div>
-                  </SheetContent>
-                </Sheet>
+                <MenuItem
+                  label="Sign Up"
+                  onClick={() => setIsSignUpSheetOpen(true)}
+                />
                 <MenuItem
                   label="Sign In"
                   onClick={() => {
                     let callbackUrl = window.location.href;
                     const encodedCallbackUrl = encodeURIComponent(callbackUrl);
                     router.push(
-                      `/auth/login?callbackUrl=${encodedCallbackUrl}`
+                      `/auth/login?callbackUrl=${encodedCallbackUrl}`,
                     );
                   }}
                 />
@@ -541,19 +505,20 @@ const IconWrapper: React.FC<{
       className="flex flex-col pb-4 sm:pb-2 items-center justify-center hover:cursor-pointer"
       onClick={onClick}
     >
-      <Icon className={`h-8 w-8  `} />
-      <div className={`text-xs ${OutfitFont.className} `}>{label}</div>
+      <Icon className="h-8 w-8" />
+      <div className={`text-xs ${OutfitFont.className}`}>{label}</div>
     </button>
   );
 };
+
 const MenuWrapper: React.FC<{
   icon: React.ElementType;
   label: string;
 }> = ({ icon: Icon, label }) => {
   return (
     <div className="flex flex-col pb-4 sm:pb-2 items-center justify-center hover:cursor-pointer">
-      <Icon className={`h-8 w-8  `} />
-      <div className={`text-xs ${OutfitFont.className} `}>{label}</div>
+      <Icon className="h-8 w-8" />
+      <div className={`text-xs ${OutfitFont.className}`}>{label}</div>
     </div>
   );
 };
