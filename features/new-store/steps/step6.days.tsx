@@ -1,13 +1,13 @@
 import { useState, useCallback, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { NewLocProps } from "../main/helper-components";
+import { NewStoreCoreProps } from "../utils";
 
-interface StepFiveProps extends NewLocProps {
+interface StepFiveProps extends NewStoreCoreProps {
   onComplete: (selectedDays: string[]) => void;
   onCompleteHours: () => void;
 }
 
-export function Days({
+export default function DaysNewStoreStep({
   onComplete,
   onCompleteHours,
   formData,
@@ -35,7 +35,7 @@ export function Days({
 
       updateFormData("selectedDays", newSelectedDays);
     },
-    [formData.selectedDays, updateFormData]
+    [formData.selectedDays, updateFormData],
   );
 
   const handleMouseDown = (day: string) => {
@@ -109,11 +109,10 @@ export function Days({
               key={day}
               onMouseDown={() => handleMouseDown(day)}
               onMouseEnter={() => handleMouseEnter(day)}
-              className={`p-2 px-20 border-[1px] text-2xl rounded-md shadow-sm ${
-                formData.selectedDays.includes(day)
+              className={`p-2 px-20 border-[1px] text-2xl rounded-md shadow-sm ${formData.selectedDays.includes(day)
                   ? "bg-black text-white"
                   : "bg-white text-black"
-              }`}
+                }`}
             >
               {day}
             </button>
@@ -121,11 +120,10 @@ export function Days({
       </div>
       <div className="mt-2 space-y-2">
         <div
-          className={`transition-all duration-500 ${
-            formData.selectedDays.length > 0
+          className={`transition-all duration-500 ${formData.selectedDays.length > 0
               ? "opacity-100 h-12"
               : "opacity-0 h-0 overflow-hidden"
-          }`}
+            }`}
         >
           <Button onClick={handleNext} className="h-12 w-full">
             Set Hours for Selected Days
@@ -133,11 +131,10 @@ export function Days({
         </div>
 
         <div
-          className={`transition-all duration-500 ${
-            weekDays && weekDays.length !== fullWeekDays.length
+          className={`transition-all duration-500 ${weekDays && weekDays.length !== fullWeekDays.length
               ? "opacity-100 h-12"
               : "opacity-0 h-0 overflow-hidden"
-          }`}
+            }`}
         >
           <Button
             onClick={onCompleteHours}

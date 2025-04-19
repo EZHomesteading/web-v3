@@ -1,25 +1,25 @@
 import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { toast } from "sonner";
 import { PiTrashThin } from "react-icons/pi";
+import { toast } from "sonner";
 
-import TimePicker from "@/features/availability-calendar/utils/time-slot";
-import { NewLocProps } from "../main/index";
-import { FulfillmentType } from "./4.fufillment";
+import { NewStoreCoreProps } from "../utils";
+import { FulfillmentType } from "./step4.fulfillment";
+
 import { Availability, Hours as HoursType, TimeSlot } from "@/types";
-import Toast from "@/components/ui/toast";
-import { checkOverlap } from "@/features/availability-calendar/utils/helper-functions-calendar";
+import TimePicker from "@/features/availability-calendar/utils/time-slot";
+import { convertMinutesToTimeString } from "@/utils/time-managers";
 import {
-  convertMinutesToTimeString,
+  checkOverlap,
   convertTimeStringToMinutes,
-} from "@/utils/time-managers";
+} from "@/features/availability-calendar/utils/helper-functions-calendar";
 
-interface StepSixProps extends NewLocProps {
+interface StepSixProps extends NewStoreCoreProps {
   onComplete: () => void;
   onBack: () => void;
 }
 
-export function Hours({
+export default function HoursNewStoreStep({
   updateFormData,
   formData,
   onBack,
@@ -28,10 +28,11 @@ export function Hours({
   const [timeSlots, setTimeSlots] = useState([{ open: 360, close: 1080 }]);
   const containerRef = useRef<HTMLDivElement>(null);
   const [activeTab, setActiveTab] = useState<number>(0);
+
   const handleAddTimeSlot = () => {
     if (checkOverlap([timeSlots])) {
       toast.error(
-        "Cannot add another set of hours because existing time slots overlap."
+        "Cannot add another set of hours because existing time slots overlap.",
       );
       return;
     }
@@ -72,7 +73,7 @@ export function Hours({
 
   const handleDeleteSlot = (indexToDelete: number) => {
     setTimeSlots((prevSlots) =>
-      prevSlots.filter((_, index) => index !== indexToDelete)
+      prevSlots.filter((_, index) => index !== indexToDelete),
     );
     if (activeTab === indexToDelete) setActiveTab(0);
   };
@@ -117,7 +118,7 @@ export function Hours({
   const handleTimeSlotChange = (
     slotIndex: number,
     isOpenTime: boolean,
-    newTime: string
+    newTime: string,
   ) => {
     setTimeSlots((prevSlots) => {
       const newSlots = [...prevSlots];
@@ -152,29 +153,29 @@ export function Hours({
       newHours.pickup = newHours.pickup.filter(
         (avail: Availability) =>
           !formData.selectedDays.includes(
-            weekDays[new Date(avail.date).getDay()]
-          )
+            weekDays[new Date(avail.date).getDay()],
+          ),
       );
     } else if (formData.currentConfig === "delivery") {
       newHours.delivery = newHours.delivery.filter(
         (avail: Availability) =>
           !formData.selectedDays.includes(
-            weekDays[new Date(avail.date).getDay()]
-          )
+            weekDays[new Date(avail.date).getDay()],
+          ),
       );
     } else {
       // For shared hours, update both services
       newHours.pickup = newHours.pickup.filter(
         (avail: Availability) =>
           !formData.selectedDays.includes(
-            weekDays[new Date(avail.date).getDay()]
-          )
+            weekDays[new Date(avail.date).getDay()],
+          ),
       );
       newHours.delivery = newHours.delivery.filter(
         (avail: Availability) =>
           !formData.selectedDays.includes(
-            weekDays[new Date(avail.date).getDay()]
-          )
+            weekDays[new Date(avail.date).getDay()],
+          ),
       );
     }
 
@@ -208,7 +209,7 @@ export function Hours({
       const daysInMonth: number = new Date(
         yearToUse,
         monthIndex + 1,
-        0
+        0,
       ).getDate();
 
       for (let day = 1; day <= daysInMonth; day++) {
@@ -236,16 +237,14 @@ export function Hours({
 
     updateFormData("hours", newHours);
 
-    // Track completed steps
     let completedSteps: Array<"pickup" | "delivery"> = [
       ...(formData.completedSteps || []),
     ];
 
     if (!formData.currentConfig) {
-      Toast({
-        message:
-          "Please decide how you would liket to fufill orders before completing this step",
-      });
+      toast.error(
+        "Please decide how you would liket to fufill orders before completing this step",
+      );
       return;
     }
 
@@ -288,9 +287,8 @@ export function Hours({
                 {getTabTitles().map((tab, index) => (
                   <button
                     key={index}
-                    className={`px-3  ${
-                      activeTab === index ? "font-semibold border-b" : ""
-                    }`}
+                    className={`px-3  ${activeTab === index ? "font-semibold border-b" : ""
+                      }`}
                     onClick={() => handleTabClick(index)}
                   >
                     {tab.title}
@@ -333,7 +331,7 @@ export function Hours({
                 Save Changes
               </Button>
             </div>
-          )
+          ),
       )}
     </div>
   );

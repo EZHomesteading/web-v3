@@ -1,9 +1,16 @@
 import { PiStorefrontThin } from "react-icons/pi";
 import { OutfitFont } from "@/components/fonts";
 import { UserRole } from "@/types";
-import { NewLocProps } from "../main/index";
+import { NewStoreCoreProps } from "../utils";
 
-export function Role({ formData, updateFormData }: NewLocProps) {
+export default function RoleNewStoreStep({
+  formData,
+  updateFormData,
+}: NewStoreCoreProps) {
+  console.log(
+    formData.role,
+    "role in /Users/zachshort/web-ezh/features/new-store/steps/step2.role.tsx",
+  );
   const options = [
     {
       label: "Co-Op Location",
@@ -39,11 +46,7 @@ export function Role({ formData, updateFormData }: NewLocProps) {
           onClick={() => {
             updateFormData("role", option.value);
           }}
-          className={`${
-            OutfitFont.className
-          } rounded-xl text-black p-6 text-start w-full border max-w-96 ${
-            formData.role === option.value && option.bg
-          }`}
+          className={`${OutfitFont.className} rounded-xl text-black p-6 text-start w-full border max-w-96 ${formData.role === option.value && option.bg}`}
         >
           <div className="flex items-center space-x-2">
             {option.icon}

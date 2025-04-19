@@ -4,7 +4,7 @@ import { GoogleMap, MarkerF, useLoadScript } from "@react-google-maps/api";
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import Loading from "@/components/secondary-loader";
 import { Libraries } from "@googlemaps/js-api-loader";
-import LocationSearchInput from "./location-search-input";
+import LocationSearchInputNewStore from "./location-search-input-new-store";
 
 interface MapProps {
   mk: string;
@@ -29,7 +29,7 @@ const customSvgMarker = `
 </svg>
 `;
 
-const Map = ({
+const MapNewStore = ({
   mk,
   showSearchBar = true,
   center = { lat: 38, lng: -79 },
@@ -42,7 +42,6 @@ const Map = ({
   wishlistStyle,
   proposedLoc,
 }: MapProps) => {
-  console.log(proposedLoc);
   const [address, setAddress] = useState("");
   const [currentCenter, setCurrentCenter] =
     useState<google.maps.LatLngLiteral>(center);
@@ -61,7 +60,7 @@ const Map = ({
       setCurrentCenter(latLng);
       setZoom(14);
     },
-    []
+    [],
   );
 
   const getApproximatePosition = useCallback(
@@ -72,12 +71,12 @@ const Map = ({
       const lng = position.lng + radius * Math.sin(angle);
       return { lat, lng };
     },
-    []
+    [],
   );
 
   const approximatePosition = useMemo(
     () => getApproximatePosition(currentCenter),
-    [currentCenter, getApproximatePosition]
+    [currentCenter, getApproximatePosition],
   );
 
   const mapOptions: google.maps.MapOptions = {
@@ -126,22 +125,22 @@ const Map = ({
     h && w && !wishlistStyle
       ? `h-[${h}px] w-[${w}px] rounded-lg shadow-lg`
       : h
-      ? `h-[${h}px] w-screen`
-      : w
-      ? `w-[${w}px] h-screen`
-      : wishlistStyle
-      ? `${wishlistStyle}`
-      : "h-screen w-screen rounded-md shadow-xl";
+        ? `h-[${h}px] w-screen`
+        : w
+          ? `w-[${w}px] h-screen`
+          : wishlistStyle
+            ? `${wishlistStyle}`
+            : "h-screen w-screen rounded-md shadow-xl";
 
   return (
     <div className={`relative touch-none`}>
       {showSearchBar && (
         <div className="absolute z w-full px-2 top-5">
-          <LocationSearchInput
+          <LocationSearchInputNewStore
             address={address}
             setAddress={setAddress}
             onLocationSelect={handleLocationSelect}
-            // apiKey={mk}
+          // apiKey={mk}
           />
         </div>
       )}
@@ -157,7 +156,7 @@ const Map = ({
           position={approximatePosition}
           icon={{
             url: `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(
-              customSvgMarker
+              customSvgMarker,
             )}`,
             scaledSize: new google.maps.Size(200, 200),
             anchor: new google.maps.Point(100, 100),
@@ -168,4 +167,4 @@ const Map = ({
   );
 };
 
-export default Map;
+export default MapNewStore;

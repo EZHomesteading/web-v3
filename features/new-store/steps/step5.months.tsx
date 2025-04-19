@@ -1,9 +1,12 @@
 import { useCallback, useEffect, useState } from "react";
 import { OutfitFont } from "@/components/fonts";
-import { NewLocProps } from "../main/helper-components";
 import { Hours } from "@/types";
+import { NewStoreCoreProps } from "../utils";
 
-export function Months({ updateFormData, formData }: NewLocProps) {
+export default function MonthsNewStoreStep({
+  updateFormData,
+  formData,
+}: NewStoreCoreProps) {
   const [isDragging, setIsDragging] = useState(false);
 
   const months = [
@@ -30,7 +33,7 @@ export function Months({ updateFormData, formData }: NewLocProps) {
 
       updateFormData("selectedMonths", newSelectedMonths);
     },
-    [formData.selectedMonths, updateFormData]
+    [formData.selectedMonths, updateFormData],
   );
 
   const handleMouseDown = (monthIndex: number) => {
@@ -53,7 +56,7 @@ export function Months({ updateFormData, formData }: NewLocProps) {
 
     const projection = generateAvailabilityProjection(
       formData.hours,
-      formData.selectedMonths
+      formData.selectedMonths,
     );
 
     updateFormData("hours", projection);
@@ -71,13 +74,11 @@ export function Months({ updateFormData, formData }: NewLocProps) {
             key={month}
             onMouseDown={() => handleMouseDown(index)}
             onMouseEnter={() => handleMouseEnter(index)}
-            className={`p-8 sm:p-12 rounded-xl border-[1px] shadow-md select-none ${
-              OutfitFont.className
-            } ${
-              formData.selectedMonths && formData.selectedMonths.includes(index)
+            className={`p-8 sm:p-12 rounded-xl border-[1px] shadow-md select-none ${OutfitFont.className
+              } ${formData.selectedMonths && formData.selectedMonths.includes(index)
                 ? "bg-[#ced9bb]/20 !border-[#ced9bb]"
                 : "bg-white"
-            }`}
+              }`}
           >
             {month}
           </button>
@@ -89,7 +90,7 @@ export function Months({ updateFormData, formData }: NewLocProps) {
 
 export function generateAvailabilityProjection(
   hours: Hours,
-  selectedMonths: number[]
+  selectedMonths: number[],
 ): Hours {
   if (!hours || !selectedMonths.length) {
     return { pickup: [], delivery: [] };
@@ -103,11 +104,9 @@ export function generateAvailabilityProjection(
   const currentDate = new Date();
   const currentYear = currentDate.getFullYear();
 
-  // Create a map of weekday patterns from existing hours
   const pickupPatterns = new Map();
   const deliveryPatterns = new Map();
 
-  // Extract patterns for each day of week from existing hours
   hours.pickup.forEach((availability) => {
     const date = new Date(availability.date);
     const dayOfWeek = date.getDay(); // 0-6 for Sunday-Saturday
@@ -120,22 +119,17 @@ export function generateAvailabilityProjection(
     deliveryPatterns.set(dayOfWeek, availability.timeSlots);
   });
 
-  // Project these patterns to all selected months
   selectedMonths.forEach((monthIndex) => {
-    // Determine which year to use for this month
     const monthToProcess = new Date(currentYear, monthIndex, 1);
     const useNextYear = monthToProcess < currentDate;
     const yearToUse = useNextYear ? currentYear + 1 : currentYear;
 
-    // Get number of days in the month
     const daysInMonth = new Date(yearToUse, monthIndex + 1, 0).getDate();
 
-    // Loop through each day of the month
     for (let day = 1; day <= daysInMonth; day++) {
       const dateObj = new Date(yearToUse, monthIndex, day);
       const dayOfWeek = dateObj.getDay();
 
-      // Add pickup availability if we have a pattern for this day of week
       if (pickupPatterns.has(dayOfWeek)) {
         result.pickup.push({
           date: new Date(dateObj),
@@ -144,7 +138,6 @@ export function generateAvailabilityProjection(
         });
       }
 
-      // Add delivery availability if we have a pattern for this day of week
       if (deliveryPatterns.has(dayOfWeek)) {
         result.delivery.push({
           date: new Date(dateObj),
@@ -156,11 +149,11 @@ export function generateAvailabilityProjection(
   });
 
   result.pickup.sort(
-    (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+    (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
   );
 
   result.delivery.sort(
-    (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+    (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
   );
 
   return result;

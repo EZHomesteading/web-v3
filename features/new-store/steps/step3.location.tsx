@@ -9,27 +9,31 @@ import PlacesAutocomplete, {
 } from "react-places-autocomplete";
 import Toast from "@/components/ui/toast";
 import { OutfitFont } from "@/components/fonts";
-import { NewLocProps } from "../main/helper-components";
-import { formatAddress } from "@/utils/address";
+import { NewStoreCoreProps } from "../utils";
+import { formatAddressToString } from "@/utils/address-helpers";
 
 const libraries: Libraries = ["places", "drawing", "geometry"];
 
-interface Props extends NewLocProps {
+interface Props extends NewStoreCoreProps {
   apiKey: string;
-  numLocs?: number;
 }
 
-export function Address({ updateFormData, formData, apiKey, numLocs }: Props) {
-  const fullAddress = formatAddress(formData.address || {});
+export default function LocationNewStoreStep({
+  updateFormData,
+  formData,
+  apiKey,
+}: Props) {
+  const fullAddress = formatAddressToString(formData.address || {});
   const [address, setAddress] = useState(fullAddress);
   const [currentCenter, setCurrentCenter] = useState<google.maps.LatLngLiteral>(
     formData?.coordinates
       ? {
-          lat: formData.coordinates.lat,
-          lng: formData.coordinates.lng,
-        }
-      : { lat: 38, lng: -79 }
+        lat: formData.coordinates[0],
+        lng: formData.coordinates[1],
+      }
+      : { lat: -79, lng: 38 },
   );
+
   const [zoom, setZoom] = useState(6);
 
   const mapRef = useRef<google.maps.Map | null>(null);
@@ -45,7 +49,7 @@ export function Address({ updateFormData, formData, apiKey, numLocs }: Props) {
       setCurrentCenter(latLng);
       setZoom(15);
     },
-    []
+    [],
   );
 
   const mapOptions: google.maps.MapOptions = {
@@ -91,7 +95,7 @@ export function Address({ updateFormData, formData, apiKey, numLocs }: Props) {
       const addressComponents = results[0].address_components;
       const street = [
         addressComponents.find((component) =>
-          component.types.includes("street_number")
+          component.types.includes("street_number"),
         )?.long_name,
         addressComponents.find((component) => component.types.includes("route"))
           ?.long_name,
@@ -99,13 +103,13 @@ export function Address({ updateFormData, formData, apiKey, numLocs }: Props) {
         .filter((part): part is string => !!part)
         .join(" ");
       const city = addressComponents.find((component) =>
-        component.types.includes("locality")
+        component.types.includes("locality"),
       )?.long_name;
       const state = addressComponents.find((component) =>
-        component.types.includes("administrative_area_level_1")
+        component.types.includes("administrative_area_level_1"),
       )?.short_name;
       const zip = addressComponents.find((component) =>
-        component.types.includes("postal_code")
+        component.types.includes("postal_code"),
       )?.long_name;
 
       if (!street || !city || !state || !zip) {
@@ -122,7 +126,11 @@ export function Address({ updateFormData, formData, apiKey, numLocs }: Props) {
         state: state,
         zip: zip,
       });
-      updateFormData("coordinates", { lat: latLng.lat, lng: latLng.lng });
+      console.log(
+        formData.address,
+        " in /Users/zachshort/web-ezh/features/new-store/steps/step3.location.tsx",
+      );
+      updateFormData("coordinates", [latLng.lat, latLng.lng]);
       setAddress(selectedAddress);
       handleLocationSelect(latLng);
     } catch (error) {
@@ -146,18 +154,7 @@ export function Address({ updateFormData, formData, apiKey, numLocs }: Props) {
             <div
               className={`absolute zmax top-2 right-1/2 transform translate-x-1/2`}
             >
-              <svg
-                stroke="currentColor"
-                fill="currentColor"
-                strokeWidth="0"
-                viewBox="0 0 256 256"
-                height="20px"
-                width="20px"
-                xmlns="http://www.w3.org/2000/svg"
-                className="absolute left-3 bottom-1/2 transform translate-y-1/2"
-              >
-                <path d="M124,99.77V176a4,4,0,0,0,8,0V99.77a36,36,0,1,0-8,0ZM128,36a28,28,0,1,1-28,28A28,28,0,0,1,128,36ZM236,176c0,12.46-11.73,23.83-33,32-20.09,7.73-46.72,12-75,12s-54.89-4.25-75-12c-21.29-8.19-33-19.56-33-32,0-18.55,25.81-34.22,67.37-40.88A4,4,0,1,1,88.63,143C52.93,148.74,28,162.3,28,176c0,17.39,40.18,36,100,36s100-18.61,100-36c0-13.7-24.93-27.26-60.63-33a4,4,0,1,1,1.26-7.89C210.19,141.78,236,157.45,236,176Z"></path>
-              </svg>
+              <MapIcon />
               <input
                 {...getInputProps({
                   placeholder: "Search by address, city, zip, and state",
@@ -222,7 +219,7 @@ export function Address({ updateFormData, formData, apiKey, numLocs }: Props) {
             position={currentCenter}
             icon={{
               url: `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(
-                customSvgMarker
+                customSvgMarker,
               )}`,
               scaledSize: new google.maps.Size(200, 200),
               anchor: new google.maps.Point(100, 100),
@@ -240,3 +237,19 @@ const customSvgMarker = `
 
 </svg>
 `;
+const MapIcon = () => {
+  return (
+    <svg
+      stroke="currentColor"
+      fill="currentColor"
+      strokeWidth="0"
+      viewBox="0 0 256 256"
+      height="20px"
+      width="20px"
+      xmlns="http://www.w3.org/2000/svg"
+      className="absolute left-3 bottom-1/2 transform translate-y-1/2"
+    >
+      <path d="M124,99.77V176a4,4,0,0,0,8,0V99.77a36,36,0,1,0-8,0ZM128,36a28,28,0,1,1-28,28A28,28,0,0,1,128,36ZM236,176c0,12.46-11.73,23.83-33,32-20.09,7.73-46.72,12-75,12s-54.89-4.25-75-12c-21.29-8.19-33-19.56-33-32,0-18.55,25.81-34.22,67.37-40.88A4,4,0,1,1,88.63,143C52.93,148.74,28,162.3,28,176c0,17.39,40.18,36,100,36s100-18.61,100-36c0-13.7-24.93-27.26-60.63-33a4,4,0,1,1,1.26-7.89C210.19,141.78,236,157.45,236,176Z"></path>
+    </svg>
+  );
+};

@@ -5,10 +5,10 @@ import {
   PiStorefrontThin,
 } from "react-icons/pi";
 import { OutfitFont } from "@/components/fonts";
-import { NewLocProps } from "../main/index";
 import { ReactNode } from "react";
+import { NewStoreCoreProps } from "../utils/utils";
 
-type Option = {
+type fulfillmentOption = {
   label: string;
   icon: ReactNode;
   description: string[];
@@ -25,7 +25,7 @@ export enum FulfillmentType {
   UNDECIDED = "undecided",
 }
 
-const options: Option[] = [
+const options: fulfillmentOption[] = [
   {
     label: "Seperate Schedules",
     icon: <PiCalendarBlankThin size={24} />,
@@ -73,7 +73,10 @@ const options: Option[] = [
   },
 ];
 
-export function Fulfillment({ formData, updateFormData }: NewLocProps) {
+export default function FulfillmentNewStoreStep({
+  formData,
+  updateFormData,
+}: NewStoreCoreProps) {
   return (
     <div className="grid grid-cols-1 gap-2 w-full sm:max-w-[66%] mb-32 sm:grid-cols-2">
       {options.map((option: Option) => (
@@ -83,11 +86,9 @@ export function Fulfillment({ formData, updateFormData }: NewLocProps) {
             updateFormData("fulfillmentStyle", option.value);
             updateFormData("currentConfig", option.currentConfig);
           }}
-          className={`${
-            OutfitFont.className
-          } flex flex-col items-justify-start text-start p-3 w-full rounded-lg border transition ${
-            formData.fulfillmentStyle === option.value ? option.bg : "bg-white"
-          }`}
+          className={`${OutfitFont.className
+            } flex flex-col items-justify-start text-start p-3 w-full rounded-lg border transition ${formData.fulfillmentStyle === option.value ? option.bg : "bg-white"
+            }`}
         >
           <div className="flex items-center space-x-2">
             <span>{option.icon}</span>
@@ -96,9 +97,8 @@ export function Fulfillment({ formData, updateFormData }: NewLocProps) {
           {option.description.map((line: string, idx: number) => (
             <p
               key={idx}
-              className={`text-xs py-[1px] text-neutral-500 ${
-                idx === 2 && "!italic"
-              }`}
+              className={`text-xs py-[1px] text-neutral-500 ${idx === 2 && "!italic"
+                }`}
             >
               {line}
             </p>

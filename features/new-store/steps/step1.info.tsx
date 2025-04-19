@@ -1,6 +1,6 @@
 import { OutfitFont } from "@/components/fonts";
 
-export function Info() {
+const InfoNewStoreStep = () => {
   return (
     <div className="flex flex-col justify-center items-center h-full px-20">
       <div
@@ -16,4 +16,5 @@ export function Info() {
       </div>
     </div>
   );
-}
+};
+export default InfoNewStoreStep;
