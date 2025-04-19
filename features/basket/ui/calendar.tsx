@@ -72,6 +72,4 @@ function Calendar({
   );
 }
 
-Calendar.name = "Calendar";
-
 export { Calendar };
