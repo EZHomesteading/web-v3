@@ -6,7 +6,7 @@ export async function GET() {
     const listings = await prisma.listing.findMany({
       select: {
         title: true,
-        subCategory: true,
+        subcategory: true,
       },
       orderBy: {
         createdAt: "desc",
