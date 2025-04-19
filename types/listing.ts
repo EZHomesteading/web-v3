@@ -6,7 +6,7 @@ export type Listing = {
   //mandatory fields, cannot exist without these
   id: string;
   userId: string;
-  locationId: string;
+  locationId: string | null;
   title: string;
   category: string;
   subcategory: string;
@@ -21,7 +21,7 @@ export type Listing = {
   unit: string;
 
   //optional fields that should be completely omitted in the db if not present to avoid bloat
-  harvestFeatures?: boolean;
+  harvestFeatures?: boolean | undefined;
   projectedStock?: number; // does this need to be refactored?
   SODT?: number;
   reports?: number;
@@ -39,7 +39,7 @@ export type ListingWithLocAndUser = ListingWithLoc & {
 };
 
 export type ListingWithLocAndUserAndBasket = ListingWithLocAndUser & {
-  basket: Basket
+  basket: Basket;
 };
 
 export type ListingWithLocAndSeller = ListingWithLoc & {

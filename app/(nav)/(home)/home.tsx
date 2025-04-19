@@ -136,7 +136,7 @@ const Home = ({ user }: Props) => {
                   !user
                     ? "/auth/register?callBackURL=/create-new-location"
                     : user.locations.length === 0
-                    ? "/new-location-and-hours"
+                    ? "/new-store"
                     : "/create"
                 }`}
                 className="

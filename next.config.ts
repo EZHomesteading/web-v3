@@ -56,4 +56,5 @@ const withPWA = require("next-pwa")({
   swSrc: "public/serviceWorker.js",
 });
 
+// Then export the combined configuration
 module.exports = withPWA(nextConfig);

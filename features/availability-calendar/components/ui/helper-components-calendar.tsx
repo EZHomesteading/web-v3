@@ -7,6 +7,7 @@ import {
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Address } from "@/types";
 import { convertMinutesToTimeString } from "@/utils/time-managers";
 import { Location, TimeSlot } from "@prisma/client";
 import { useRouter } from "next/navigation";
@@ -50,12 +51,14 @@ const DeliveryPickupToggle = ({
           )}
 
           {panelSide && (
-            <>
+            <span>
               {mode === DeliveryPickupToggleMode.DELIVERY
                 ? "Delivery"
                 : "Pickup & Dropoff"}
-            </>
+            </span>
           )}
+
+          {/* Make sure this div is always rendered in the same position */}
           <div className="border-r h-full pl-1" />
           <RiArrowDownSLine className="h-6 w-6 pl-1" />
         </Button>
@@ -137,8 +140,8 @@ const LocationSelector = ({
 }: LocationSelectorProps) => {
   const router = useRouter();
 
-  const formatAddress = (address: string[]): string => {
-    return address.join(", ");
+  const formatAddress = (address: Address): string => {
+    return `${address.street}, ${address.city}, ${address.state}. ${address.zip} `;
   };
   const menuItems = locations.map((location: Location, idx: number) => (
     <DropdownMenuRadioItem
@@ -231,9 +234,7 @@ const LocationSelector = ({
           value={id}
           onValueChange={(value: any) => {
             if (value === "new") {
-              router.push(
-                "/new-location-and-hours?/selling/availability-calendar"
-              );
+              router.push("/new-store?/selling/availability-calendar");
             } else {
               router.push(`/selling/availability-calendar/${value}`);
             }

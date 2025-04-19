@@ -41,7 +41,7 @@ const HoursLocationContainer = ({ locations, apiKey, role }: LocationProps) => {
             key={key}
             id={location?.id}
             locationHeading={locationHeadings[locationIndex]?.text || ""}
-            address={location.address.join(", ")}
+            address={`${location.address.street}, ${location.address.city}, ${location.address.state}. ${location.address.zip} `}
           />
         ))}
         {role !== UserRole.PRODUCER && (

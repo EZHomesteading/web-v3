@@ -31,7 +31,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import UnitSelect, {
-  QuantityTypeValue,
+  unitValue,
 } from "@/features/create/components/modals/unit-select";
 import { HoverButton } from "@/components/ui/hover-btn";
 import { OutfitFont } from "@/components/fonts";
@@ -55,7 +55,7 @@ interface UpdateListingProps {
 
 const UpdateClient = ({ listing }: UpdateListingProps) => {
   const [isLoading, setIsLoading] = useState(false);
-  const [unit, setUnit] = useState<QuantityTypeValue>();
+  const [unit, setUnit] = useState<unitValue>();
   const [certificationChecked, setCertificationChecked] = useState(false);
   const [harvestDates, setHarvestDates] = useState<Month[]>(
     (listing.harvestDates as Month[]) || []
@@ -440,7 +440,7 @@ const UpdateClient = ({ listing }: UpdateListingProps) => {
               <UnitSelect
                 value={unit}
                 onChange={(value) => {
-                  setUnit(value as QuantityTypeValue);
+                  setUnit(value as unitValue);
                   setValue("quantityType", value?.value);
                 }}
               />
@@ -788,9 +788,8 @@ const UpdateClient = ({ listing }: UpdateListingProps) => {
                                     className={`${OutfitFont.className}`}
                                   ></li>{" "}
                                   {listing.user.locations &&
-                                  listing.user.locations[0]?.address.length ===
-                                    4 ? (
-                                    <li className="text-xs">{`${listing.user.locations[0]?.address[0]}, ${listing.user.locations[0]?.address[1]}, ${listing.user.locations[0]?.address[2]}, ${listing.user.locations[0]?.address[3]}`}</li>
+                                  listing.user.locations[0]?.address ? (
+                                    <li className="text-xs">{`${listing.user.locations[0]?.address.street}, ${listing.user.locations[0]?.address.city}, ${listing.user.locations[0]?.address.state}, ${listing.user.locations[0]?.address.zip}`}</li>
                                   ) : (
                                     <li>Full Address not available</li>
                                   )}
@@ -829,9 +828,8 @@ const UpdateClient = ({ listing }: UpdateListingProps) => {
                                       className={`${OutfitFont.className}`}
                                     ></li>{" "}
                                     {listing.user.locations &&
-                                    listing.user.locations[1]?.address
-                                      .length === 4 ? (
-                                      <li className="text-xs">{`${listing.user.locations[1]?.address[0]}, ${listing.user.locations[1]?.address[1]}, ${listing.user.locations[1]?.address[2]}, ${listing.user.locations[1]?.address[3]}`}</li>
+                                    listing.user.locations[1]?.address ? (
+                                      <li className="text-xs">{`${listing.user.locations[1]?.address.street}, ${listing.user.locations[1]?.address.city}, ${listing.user.locations[1]?.address.state}, ${listing.user.locations[1]?.address.zip}`}</li>
                                     ) : (
                                       <li>Full Address not available</li>
                                     )}
@@ -871,9 +869,8 @@ const UpdateClient = ({ listing }: UpdateListingProps) => {
                                       className={`${OutfitFont.className}`}
                                     ></li>{" "}
                                     {listing.user.locations &&
-                                    listing.user.locations[2]?.address
-                                      .length === 4 ? (
-                                      <li className="text-xs">{`${listing.user.locations[2]?.address[0]}, ${listing.user.locations[2]?.address[1]}, ${listing.user.locations[2]?.address[2]}, ${listing.user.locations[2]?.address[3]}`}</li>
+                                    listing.user.locations[2]?.address ? (
+                                      <li className="text-xs">{`${listing.user.locations[2]?.address.street}, ${listing.user.locations[2]?.address.city}, ${listing.user.locations[2]?.address.state}, ${listing.user.locations[2]?.address.zip}`}</li>
                                     ) : (
                                       <li>Full Address not available</li>
                                     )}
