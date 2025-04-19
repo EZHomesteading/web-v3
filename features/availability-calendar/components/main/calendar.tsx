@@ -6,28 +6,14 @@ import TimePicker from "../../utils/time-slot";
 import { toast } from "sonner";
 import StackingPanelLayout, { PanelProps } from "../ui/panel";
 import {
-  DeliveryPickupToggle,
   DeliveryPickupToggleMode,
   Mode,
   CustomSwitch,
   CalendarDay,
   LocationSelector,
+  DeliveryPickupToggle,
 } from "../ui/helper-components-calendar";
 import { PiGearThin } from "react-icons/pi";
-import {
-  Availability,
-  Hours,
-  Location,
-  TimeSlot,
-  UserRole,
-} from "@prisma/client";
-import {
-  checkOverlap,
-  convertTimeStringToMinutes,
-  createDateKey,
-  daysOfWeek,
-} from "../../utils/helper-functions-calendar";
-import { usePathname } from "next/navigation";
 import { RiArrowDownSLine } from "react-icons/ri";
 import axios from "axios";
 import { OutfitFont } from "@/components/fonts";
@@ -37,15 +23,33 @@ import {
   getDaysInMonth,
   getFirstDayOfMonth,
 } from "@/utils/time-managers";
+import {
+  checkOverlap,
+  convertTimeStringToMinutes,
+  createDateKey,
+  daysOfWeek,
+} from "../../utils/helper-functions-calendar";
+import { usePathname } from "next/navigation";
+import {
+  Address,
+  Availability,
+  Hours,
+  Location,
+  TimeSlot,
+  UserRole,
+} from "@/types";
 
-interface p {
+// Define types to replace Prisma imports
+
+interface CalendarProps {
   location?: Location;
   id?: string;
   mk: string;
   locations: Location[];
   userId?: string;
 }
-const Calendar = ({ location, id, mk, locations, userId }: p) => {
+
+const Calendar = ({ location, id, mk, locations, userId }: CalendarProps) => {
   const [hours, setHours] = useState<Hours>({
     delivery:
       location?.hours?.delivery?.map((ex: any) => ({
@@ -58,7 +62,7 @@ const Calendar = ({ location, id, mk, locations, userId }: p) => {
         date: new Date(ex.date),
       })) || [],
   });
-
+  const pathname = usePathname();
   const [panelStack, setPanelStack] = useState<PanelProps[]>([]);
   const isPanelOpen = panelStack.length > 0;
   const [isOpen, setIsOpen] = useState(true);
@@ -67,7 +71,7 @@ const Calendar = ({ location, id, mk, locations, userId }: p) => {
   const modifyButtonTimerRef = useRef<NodeJS.Timeout | null>(null);
   const [deliveryPickupMode, setDeliveryPickupMode] =
     useState<DeliveryPickupToggleMode>(() => {
-      if (location?.role === UserRole.COOP) {
+      if (location?.role === "COOP") {
         return DeliveryPickupToggleMode.PICKUP;
       }
       return DeliveryPickupToggleMode.DELIVERY;
@@ -96,6 +100,12 @@ const Calendar = ({ location, id, mk, locations, userId }: p) => {
   });
   const panelSide = windowDimensions.width > 1150;
 
+  const mainContentVariants = {
+    open: { width: panelSide ? "calc(100% - 384px)" : "100%" },
+    closed: { width: "100%" },
+  };
+
+  // Mouse event handlers for calendar day selection
   const handleMouseDown = (day: number | null, month: number, year: number) => {
     if (day !== null) {
       const key = createDateKey(year, month + 1, day);
@@ -126,11 +136,6 @@ const Calendar = ({ location, id, mk, locations, userId }: p) => {
   const handleMouseUp = () => {
     setIsSelecting(false);
     setSelectionMode(null);
-  };
-
-  const mainContentVariants = {
-    open: { width: panelSide ? "calc(100% - 384px)" : "100%" },
-    closed: { width: "100%" },
   };
 
   const handleClosePanel = () => {
@@ -236,59 +241,6 @@ const Calendar = ({ location, id, mk, locations, userId }: p) => {
     });
   };
 
-  const renderCalendarForMonth = (
-    year: number,
-    month: number
-  ): React.JSX.Element => {
-    const daysInMonth = getDaysInMonth(year, month);
-    const firstDayOfMonth = getFirstDayOfMonth(year, month);
-    const { currentHours } = getCurrentHours();
-    const calendarDays: React.JSX.Element[] = [];
-    const totalCells = 42;
-
-    for (let i = 0; i < totalCells; i++) {
-      const day = i - firstDayOfMonth + 1;
-      const isValidDay = day > 0 && day <= daysInMonth;
-      const key = isValidDay ? createDateKey(year, month + 1, day) : "";
-      const isSelected = isValidDay && !!selectedDays[key];
-
-      let timeSlots: TimeSlot[] = [];
-      if (isValidDay) {
-        const currentDate = parseISO(key);
-        const matchingHours = currentHours?.find((hourSet) =>
-          isSameDay(parseISO(hourSet.date.toISOString()), currentDate)
-        );
-        timeSlots = matchingHours?.timeSlots || [];
-      }
-
-      calendarDays.push(
-        <CalendarDay
-          key={`${month}-${i}`}
-          day={isValidDay ? day : null}
-          onMouseDown={() => handleMouseDown(day, month, year)}
-          onMouseEnter={() => handleMouseEnter(day, month, year)}
-          isSelected={isSelected}
-          timeSlots={timeSlots}
-        />
-      );
-    }
-
-    return (
-      <div
-        key={month}
-        data-month={format(new Date(year, month), "MMM yyyy")}
-        className={`pl-1`}
-      >
-        <div
-          className="text-2xl font-normal mb-4 px-2 cursor-pointer underline w-fit"
-          onClick={() => selectAllDaysInMonth(year, month)}
-        >
-          {format(new Date(year, month), "MMM yyyy")}
-        </div>
-        <div className="grid grid-cols-7 w-full gap-px">{calendarDays}</div>
-      </div>
-    );
-  };
   const renderPanelContent = (panelIndex: number) => (
     <div className="flex flex-col h-full">
       <h2 className="text-xl font-normal my-4">{getSelectionDescription}</h2>
@@ -378,6 +330,60 @@ const Calendar = ({ location, id, mk, locations, userId }: p) => {
     </div>
   );
 
+  const renderCalendarForMonth = (
+    year: number,
+    month: number
+  ): React.JSX.Element => {
+    const daysInMonth = getDaysInMonth(year, month);
+    const firstDayOfMonth = getFirstDayOfMonth(year, month);
+    const { currentHours } = getCurrentHours();
+    const calendarDays: React.JSX.Element[] = [];
+    const totalCells = 42;
+
+    for (let i = 0; i < totalCells; i++) {
+      const day = i - firstDayOfMonth + 1;
+      const isValidDay = day > 0 && day <= daysInMonth;
+      const key = isValidDay ? createDateKey(year, month + 1, day) : "";
+      const isSelected = isValidDay && !!selectedDays[key];
+
+      let timeSlots: TimeSlot[] = [];
+      if (isValidDay) {
+        const currentDate = parseISO(key);
+        const matchingHours = currentHours?.find((hourSet) =>
+          isSameDay(parseISO(hourSet.date.toISOString()), currentDate)
+        );
+        timeSlots = matchingHours?.timeSlots || [];
+      }
+
+      calendarDays.push(
+        <CalendarDay
+          key={`${month}-${i}`}
+          day={isValidDay ? day : null}
+          onMouseDown={() => handleMouseDown(day, month, year)}
+          onMouseEnter={() => handleMouseEnter(day, month, year)}
+          isSelected={isSelected}
+          timeSlots={timeSlots}
+        />
+      );
+    }
+
+    return (
+      <div
+        key={month}
+        data-month={format(new Date(year, month), "MMM yyyy")}
+        className={`pl-1`}
+      >
+        <div
+          className="text-2xl font-normal mb-4 px-2 cursor-pointer underline w-fit"
+          onClick={() => selectAllDaysInMonth(year, month)}
+        >
+          {format(new Date(year, month), "MMM yyyy")}
+        </div>
+        <div className="grid grid-cols-7 w-full gap-px">{calendarDays}</div>
+      </div>
+    );
+  };
+
   const renderAllMonths = (): React.JSX.Element[] => {
     const calendarMonths: React.JSX.Element[] = [];
 
@@ -390,7 +396,6 @@ const Calendar = ({ location, id, mk, locations, userId }: p) => {
 
     return calendarMonths;
   };
-  const pathname = usePathname();
 
   const renderCalendarContent = () => (
     <>
@@ -410,7 +415,7 @@ const Calendar = ({ location, id, mk, locations, userId }: p) => {
             panelSide={panelSide}
             onModeChange={handleDeliveryPickupModeChange}
             mode={deliveryPickupMode}
-          />
+          />{" "}
           <Button
             onClick={() => {
               setIsBasePanelOpen(!isBasePanelOpen);
@@ -486,101 +491,6 @@ const Calendar = ({ location, id, mk, locations, userId }: p) => {
     setDeliveryPickupMode(newMode);
   };
 
-  useEffect(() => {
-    if (selectedDaysCount > 0 && !isBasePanelOpen) {
-      if (modifyButtonTimerRef.current) {
-        clearTimeout(modifyButtonTimerRef.current);
-      }
-      modifyButtonTimerRef.current = setTimeout(() => {
-        setShowModifyButton(true);
-      }, 1);
-    } else {
-      setShowModifyButton(false);
-      if (modifyButtonTimerRef.current) {
-        clearTimeout(modifyButtonTimerRef.current);
-      }
-    }
-
-    return () => {
-      if (modifyButtonTimerRef.current) {
-        clearTimeout(modifyButtonTimerRef.current);
-      }
-    };
-  }, [selectedDaysCount, isPanelOpen]);
-
-  useEffect(() => {
-    if (panelStack.length > 0) {
-      const updatedPanelStack = panelStack.map((panel, index) => ({
-        ...panel,
-        content: renderPanelContent(index),
-      }));
-      setPanelStack(updatedPanelStack);
-    }
-  }, [getSelectionDescription, panelStack.length]);
-
-  useEffect(() => {
-    const shouldShowModifyButton =
-      selectedDaysCount > 0 && panelStack.length === 0;
-
-    if (shouldShowModifyButton) {
-      if (modifyButtonTimerRef.current) {
-        clearTimeout(modifyButtonTimerRef.current);
-      }
-      modifyButtonTimerRef.current = setTimeout(() => {
-        setShowModifyButton(true);
-      }, 1);
-    } else {
-      setShowModifyButton(false);
-      if (modifyButtonTimerRef.current) {
-        clearTimeout(modifyButtonTimerRef.current);
-      }
-    }
-
-    return () => {
-      if (modifyButtonTimerRef.current) {
-        clearTimeout(modifyButtonTimerRef.current);
-      }
-    };
-  }, [selectedDaysCount, isBasePanelOpen, panelStack.length]);
-
-  useEffect(() => {
-    const handleResize = () =>
-      setWindowDimensions({
-        width: window.innerWidth,
-        height: window.innerHeight,
-      });
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
-  useEffect(() => {
-    if (selectedDaysCount === 0) {
-      setPanelStack([]);
-      setUserClosedPanel(false);
-    } else if (
-      panelSide &&
-      selectedDaysCount === 1 &&
-      !isPanelOpen &&
-      !userClosedPanel
-    ) {
-      setPanelStack([
-        {
-          content: renderPanelContent(0),
-          onClose: () => {
-            setPanelStack([]);
-            setUserClosedPanel(true);
-          },
-        },
-      ]);
-    }
-  }, [selectedDaysCount, panelSide, isPanelOpen, userClosedPanel]);
-
-  useEffect(() => {
-    if (selectedDaysCount > 1) {
-      setUserClosedPanel(false);
-    }
-  }, [selectedDaysCount]);
-
   const handleSaveChanges = async () => {
     if (checkOverlap(allTimeSlots)) {
       toast.error("Time slots overlap. Please adjust the hours.");
@@ -623,23 +533,21 @@ const Calendar = ({ location, id, mk, locations, userId }: p) => {
     };
 
     try {
-      const response = await axios.post(
-        "/api/useractions/update/location-hours",
-        {
-          location: [
-            {
-              address: location?.address,
-              coordinates: location?.coordinates,
-              role: location?.role,
-              hours: updatedHours,
-            },
-          ],
-          locationId: location?.id,
-          isDefault: null,
-        }
-      );
+      // Use the API endpoint instead of direct Prisma call
+      const response = await axios.post("/api/calendar/hours", {
+        location: [
+          {
+            address: location?.address,
+            coordinates: location?.coordinates,
+            role: location?.role,
+            hours: updatedHours,
+          },
+        ],
+        locationId: location?.id,
+        isDefault: null,
+      });
 
-      if (response.data) {
+      if (response.data.success) {
         setHours(updatedHours);
         toast.success("Hours updated successfully");
       } else {
@@ -658,6 +566,139 @@ const Calendar = ({ location, id, mk, locations, userId }: p) => {
     setPanelStack([]);
     setAllTimeSlots([[{ open: 540, close: 1020 }]]);
   };
+
+  // Fetch initial hours data
+  // useEffect(() => {
+  //   const fetchHours = async () => {
+  //     if (location?.id) {
+  //       try {
+  //         const response = await axios.get(
+  //           `/api/calendar/hours?locationId=${location.id}`
+  //         );
+  //         if (response.data.location?.hours) {
+  //           setHours({
+  //             delivery: response.data.location.hours.delivery.map(
+  //               (item: any) => ({
+  //                 ...item,
+  //                 date: new Date(item.date),
+  //               })
+  //             ),
+  //             pickup: response.data.location.hours.pickup.map((item: any) => ({
+  //               ...item,
+  //               date: new Date(item.date),
+  //             })),
+  //           });
+  //         }
+  //       } catch (error) {
+  //         console.error("Error fetching hours:", error);
+  //         toast.error("Failed to load calendar data");
+  //       }
+  //     }
+  //   };
+
+  //   fetchHours();
+  // }, [location?.id]);
+
+  // Show/hide modify button based on selection
+  useEffect(() => {
+    if (selectedDaysCount > 0 && !isBasePanelOpen) {
+      if (modifyButtonTimerRef.current) {
+        clearTimeout(modifyButtonTimerRef.current);
+      }
+      modifyButtonTimerRef.current = setTimeout(() => {
+        setShowModifyButton(true);
+      }, 1);
+    } else {
+      setShowModifyButton(false);
+      if (modifyButtonTimerRef.current) {
+        clearTimeout(modifyButtonTimerRef.current);
+      }
+    }
+
+    return () => {
+      if (modifyButtonTimerRef.current) {
+        clearTimeout(modifyButtonTimerRef.current);
+      }
+    };
+  }, [selectedDaysCount, isPanelOpen, isBasePanelOpen]);
+
+  // Update panel content when selection description changes
+  useEffect(() => {
+    if (panelStack.length > 0) {
+      const updatedPanelStack = panelStack.map((panel, index) => ({
+        ...panel,
+        content: renderPanelContent(index),
+      }));
+      setPanelStack(updatedPanelStack);
+    }
+  }, [getSelectionDescription, panelStack.length]);
+
+  // Handle showing modify button
+  useEffect(() => {
+    const shouldShowModifyButton =
+      selectedDaysCount > 0 && panelStack.length === 0;
+
+    if (shouldShowModifyButton) {
+      if (modifyButtonTimerRef.current) {
+        clearTimeout(modifyButtonTimerRef.current);
+      }
+      modifyButtonTimerRef.current = setTimeout(() => {
+        setShowModifyButton(true);
+      }, 1);
+    } else {
+      setShowModifyButton(false);
+      if (modifyButtonTimerRef.current) {
+        clearTimeout(modifyButtonTimerRef.current);
+      }
+    }
+
+    return () => {
+      if (modifyButtonTimerRef.current) {
+        clearTimeout(modifyButtonTimerRef.current);
+      }
+    };
+  }, [selectedDaysCount, isBasePanelOpen, panelStack.length]);
+
+  // Handle window resize
+  useEffect(() => {
+    const handleResize = () =>
+      setWindowDimensions({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  // Auto-open panel for single selection
+  useEffect(() => {
+    if (selectedDaysCount === 0) {
+      setPanelStack([]);
+      setUserClosedPanel(false);
+    } else if (
+      panelSide &&
+      selectedDaysCount === 1 &&
+      !isPanelOpen &&
+      !userClosedPanel
+    ) {
+      setPanelStack([
+        {
+          content: renderPanelContent(0),
+          onClose: () => {
+            setPanelStack([]);
+            setUserClosedPanel(true);
+          },
+        },
+      ]);
+    }
+  }, [selectedDaysCount, panelSide, isPanelOpen, userClosedPanel]);
+
+  // Reset user closed panel flag when multiple days are selected
+  useEffect(() => {
+    if (selectedDaysCount > 1) {
+      setUserClosedPanel(false);
+    }
+  }, [selectedDaysCount]);
 
   return (
     <StackingPanelLayout

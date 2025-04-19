@@ -761,7 +761,7 @@ const CreateClient: React.FC<Props> = ({
                   ))}
                   {locations?.length < 5 && (
                     <Link
-                      href={`/new-location-and-hours`}
+                      href={`/new-store`}
                       className={`text-gray-500 w-full border !border-k relative py-8 rounded-sm shadow-md text-base font-medium text-center
                     `}
                     >
@@ -779,7 +779,7 @@ const CreateClient: React.FC<Props> = ({
                   a couple of minutes.
                 </p>
                 <Link
-                  href={`/new-location-and-hours`}
+                  href={`/new-store`}
                   className={`items-center border p-4 shadow-md text-base sm:text-xl group font-medium rounded-full flex justify-between !border-black absolute top-1/3 right-1/2 transform translate-x-1/2 w-full max-w-[350px]`}
                 >
                   Create a new Selling Location

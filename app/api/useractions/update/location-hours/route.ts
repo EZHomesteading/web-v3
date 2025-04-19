@@ -31,7 +31,7 @@ export async function POST(request: Request) {
       //console.log("Updating hours for existing location");
       updatedLocation = await prisma.location.update({
         where: { id: locationId },
-        data: { hours, displayName },
+        data: { hours },
       });
     } else {
       const locationCount = await prisma.location.count({

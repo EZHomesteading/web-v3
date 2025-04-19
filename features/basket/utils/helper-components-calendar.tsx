@@ -19,6 +19,7 @@ import {
 } from "react-icons/pi";
 import { RiArrowDownSLine } from "react-icons/ri";
 import { convertMinutesToTimeString } from "@/utils/time-managers";
+import { Address } from "@/types";
 
 export enum DeliveryPickupToggleMode {
   DELIVERY = "DELIVERY",
@@ -153,8 +154,8 @@ const LocationSelector = ({
 }: LocationSelectorProps) => {
   const router = useRouter();
 
-  const formatAddress = (address: string[]): string => {
-    return address.join(", ");
+  const formatAddress = (address: Address): string => {
+    return `${address.street}, ${address.city}, ${address.state}. ${address.zip} `;
   };
   const menuItems = locations.map((location: Location, idx: number) => (
     <DropdownMenuRadioItem
@@ -247,9 +248,7 @@ const LocationSelector = ({
           value={id}
           onValueChange={(value) => {
             if (value === "new") {
-              router.push(
-                "/new-location-and-hours?/selling/availability-calendar"
-              );
+              router.push("/new-store?/selling/availability-calendar");
             } else {
               router.push(`/selling/availability-calendar/${value}`);
             }

@@ -1,3 +1,4 @@
+"use client";
 import React, { ReactNode, useEffect, useState } from "react";
 import { motion, AnimatePresence, MotionStyle } from "framer-motion";
 import { X } from "lucide-react";
@@ -15,9 +16,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { LocationSelector } from "./helper-components-calendar";
 import { toast } from "sonner";
 import { Location } from "@prisma/client";
-import Link from "next/link";
 import SetDefaultButton from "./set-default-button";
-import { OutfitFont } from "@/components/fonts";
 import ListingMap from "./listing-map";
 import Toast from "@/components/ui/toast";
 import Alert from "@/components/ui/custom-alert";
@@ -43,7 +42,7 @@ interface StackingPanelLayoutProps {
   userId?: string;
 }
 
-const StackingPanelLayout: React.FC<StackingPanelLayoutProps> = async ({
+const StackingPanelLayout: React.FC<StackingPanelLayoutProps> = ({
   children,
   panels,
   panelSide,
@@ -74,8 +73,7 @@ const StackingPanelLayout: React.FC<StackingPanelLayoutProps> = async ({
   const handleAddressChange = (field: string, value: string) => {
     setAddress((prev) => ({ ...prev, [field]: value }));
   };
-  const session = await authCache();
-  const userRole = session?.user?.role;
+
   const getLatLngFromAddress = async (address: string) => {
     const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
       address
@@ -105,7 +103,7 @@ const StackingPanelLayout: React.FC<StackingPanelLayoutProps> = async ({
     const newGeoResult = await getLatLngFromAddress(fullAddress);
     setGeoResult(newGeoResult);
     let hours = null;
-    let role = userRole;
+    let role = location?.role;
     let text = "New store location added";
     if (location) {
       hours = location?.hours;
@@ -313,7 +311,7 @@ const StackingPanelLayout: React.FC<StackingPanelLayoutProps> = async ({
           )}
           <div className="flex flex-col justify-between">
             <LocationSelector
-              name={validDisplayName}
+              //name={validDisplayName}
               id={id}
               address={location?.address}
               locations={locations}
@@ -461,7 +459,7 @@ const StackingPanelLayout: React.FC<StackingPanelLayoutProps> = async ({
             )}
             {!location?.isDefault && (
               <SetDefaultButton
-                street={location?.address[0]}
+                street={location?.address.street}
                 userId={userId}
                 locationId={location?.id}
                 className="!text-base  font-medium w-full my-2 border py-5 rounded-sm justify-between px-2 sm:px-4 flex relative bg-inherit text-black hover:text-white !border-black shadow-md"
@@ -481,8 +479,8 @@ const StackingPanelLayout: React.FC<StackingPanelLayoutProps> = async ({
               <div className={`relative`}>
                 <ListingMap
                   apiKey={mk}
-                  lat={geoResult?.lat || location?.coordinates[1] || 38}
-                  lng={geoResult?.lng || location?.coordinates[0] || -84}
+                  lat={geoResult?.lat || location?.coordinates.lat || 38}
+                  lng={geoResult?.lng || location?.coordinates.lng || -84}
                   scrollWheel={false}
                   gestureHandling="none"
                 />

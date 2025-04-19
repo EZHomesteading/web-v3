@@ -39,7 +39,7 @@ export async function GET(req: NextRequest) {
           select: {
             listing: {
               select: {
-                imageSrc: true,
+                images: true,
               },
             },
           },
@@ -47,7 +47,7 @@ export async function GET(req: NextRequest) {
         location: {
           select: {
             address: true,
-            displayName: true,
+            name: true,
             hours: true,
             image: true,
             user: {

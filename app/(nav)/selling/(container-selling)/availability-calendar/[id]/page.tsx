@@ -2,6 +2,7 @@ import React from "react";
 import { auth } from "@/auth";
 import Calendar from "@/features/availability-calendar/components/main/calendar";
 import { Location } from "@prisma/client";
+import { getUserLocations } from "@/actions/getLocations";
 
 interface EditLocationPageProps {
   params: { id: string };
@@ -13,14 +14,9 @@ export default async function EditLocationPage({
   const session = await auth();
   const locationId = params.id;
 
-  let locations: Location[] = [];
-
   const userId = session?.user?.id;
-  const res = await fetch(
-    `${process.env.API_URL}/get-many?collection=Location&key=userId&value=${userId}&fields=address,coordinates,isDefault,id,userId,displayName,hours`
-  );
-  const data = await res.json();
-  locations = data.items;
+  const locations = await getUserLocations({ userId });
+
   const location = locations.find((loc) => loc.id === locationId);
   console.log(location?.name);
 
