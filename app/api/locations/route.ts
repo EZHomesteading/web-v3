@@ -18,7 +18,7 @@ export async function GET(req: NextRequest) {
     if (!locationIds.length) {
       return NextResponse.json(
         { error: "No location IDs provided" },
-        { status: 400 },
+        { status: 400 }
       );
     }
 
@@ -54,7 +54,10 @@ const NewStoreReq = z.object({
     state: z.string(),
     postalCode: z.string().optional(),
   }),
-  coordinates: z.array(z.number(), z.number()),
+  coordinates: z.object({
+    lat: z.number(),
+    lng: z.number(),
+  }),
   role: z.string(),
   hours: z.object({
     delivery: z.array(z.any()).optional(),
@@ -81,7 +84,7 @@ export async function POST(req: NextRequest) {
           error: "Invalid request data",
           details: validationResult.error.format(),
         },
-        { status: 400 },
+        { status: 400 }
       );
     }
 
@@ -99,13 +102,13 @@ export async function POST(req: NextRequest) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: "Validation error", details: error.format() },
-        { status: 400 },
+        { status: 400 }
       );
     }
 
     return NextResponse.json(
       { error: "Internal Server Error" },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }

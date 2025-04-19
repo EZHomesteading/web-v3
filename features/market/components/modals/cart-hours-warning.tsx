@@ -76,7 +76,7 @@ const HoursWarningModal = ({
   onConfirm: () => void;
   incompatibleDays: DateCompatibility[];
   type: "pickup" | "delivery";
-  isFirstItem?: boolean;
+  isFirstItem: boolean;
 }) => {
   console.log("Modal rendering with isFirstItem:", isFirstItem);
   const [isMobile, setIsMobile] = useState(false);

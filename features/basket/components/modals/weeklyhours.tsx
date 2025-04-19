@@ -41,7 +41,7 @@ const WeeklyHours: React.FC<WeeklyHoursProps> = ({ location, mode }) => {
     const hour12 = hour % 12 || 12;
     return `${hour12}${ampm}`;
   };
-
+  console.log(location);
   const getWeekDates = (offset: number): Date[] => {
     const today = new Date();
     const startDate = new Date(today);

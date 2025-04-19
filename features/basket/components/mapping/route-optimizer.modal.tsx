@@ -10,7 +10,7 @@ interface RouteOptimizerModalProps {
   onClose: () => void;
   locations: Location[];
   googleMapsApiKey: string;
-  initialLocation: number[];
+  initialLocation: { lat: number; lng: number };
   selectedTime: Date;
   setPickupTimes: any;
   setStartLoc: React.Dispatch<React.SetStateAction<any[]>>;

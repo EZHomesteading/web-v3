@@ -27,19 +27,19 @@ export default function NewStoreClient({
 
   const [step, setStep] = useState(startingStep);
   const [formData, setFormData] = useState<NewStoreFormData>(
-    InitialFormDataNewStore,
+    InitialFormDataNewStore
   );
 
   const updateFormData = <F extends keyof NewStoreFormData>(
     field: F,
-    value: NewStoreFormData[F],
+    value: NewStoreFormData[F]
   ) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   console.log(
     formData,
-    " in /Users/zachshort/web-ezh/features/new-store/main/new-store-client.tsx",
+    " in /Users/zachshort/web-ezh/features/new-store/main/new-store-client.tsx"
   );
 
   async function Submit() {
@@ -48,7 +48,10 @@ export default function NewStoreClient({
       role: formData.role,
       name: "test name",
       address: formData.address,
-      coordinates: formData.coordinates,
+      coordinates: {
+        lat: formData.coordinates[0],
+        lng: formData.coordinates[1],
+      },
       type: formData.type,
       hours: formData.hours,
       bio: "test bio",
@@ -57,14 +60,14 @@ export default function NewStoreClient({
 
     console.log(
       data,
-      " in /Users/zachshort/web-ezh/features/new-store/main/new-store-client.tsx",
+      " in /Users/zachshort/web-ezh/features/new-store/main/new-store-client.tsx"
     );
 
     try {
       const res = await axios.post("/api/locations", data);
 
       toast.success(res.data.message);
-      router.push("/selling");
+      router.push("/create");
     } catch (error: any) {
       console.error(error);
       toast.error(error.response.data.error);

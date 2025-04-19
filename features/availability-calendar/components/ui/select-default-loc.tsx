@@ -19,7 +19,7 @@ const SelectDefaultLoc = ({ locations, user }: p) => {
           <>
             <SetDefaultButton
               key={index}
-              street={location?.address[0]}
+              street={location?.address.street}
               userId={user?.id}
               locationId={location?.id}
             />

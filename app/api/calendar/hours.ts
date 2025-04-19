@@ -3,7 +3,7 @@ import prisma from "@/lib/prisma";
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
-  const locationId = searchParams.get("locationId");
+  const locationId = await searchParams.get("locationId");
 
   if (!locationId) {
     return NextResponse.json(

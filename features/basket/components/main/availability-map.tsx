@@ -272,7 +272,7 @@ const AvailabilityMap: React.FC<AvailabilityMapProps> = ({
     return null;
   }
 
-  const defaultCoords = [40.7128, -74.006]; // NYC coordinates as fallback
+  const defaultCoords = { lat: 40.7128, lng: -74.006 }; // NYC coordinates as fallback
 
   // Safely access coordinates with fallback
   const initialCoordinates = (() => {
@@ -308,8 +308,8 @@ const AvailabilityMap: React.FC<AvailabilityMapProps> = ({
 
   const datePickerTriggerRef = useRef<HTMLButtonElement>(null);
   const [mapCenter, setMapCenter] = useState({
-    lat: hereCoordinates[1] ?? defaultCoords[1],
-    lng: hereCoordinates[0] ?? defaultCoords[0],
+    lat: hereCoordinates.lat ?? defaultCoords.lat,
+    lng: hereCoordinates.lng ?? defaultCoords.lng,
   });
   const [randomizedPositions, setRandomizedPositions] =
     useState<RandomizedPositions>({});
@@ -402,8 +402,8 @@ const AvailabilityMap: React.FC<AvailabilityMapProps> = ({
       setHereCoordinates(userLoc[0].coordinates);
       setInitLoc(userLoc[0]);
       setMapCenter({
-        lat: userLoc[0].coordinates[1],
-        lng: userLoc[0].coordinates[0],
+        lat: userLoc[0].coordinates.lat,
+        lng: userLoc[0].coordinates.lng,
       });
     }
   }, [userLoc]);
@@ -412,8 +412,8 @@ const AvailabilityMap: React.FC<AvailabilityMapProps> = ({
     const newRandomPositions: RandomizedPositions = {};
     locations.forEach((location) => {
       if (!randomizedPositions[location.id] && location.coordinates) {
-        const originalLat = location.coordinates[1];
-        const originalLng = location.coordinates[0];
+        const originalLat = location.coordinates.lat;
+        const originalLng = location.coordinates.lng;
         newRandomPositions[location.id] = {
           originalLat,
           originalLng,
@@ -530,8 +530,7 @@ const AvailabilityMap: React.FC<AvailabilityMapProps> = ({
 
       if (!isOpen) {
         unavailable.push({
-          name:
-            location.name || location.user?.name || "Unknown Location",
+          name: location.name || location.user?.name || "Unknown Location",
           nextOpenTime: findNextOpenTime(location, selectedDateTime),
         });
       }
@@ -772,8 +771,8 @@ const AvailabilityMap: React.FC<AvailabilityMapProps> = ({
           >
             <MarkerF
               position={{
-                lat: hereCoordinates[1],
-                lng: hereCoordinates[0],
+                lat: hereCoordinates.lat,
+                lng: hereCoordinates.lng,
               }}
               icon={{
                 url: "/icons/clipart2825061.png",
@@ -796,10 +795,12 @@ const AvailabilityMap: React.FC<AvailabilityMapProps> = ({
                 <React.Fragment key={location.id}>
                   <Circle
                     center={
-                      new google.maps.LatLng(
-                        position.randomLat,
-                        position.randomLng
-                      )
+                      position.randomLat
+                        ? new google.maps.LatLng(
+                            position.randomLat,
+                            position.randomLng
+                          )
+                        : new google.maps.LatLng(40, -80)
                     }
                     radius={
                       zoom >= 16
@@ -835,9 +836,7 @@ const AvailabilityMap: React.FC<AvailabilityMapProps> = ({
                     }
                     label={{
                       text:
-                        location.name ||
-                        location.user.name ||
-                        "no name found",
+                        location.name || location.user.name || "no name found",
                       color: "black",
                       fontSize: "14px",
                       fontWeight: "bold",

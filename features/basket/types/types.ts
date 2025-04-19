@@ -7,7 +7,7 @@ export interface RouteOptimizerProps {
   initialTime: Date;
   locations: any[];
   googleMapsApiKey: string;
-  initialLocation: number[];
+  initialLocation: { lat: number; lng: number };
   onClose: () => void;
   setCartPickupTimes: any;
   isOpen: boolean;

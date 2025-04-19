@@ -376,7 +376,7 @@ const DetailedBasketCard: React.FC<DetailedBasketCardProps> = ({
       const hasDeliveryHours = basket.location?.hours?.delivery?.length > 0;
       const hasPickupHours = basket.location?.hours?.pickup?.length > 0;
       const isCoop = basket.location.role === "COOP";
-
+      console.log(hasPickupHours);
       if (!hasDeliveryHours && hasPickupHours) {
         return DeliveryPickupToggleMode.PICKUP;
       }

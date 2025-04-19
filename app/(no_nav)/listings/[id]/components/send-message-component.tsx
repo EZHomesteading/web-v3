@@ -37,6 +37,7 @@ const SendMessageComponent = ({
     setShowWarning,
     incompatibleDays,
     addToBasket,
+    isFirstItemInCart,
   } = useBasket({
     listingId: listing.id,
     user,
@@ -127,6 +128,7 @@ const SendMessageComponent = ({
       )}
 
       <HoursWarningModal
+        isFirstItem={isFirstItemInCart}
         isOpen={showWarning}
         onClose={() => setShowWarning(false)}
         onConfirm={() => {

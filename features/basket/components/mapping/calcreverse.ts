@@ -28,8 +28,8 @@ const calculateDistanceMatrix = async (
 
   for (const location of locations) {
     const dest = new google.maps.LatLng(
-      location.coordinates[1],
-      location.coordinates[0]
+      location.coordinates.lat,
+      location.coordinates.lng
     );
     const distance = google.maps.geometry.spherical.computeDistanceBetween(
       baseLocation,
@@ -125,8 +125,8 @@ export const optimizeArrivalTimeRoute = async (
     if (hasTightWindows) {
       const firstLocation = sortedLocations[0];
       const firstLocationLatLng = new google.maps.LatLng(
-        firstLocation.coordinates[1],
-        firstLocation.coordinates[0]
+        firstLocation.coordinates.lat,
+        firstLocation.coordinates.lng
       );
 
       const intermediateResult = await calculateRouteWithArrivalTimings(
@@ -193,8 +193,8 @@ const optimizeInChunksForArrival = async (
       remainingLocations.length === 0
         ? startLocation
         : new google.maps.LatLng(
-            remainingLocations[0].coordinates[1],
-            remainingLocations[0].coordinates[0]
+            remainingLocations[0].coordinates.lat,
+            remainingLocations[0].coordinates.lng
           );
 
     const chunkResult = await calculateRouteWithArrivalTimings(
@@ -254,7 +254,7 @@ const calculateRouteWithArrivalTimings = async (
     };
   }
   const waypoints = locations.map((loc) => ({
-    location: new google.maps.LatLng(loc.coordinates[1], loc.coordinates[0]),
+    location: new google.maps.LatLng(loc.coordinates.lat, loc.coordinates.lng),
     stopover: true,
   }));
 
@@ -425,8 +425,8 @@ const calculateInitialLeg = async (
 ): Promise<RouteResult> => {
   const firstLocation = intermediateResult.route[0];
   const firstLocationLatLng = new google.maps.LatLng(
-    firstLocation.coordinates[1],
-    firstLocation.coordinates[0]
+    firstLocation.coordinates.lat,
+    firstLocation.coordinates.lng
   );
 
   const initialLeg = await new Promise<google.maps.DirectionsResult>(
@@ -499,7 +499,7 @@ export const optimizeRoute = async (
 
   // Convert locations to waypoints
   const waypoints = locations.map((loc) => ({
-    location: new google.maps.LatLng(loc.coordinates[1], loc.coordinates[0]),
+    location: new google.maps.LatLng(loc.coordinates.lat, loc.coordinates.lng),
     stopover: true,
   }));
 

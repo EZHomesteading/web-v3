@@ -38,7 +38,7 @@ const MarketCartToggle = ({
     setShowWarning,
     incompatibleDays,
     addToBasket,
-    isFirstItemInCart, // Add this from the updated useBasket hook
+    isFirstItemInCart,
   } = useBasket({
     listingId: listing?.id,
     address: listing.location.address,

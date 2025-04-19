@@ -87,7 +87,7 @@ const RouteOptimizer = ({
     suggestedPickupTimes: {},
   });
   const [userLocation, setUserLocation] = useState<google.maps.LatLng | null>(
-    new google.maps.LatLng(initialLocation[1], initialLocation[0]) || null
+    new google.maps.LatLng(initialLocation.lat, initialLocation.lng) || null
   );
   const [endLocation, setEndLocation] = useState<google.maps.LatLng | null>(
     null
@@ -114,7 +114,7 @@ const RouteOptimizer = ({
   );
   const [useCustomStartLocation, setUseCustomStartLocation] = useState(false);
   const [startLocation, setStartLocation] = useState<google.maps.LatLng | null>(
-    new google.maps.LatLng(initialLocation[1], initialLocation[0]) || null
+    new google.maps.LatLng(initialLocation.lat, initialLocation.lng) || null
   );
   const [mapKey, setMapKey] = useState(0);
   const [useCustomEndLocation, setUseCustomEndLocation] = useState(false);
@@ -159,8 +159,8 @@ const RouteOptimizer = ({
 
     locations.forEach((location) => {
       if (!randomizedPositions[location.id]) {
-        const originalLat = location.coordinates[1];
-        const originalLng = location.coordinates[0];
+        const originalLat = location.coordinates.lat;
+        const originalLng = location.coordinates.lng;
         const randomLat = originalLat + generateRandomOffset();
         const randomLng = originalLng + generateRandomOffset();
 
@@ -464,8 +464,7 @@ const RouteOptimizer = ({
       errorMessage = (
         <div className="space-y-2">
           <p className="text-red-600 font-medium">
-            Cannot route to{" "}
-            {error.location?.name || error.location.user.name}
+            Cannot route to {error.location?.name || error.location.user.name}
           </p>
           <p>
             This location would be closed when we arrive. Their hours are:{" "}
@@ -635,7 +634,7 @@ const RouteOptimizer = ({
     // Only set initial location if no custom start location is set
     if (!customStartLocation) {
       setUserLocation(
-        new google.maps.LatLng(initialLocation[1], initialLocation[0])
+        new google.maps.LatLng(initialLocation.lat, initialLocation.lng)
       );
 
       if (navigator.geolocation) {
@@ -650,7 +649,7 @@ const RouteOptimizer = ({
           (error) => {
             console.error("Error getting location:", error);
             setUserLocation(
-              new google.maps.LatLng(initialLocation[1], initialLocation[0])
+              new google.maps.LatLng(initialLocation.lat, initialLocation.lng)
             );
           }
         );
@@ -781,8 +780,7 @@ const RouteOptimizer = ({
                                         className={`${OutfitFont.className} font-medium truncate`}
                                       >
                                         {index + 1}.{" "}
-                                        {location.name ||
-                                          location.user.name}
+                                        {location.name || location.user.name}
                                       </span>
                                     </div>
                                   </div>
@@ -874,8 +872,8 @@ const RouteOptimizer = ({
                         if (!checked1) {
                           setStartLocation(
                             new google.maps.LatLng(
-                              initialLocation[1],
-                              initialLocation[0]
+                              initialLocation.lat,
+                              initialLocation.lng
                             )
                           );
                           setCustomStartLocation(null);
@@ -938,8 +936,8 @@ const RouteOptimizer = ({
                         if (!checked) {
                           setEndLocation(
                             new google.maps.LatLng(
-                              initialLocation[1],
-                              initialLocation[0]
+                              initialLocation.lat,
+                              initialLocation.lng
                             )
                           );
                           setCustomEndLocation(null);
@@ -1086,8 +1084,7 @@ const RouteOptimizer = ({
                           className="border-b last:border-b-0 py-1"
                         >
                           <div className="font-medium text-xs md:text-sm">
-                            {index + 1}.{" "}
-                            {location.name || location?.user?.name}
+                            {index + 1}. {location.name || location?.user?.name}
                           </div>
                           <div className="pl-2 md:pl-4">
                             <div className="text-gray-600 text-xs">
@@ -1198,7 +1195,7 @@ const RouteOptimizer = ({
                         ? [startLocation.lat(), startLocation.lng()]
                         : userLocation
                         ? [userLocation.lat(), userLocation.lng()]
-                        : initialLocation
+                        : [initialLocation.lat, initialLocation.lng]
                     );
 
                     setEndLoc(
@@ -1271,8 +1268,8 @@ const RouteOptimizer = ({
             position={
               startLocation?.toJSON() ||
               userLocation?.toJSON() || {
-                lat: initialLocation[1],
-                lng: initialLocation[0],
+                lat: initialLocation.lat,
+                lng: initialLocation.lng,
               }
             }
             icon={{
@@ -1338,10 +1335,7 @@ const RouteOptimizer = ({
                   )
                 }
                 label={{
-                  text:
-                    location.name ||
-                    location.user.name ||
-                    "no name found",
+                  text: location.name || location.user.name || "no name found",
                   color: "black",
                   fontSize: "12px",
                   fontWeight: "bold",

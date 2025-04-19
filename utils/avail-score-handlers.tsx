@@ -58,10 +58,10 @@ export const getTextColor = (score: number) => {
   }
 };
 
-export function calculateAvailabilityScores(hours: Hours): ScoreResult {
+export function calculateAvailabilityScores(hours: Hours | null): ScoreResult {
   return {
-    pickup: calculateServiceScores(hours.pickup || []),
-    delivery: calculateServiceScores(hours.delivery || []),
+    pickup: calculateServiceScores(hours?.pickup || []),
+    delivery: calculateServiceScores(hours?.delivery || []),
   };
 }
 

@@ -37,6 +37,7 @@ const SendMessageSection = ({
     incompatibleDays,
     addToBasket,
     updateQuantity,
+    isFirstItemInCart,
   } = useBasket({
     listingId: listing.id,
     user,
@@ -173,12 +174,8 @@ const SendMessageSection = ({
           }`}
         >
           {isInBasket
-            ? `Remove ${quantity ? quantity : 0} ${
-                listing?.unit
-              } from Basket`
-            : `Add ${quantity ? quantity : 0} ${
-                listing?.unit
-              } to Basket`}
+            ? `Remove ${quantity ? quantity : 0} ${listing?.unit} from Basket`
+            : `Add ${quantity ? quantity : 0} ${listing?.unit} to Basket`}
         </button>
 
         {!isInBasket && (
@@ -188,6 +185,7 @@ const SendMessageSection = ({
         )}
       </div>
       <HoursWarningModal
+        isFirstItem={isFirstItemInCart}
         isOpen={showWarning}
         onClose={() => setShowWarning(false)}
         onConfirm={() => {
