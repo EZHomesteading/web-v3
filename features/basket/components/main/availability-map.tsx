@@ -277,7 +277,11 @@ const AvailabilityMap: React.FC<AvailabilityMapProps> = ({
   // Safely access coordinates with fallback
   const initialCoordinates = (() => {
     try {
-      return userLoc[0]?.coordinates || defaultCoords;
+      const coord = {
+        lat: userLoc[0]?.coordinates[1],
+        lng: userLoc[0]?.coordinates[0],
+      };
+      return coord || defaultCoords;
     } catch (error) {
       return defaultCoords;
     }
@@ -402,8 +406,8 @@ const AvailabilityMap: React.FC<AvailabilityMapProps> = ({
       setHereCoordinates(userLoc[0].coordinates);
       setInitLoc(userLoc[0]);
       setMapCenter({
-        lat: userLoc[0].coordinates.lat,
-        lng: userLoc[0].coordinates.lng,
+        lat: userLoc[0].coordinates[1],
+        lng: userLoc[0].coordinates[0],
       });
     }
   }, [userLoc]);
@@ -412,8 +416,8 @@ const AvailabilityMap: React.FC<AvailabilityMapProps> = ({
     const newRandomPositions: RandomizedPositions = {};
     locations.forEach((location) => {
       if (!randomizedPositions[location.id] && location.coordinates) {
-        const originalLat = location.coordinates.lat;
-        const originalLng = location.coordinates.lng;
+        const originalLat = location.coordinates[1];
+        const originalLng = location.coordinates[0];
         newRandomPositions[location.id] = {
           originalLat,
           originalLng,
@@ -435,7 +439,7 @@ const AvailabilityMap: React.FC<AvailabilityMapProps> = ({
         address,
         coordinates,
       });
-      setHereCoordinates(coordinates);
+      setHereCoordinates({ lng: coordinates[0], lat: coordinates[1] });
       setMapCenter({
         lng: coordinates[0],
         lat: coordinates[1],

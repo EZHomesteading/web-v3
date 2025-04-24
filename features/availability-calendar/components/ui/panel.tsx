@@ -479,8 +479,8 @@ const StackingPanelLayout: React.FC<StackingPanelLayoutProps> = ({
               <div className={`relative`}>
                 <ListingMap
                   apiKey={mk}
-                  lat={geoResult?.lat || location?.coordinates.lat || 38}
-                  lng={geoResult?.lng || location?.coordinates.lng || -84}
+                  lat={geoResult?.lat || location?.coordinates[1] || 38}
+                  lng={geoResult?.lng || location?.coordinates[0] || -84}
                   scrollWheel={false}
                   gestureHandling="none"
                 />

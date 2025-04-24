@@ -4,16 +4,17 @@ export enum LocRole {
   COOP = "COOP",
   PRODUCER = "PRODUCER",
 }
-
+export type coordObj = { lat: number; lng: number };
 export type Location = {
   id: string;
   userId: string;
   type: string;
-  coordinates: Coordinates;
+  coordinates: number[];
+  showPreciseLocation: boolean;
   address: Address;
   name: string;
   role: UserRole;
-  bio: string;
+  bio: string | null;
   hours: Hours | null;
   SODT: number | null;
   isDefault: boolean;
@@ -45,14 +46,9 @@ export type Address = {
   zip: string;
 };
 
-export type Coordinates = {
-  lat: number;
-  lng: number;
-};
-
 export type LocationObj = {
   type: string;
-  coordinates: Coordinates;
+  coordinates: number[];
   address: Address;
   hours?: Hours;
   role: UserRole;

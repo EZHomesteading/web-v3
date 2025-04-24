@@ -159,8 +159,8 @@ const RouteOptimizer = ({
 
     locations.forEach((location) => {
       if (!randomizedPositions[location.id]) {
-        const originalLat = location.coordinates.lat;
-        const originalLng = location.coordinates.lng;
+        const originalLat = location.coordinates[1];
+        const originalLng = location.coordinates[0];
         const randomLat = originalLat + generateRandomOffset();
         const randomLng = originalLng + generateRandomOffset();
 

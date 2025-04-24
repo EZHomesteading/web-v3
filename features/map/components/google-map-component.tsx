@@ -12,10 +12,7 @@ interface GoogleMapComponentProps {
   showProducers: boolean;
   filteredCoops: LocationInfo[];
   filteredProducers: LocationInfo[];
-  handleMarkerClick: (
-    coordinate: { lat: number; lng: number },
-    id: string
-  ) => void;
+  handleMarkerClick: (coordinate: number[], id: string) => void;
 }
 
 const GoogleMapComponent = ({
@@ -57,7 +54,12 @@ const GoogleMapComponent = ({
               {filteredCoops.map((coop: LocationInfo, index: number) => (
                 <MarkerF
                   key={`coop-${index}`}
-                  position={coop.coordinates}
+                  position={
+                    new google.maps.LatLng(
+                      coop.coordinates[1],
+                      coop.coordinates[0]
+                    )
+                  }
                   clusterer={clusterer}
                   icon={{
                     url: "https://utfs.io/f/f3a25818-2570-45d5-bc4c-cabe3ce88fe9-ie3okn.png",
@@ -92,7 +94,12 @@ const GoogleMapComponent = ({
                 (producer: LocationInfo, index: number) => (
                   <MarkerF
                     key={`producer-${index}`}
-                    position={producer.coordinates}
+                    position={
+                      new google.maps.LatLng(
+                        producer.coordinates[1],
+                        producer.coordinates[0]
+                      )
+                    }
                     icon={{
                       url: "https://utfs.io/f/ec4f6766-4c18-4752-a3b2-6030aed3cb33-os33pn.png",
                       scaledSize: new window.google.maps.Size(28, 28),

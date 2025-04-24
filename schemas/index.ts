@@ -48,7 +48,7 @@ const locationDef = {
   0: z
     .object({
       type: z.literal("Point"),
-      coordinates: z.array(z.number()),
+      coordinates: z.array(z.number(), z.number()),
       address: z.array(z.string()),
       hours: z.any(),
     })
@@ -56,7 +56,7 @@ const locationDef = {
   1: z
     .object({
       type: z.literal("Point"),
-      coordinates: z.array(z.string()),
+      coordinates: z.array(z.number(), z.number()),
       address: z.array(z.string()),
       hours: z.any(),
     })
@@ -64,7 +64,7 @@ const locationDef = {
   2: z
     .object({
       type: z.literal("Point"),
-      coordinates: z.array(z.string()),
+      coordinates: z.array(z.number(), z.number()),
       address: z.array(z.string()),
       hours: z.any(),
     })

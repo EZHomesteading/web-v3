@@ -125,8 +125,8 @@ const calculateDistanceMatrix = async (
 
   for (const location of locations) {
     const dest = new google.maps.LatLng(
-      location.coordinates.lat,
-      location.coordinates.lng
+      location.coordinates[1],
+      location.coordinates[0]
     );
     const distance = google.maps.geometry.spherical.computeDistanceBetween(
       start,
@@ -164,8 +164,8 @@ const optimizeInChunks = async (
       remainingLocations.length === 0
         ? endLocation
         : new google.maps.LatLng(
-            remainingLocations[0].coordinates.lat,
-            remainingLocations[0].coordinates.lng
+            remainingLocations[0].coordinates[1],
+            remainingLocations[0].coordinates[0]
           );
 
     // Optimize this chunk
@@ -278,7 +278,7 @@ export const calculateRouteWithTimings = async (
     };
   }
   const waypoints = locations.map((loc) => ({
-    location: new google.maps.LatLng(loc.coordinates.lat, loc.coordinates.lng),
+    location: new google.maps.LatLng(loc.coordinates[1], loc.coordinates[0]),
     stopover: true,
   }));
 

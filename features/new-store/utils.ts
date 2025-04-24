@@ -6,7 +6,7 @@ export interface NewStoreCoreProps {
   formData: NewStoreFormData;
   updateFormData: <K extends keyof NewStoreFormData>(
     field: K,
-    value: NewStoreFormData[K],
+    value: NewStoreFormData[K]
   ) => void;
 }
 
@@ -42,7 +42,7 @@ export const InitialFormDataNewStore: NewStoreFormData = {
 
 export const ValidateFormDataNewStore = (
   formData: NewStoreFormData,
-  step: number,
+  step: number
 ): boolean => {
   if (step >= 2 && formData.role === UserRole.CONSUMER) {
     return false;
@@ -110,7 +110,7 @@ export const getCoordinatesFromAddress = async (
   formatAddress: (address: Address, options?: { delimiter: string }) => string,
   updateFormData: (field: "coordinates", value: number[]) => void,
   onSuccess: () => void,
-  setIsLoading: (loading: boolean) => void,
+  setIsLoading: (loading: boolean) => void
 ) => {
   setIsLoading(true);
   try {
@@ -132,8 +132,9 @@ export const getCoordinatesFromAddress = async (
       return;
     }
 
-    const googleCoordinates =
-      await tryGoogleMapsGeocodingService(addressString);
+    const googleCoordinates = await tryGoogleMapsGeocodingService(
+      addressString
+    );
 
     if (googleCoordinates) {
       updateFormData("coordinates", googleCoordinates);
@@ -142,12 +143,12 @@ export const getCoordinatesFromAddress = async (
     }
 
     toast.error(
-      "Could not get location. Please try entering coordinates manually.",
+      "Could not get location. Please try entering coordinates manually."
     );
   } catch (error) {
     console.error("Geocoding error:", error);
     toast.error(
-      "Could not get location. Please try entering coordinates manually.",
+      "Could not get location. Please try entering coordinates manually."
     );
   } finally {
     setIsLoading(false);
@@ -155,7 +156,7 @@ export const getCoordinatesFromAddress = async (
 };
 
 const tryPrimaryGeocodingService = async (
-  addressString: string,
+  addressString: string
 ): Promise<number[] | null> => {
   try {
     const params = new URLSearchParams({
@@ -175,16 +176,16 @@ const tryPrimaryGeocodingService = async (
         headers: {
           EZHomesteading: "ezh/1.0",
         },
-      },
+      }
     );
 
     const data = await response.json();
     const usResults = data.filter(
-      (item) => item.address?.country_code === "us",
+      (item: any) => item.address?.country_code === "us"
     );
 
     if (usResults && usResults.length > 0) {
-      const formattedSuggestions = usResults.map((item) => ({
+      const formattedSuggestions = usResults.map((item: any) => ({
         lat: parseFloat(item.lat),
         lng: parseFloat(item.lon),
       }));
@@ -202,11 +203,11 @@ const tryPrimaryGeocodingService = async (
 };
 
 const tryGoogleMapsGeocodingService = async (
-  addressString: string,
+  addressString: string
 ): Promise<number[] | null> => {
   try {
     const googleMapsUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
-      addressString,
+      addressString
     )}&components=country:US&key=${process.env.EXPO_PUBLIC_MAPS_KEY_IOS}`;
 
     const googleResponse = await fetch(googleMapsUrl);

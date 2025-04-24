@@ -26,12 +26,12 @@ export default function LocationNewStoreStep({
   const fullAddress = formatAddressToString(formData.address || {});
   const [address, setAddress] = useState(fullAddress);
   const [currentCenter, setCurrentCenter] = useState<google.maps.LatLngLiteral>(
-    formData?.coordinates
+    formData?.coordinates[1]
       ? {
-        lat: formData.coordinates[0],
-        lng: formData.coordinates[1],
-      }
-      : { lat: -79, lng: 38 },
+          lat: formData.coordinates[1],
+          lng: formData.coordinates[0],
+        }
+      : { lat: 38, lng: -79 }
   );
 
   const [zoom, setZoom] = useState(6);
@@ -49,7 +49,7 @@ export default function LocationNewStoreStep({
       setCurrentCenter(latLng);
       setZoom(15);
     },
-    [],
+    []
   );
 
   const mapOptions: google.maps.MapOptions = {
@@ -95,7 +95,7 @@ export default function LocationNewStoreStep({
       const addressComponents = results[0].address_components;
       const street = [
         addressComponents.find((component) =>
-          component.types.includes("street_number"),
+          component.types.includes("street_number")
         )?.long_name,
         addressComponents.find((component) => component.types.includes("route"))
           ?.long_name,
@@ -103,13 +103,13 @@ export default function LocationNewStoreStep({
         .filter((part): part is string => !!part)
         .join(" ");
       const city = addressComponents.find((component) =>
-        component.types.includes("locality"),
+        component.types.includes("locality")
       )?.long_name;
       const state = addressComponents.find((component) =>
-        component.types.includes("administrative_area_level_1"),
+        component.types.includes("administrative_area_level_1")
       )?.short_name;
       const zip = addressComponents.find((component) =>
-        component.types.includes("postal_code"),
+        component.types.includes("postal_code")
       )?.long_name;
 
       if (!street || !city || !state || !zip) {
@@ -128,7 +128,7 @@ export default function LocationNewStoreStep({
       });
       console.log(
         formData.address,
-        " in /Users/zachshort/web-ezh/features/new-store/steps/step3.location.tsx",
+        " in /Users/zachshort/web-ezh/features/new-store/steps/step3.location.tsx"
       );
       updateFormData("coordinates", [latLng.lat, latLng.lng]);
       setAddress(selectedAddress);
@@ -219,7 +219,7 @@ export default function LocationNewStoreStep({
             position={currentCenter}
             icon={{
               url: `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(
-                customSvgMarker,
+                customSvgMarker
               )}`,
               scaledSize: new google.maps.Size(200, 200),
               anchor: new google.maps.Point(100, 100),

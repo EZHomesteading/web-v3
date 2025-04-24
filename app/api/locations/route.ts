@@ -54,10 +54,7 @@ const NewStoreReq = z.object({
     state: z.string(),
     postalCode: z.string().optional(),
   }),
-  coordinates: z.object({
-    lat: z.number(),
-    lng: z.number(),
-  }),
+  coordinates: z.array(z.number(), z.number()),
   role: z.string(),
   hours: z.object({
     delivery: z.array(z.any()).optional(),

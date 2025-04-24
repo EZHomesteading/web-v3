@@ -4,17 +4,19 @@ import Select from "react-select";
 import useunits from "@/hooks/listing/use-unit";
 
 export type unitValue = {
-  unit: string;
   value: string;
-  label?: string; // Add label to match react-select's expected format
+  label: string;
 };
 
 interface ProductSelectProps {
-  value?: unitValue;
-  onChange: (value: unitValue | undefined) => void; // Allow undefined as input
+  selectedUnit?: unitValue; // Renamed from 'value'
+  onUnitChange: (unit: unitValue | undefined) => void; // Renamed from 'onChange'
 }
 
-const UnitSelect: React.FC<ProductSelectProps> = ({ value, onChange }) => {
+const UnitSelect: React.FC<ProductSelectProps> = ({
+  selectedUnit,
+  onUnitChange,
+}) => {
   const { getAll } = useunits();
 
   return (
@@ -22,8 +24,8 @@ const UnitSelect: React.FC<ProductSelectProps> = ({ value, onChange }) => {
       <Select
         placeholder="Unit"
         options={getAll()}
-        value={value}
-        onChange={(newValue) => onChange(newValue as unitValue)}
+        value={selectedUnit}
+        onChange={(newValue) => onUnitChange(newValue as unitValue)}
         formatOptionLabel={(option: any) => (
           <div className="rounded-lg text-black">{option.label}</div>
         )}
@@ -41,10 +43,12 @@ const UnitSelect: React.FC<ProductSelectProps> = ({ value, onChange }) => {
           control: (base: any) => ({
             ...base,
             color: "black",
+            borderColor: "black",
           }),
           singleValue: (base: any) => ({
             ...base,
             color: "black",
+            fontWeight: "bold",
           }),
           input: (base: any) => ({
             ...base,
@@ -66,11 +70,11 @@ const UnitSelect: React.FC<ProductSelectProps> = ({ value, onChange }) => {
             ...theme.colors,
             primary: "#000",
             primary25: "#f0f0f0",
-            neutral50: "black", // This controls the placeholder text color
+            neutral50: "black",
             neutral80: "black",
           },
         })}
-        isClearable={true} // Allow clearing the selection
+        isClearable={true}
       />
     </div>
   );

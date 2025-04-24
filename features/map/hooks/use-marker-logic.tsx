@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 
 interface MarkerInfo {
-  coordinates: { lat: number; lng: number };
+  coordinates: number[];
   listings: {
     images: string[];
   };
@@ -16,7 +16,7 @@ interface MarkerInfo {
 interface UseMarkerLogicProps {
   mapRef: React.MutableRefObject<google.maps.Map | null>;
   infoWindowRef: React.MutableRefObject<HTMLDivElement | null>;
-  setCurrentCenter: (center: { lat: number; lng: number }) => void;
+  setCurrentCenter: (center: number[]) => void;
   setZoom: (zoom: number) => void;
 }
 
@@ -29,7 +29,7 @@ export const useMarkerLogic = ({
   const [selectedMarker, setSelectedMarker] = useState<MarkerInfo | null>(null);
 
   const handleMarkerClick = useCallback(
-    async (coordinate: { lat: number; lng: number }, id: string) => {
+    async (coordinate: number[], id: string) => {
       try {
         const response = await fetch(
           `/api/useractions/user/marker-info?id=${id}`
@@ -76,8 +76,8 @@ export const useMarkerLogic = ({
     if (selectedMarker && mapRef.current) {
       const map = mapRef.current;
       const markerPosition = new google.maps.LatLng(
-        selectedMarker.coordinates.lat,
-        selectedMarker.coordinates.lng
+        selectedMarker.coordinates[1],
+        selectedMarker.coordinates[0]
       );
       map.panTo(markerPosition);
     }

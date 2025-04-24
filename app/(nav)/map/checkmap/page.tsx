@@ -10,7 +10,7 @@ export type OrderMap = {
   location: {
     name: string;
     coordinates: number[];
-    address: string[];
+    address: { street: string; city: string; state: string; zip: string };
   };
 };
 

@@ -48,10 +48,8 @@ export default function NewStoreClient({
       role: formData.role,
       name: "test name",
       address: formData.address,
-      coordinates: {
-        lat: formData.coordinates[0],
-        lng: formData.coordinates[1],
-      },
+      coordinates: [formData.coordinates[1], formData.coordinates[0]],
+
       type: formData.type,
       hours: formData.hours,
       bio: "test bio",

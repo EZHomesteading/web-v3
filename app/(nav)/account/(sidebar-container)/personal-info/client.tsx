@@ -29,13 +29,12 @@ const Page: React.FC<PageProps> = ({ apiKey, user, location }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [editingCard, setEditingCard] = useState<string | null>(null);
   const [image, setImage] = useState<string | undefined>(user?.image);
-  const [address, setAddress] = useState(location?.address?.join(", ") || "");
+  const [address, setAddress] = useState(location?.address || null);
   const [addressFields, setAddressFields] = useState<AddressFields>({
-    street: location?.address?.[0] || "",
-    city: location?.address?.[1] || "",
-    state: location?.address?.[2] || "",
-    zip: location?.address?.[3] || "",
-    apt: location?.address?.[4] || "",
+    street: location?.address?.street || "",
+    city: location?.address?.city || "",
+    state: location?.address?.state || "",
+    zip: location?.address?.zip || "",
   });
 
   const truncateAddress = (address: string, maxLength: number = 60) => {
@@ -129,7 +128,9 @@ const Page: React.FC<PageProps> = ({ apiKey, user, location }) => {
   const onSubmitLoc: SubmitHandler<FormValues> = async (data) => {
     setIsLoading(true);
 
-    const geoData = await getLatLngFromAddress(address);
+    const geoData = await getLatLngFromAddress(
+      `${address?.street}, ${address?.city}, ${address?.state}. ${address?.zip}`
+    );
 
     const addressArray = [
       addressFields.street,
@@ -163,7 +164,7 @@ const Page: React.FC<PageProps> = ({ apiKey, user, location }) => {
   const handleEditStart = (cardName: string) => {
     setEditingCard(cardName);
     if (cardName === "Address") {
-      setAddress("");
+      setAddress(null);
       setAddressFields({ street: "", apt: "", city: "", state: "", zip: "" });
       setValue("street", "");
       setValue("apt", "");
@@ -177,13 +178,13 @@ const Page: React.FC<PageProps> = ({ apiKey, user, location }) => {
     setEditingCard(null);
     reset();
     if (editingCard === "Address") {
-      setAddress(location?.address?.join(", ") || "");
+      setAddress(location?.address || null);
       setAddressFields({
-        street: location?.address?.[0] || "",
+        street: location?.address?.street || "",
         apt: "",
-        city: location?.address?.[1] || "",
-        state: location?.address?.[2] || "",
-        zip: location?.address?.[3] || "",
+        city: location?.address?.city || "",
+        state: location?.address?.state || "",
+        zip: location?.address?.zip || "",
       });
     }
   };

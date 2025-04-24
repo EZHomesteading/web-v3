@@ -4,15 +4,12 @@ export interface MapUser {
 }
 
 export interface LocationInfo {
-  coordinates: {
-    lat: number;
-    lng: number;
-  };
+  coordinates: number[];
   id: string;
 }
 
 export interface MarkerInfo {
-  coordinates: { lat: number; lng: number };
+  coordinates: number[];
   listings: {
     images: string[];
   };

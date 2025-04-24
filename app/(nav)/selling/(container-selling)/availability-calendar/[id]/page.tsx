@@ -8,15 +8,19 @@ interface EditLocationPageProps {
   params: { id: string };
 }
 
-export default async function EditLocationPage({
-  params,
-}: EditLocationPageProps) {
+export default function EditLocationPage({ params }: EditLocationPageProps) {
+  // Use Promise.resolve for params to satisfy Next.js's expectation
+  return EditLocationPageContent({ params });
+}
+
+// Create a separate async component for the actual content
+async function EditLocationPageContent({ params }: EditLocationPageProps) {
   const session = await auth();
   const locationId = params.id;
+  console.log(params.id);
 
   const userId = session?.user?.id;
   const locations = await getUserLocations({ userId });
-
   const location = locations.find((loc) => loc.id === locationId);
   console.log(location?.name);
 

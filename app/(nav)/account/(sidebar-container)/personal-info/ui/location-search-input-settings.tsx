@@ -7,7 +7,7 @@ import PlacesAutocomplete, {
 interface LocationSearchInputProps {
   apiKey: string;
   address: string;
-  setAddress: React.Dispatch<React.SetStateAction<string>>;
+  setAddress: React.Dispatch<React.SetStateAction<string | null>>;
   onAddressParsed: (address: {
     street: string;
     city: string;
