@@ -9,12 +9,14 @@ const SetDefaultButton = ({
   street,
   className = "border-[1px] rounded-xl w-[300px] h-[100px] shadow-md flex flex-col items-center justify-center",
   title,
+  index,
 }: {
   userId?: string;
   title?: string;
   locationId?: string;
   street?: string;
   className?: string;
+  index?: number;
 }) => {
   const handleSetDefault = async () => {
     try {
@@ -24,13 +26,13 @@ const SetDefaultButton = ({
       });
       if (response.status === 200) {
         toast.success(street + " is now your default address");
-        window.location.replace("/selling/availability-calendar");
+        window.location.replace(`/selling/availability-calendar/${locationId}`);
       }
     } catch (error) {}
   };
 
   return (
-    <button className={`${className}`} onClick={handleSetDefault}>
+    <button key={index} className={`${className}`} onClick={handleSetDefault}>
       {title ? <>{title}</> : <>{street}</>}
       <PiCheckFat className={`absolute right-1 top-5 h-6 w-6`} />
     </button>

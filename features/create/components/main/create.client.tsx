@@ -28,6 +28,7 @@ import CreateHeader from "./header.create";
 import Toast from "@/components/ui/toast";
 import Link from "next/link";
 import { PiArrowRight } from "react-icons/pi";
+import useunits from "@/hooks/listing/use-unit";
 
 interface Props {
   defaultLocation?: Location;
@@ -54,7 +55,10 @@ const CreateClient: React.FC<Props> = ({
   const [checkbox4Checked, setCheckbox4Checked] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [step, setStep] = useState<number>(1);
-  const [unit, setunit] = useState<unitValue | undefined>(undefined);
+  const [unitFormValue, setUnitFormValue] = useState<string | null>(null);
+  const [selectedUnitObject, setSelectedUnitObject] = useState<
+    unitValue | undefined
+  >(undefined);
   const [category, setcategory] = useState<category>("");
   const [subcategory, setsubcategory] = useState<subcategory>("");
   const [projectHarvest, setProjectHarvest] = useState<boolean>(true);
@@ -110,7 +114,7 @@ const CreateClient: React.FC<Props> = ({
 
   const formLocationId = watch("locationId");
   const formLocationRole = watch("locationRole");
-  const formUnit = watch("unit");
+  const formUnitValue = watch("unit");
   const formTitle = watch("title");
   const shelfLifeDays = watch("shelfLifeDays");
   const shelfLifeWeeks = watch("shelfLifeWeeks");
@@ -262,6 +266,34 @@ const CreateClient: React.FC<Props> = ({
     },
     [setValue, watch]
   );
+  useEffect(() => {
+    if (formUnitValue !== unitFormValue) {
+      setUnitFormValue(formUnitValue);
+
+      // Find the corresponding unit object if form value exists
+      if (formUnitValue) {
+        const { getAll } = useunits();
+        const unitObj = getAll().find((u) => u.value === formUnitValue);
+        if (unitObj) {
+          setSelectedUnitObject(unitObj);
+        }
+      } else {
+        setSelectedUnitObject(undefined);
+      }
+    }
+  }, [formUnitValue]);
+
+  // Update the form value directly
+  const updateUnitFormValue = (value: string | null) => {
+    setValue("unit", value);
+    setUnitFormValue(value);
+  };
+
+  // Helper function to find unit object from value
+  const getUnitObjectFromValue = (value: string): unitValue | undefined => {
+    const { getAll } = useunits();
+    return getAll().find((unit) => unit.value === value);
+  };
 
   const handleSODTCheckboxChange = useCallback(
     (checked: boolean, index: number): void => {
@@ -508,7 +540,6 @@ const CreateClient: React.FC<Props> = ({
         setRating([]);
         setTags([]);
         setCertificationChecked(false);
-        setunit(undefined);
 
         router.push("/selling/my-store");
 
@@ -565,7 +596,7 @@ const CreateClient: React.FC<Props> = ({
       ],
       4: [
         {
-          condition: () => !unit,
+          condition: () => !unitFormValue,
           message: "Please enter a unit for your listing",
         },
         {
@@ -636,7 +667,7 @@ const CreateClient: React.FC<Props> = ({
     subcategory,
     title,
     description,
-    unit,
+    unitFormValue,
     projectHarvest,
     minOrder,
     quantity,
@@ -830,8 +861,10 @@ const CreateClient: React.FC<Props> = ({
           <StepThree
             role={formLocationRole}
             title={formTitle}
-            unit={formUnit}
-            setunit={setunit}
+            unitFormValue={unitFormValue}
+            selectedUnitObject={selectedUnitObject}
+            setSelectedUnitObject={setSelectedUnitObject}
+            setUnitFormValue={updateUnitFormValue}
             postSODT={postSODT}
             handleSODTCheckboxChange={handleSODTCheckboxChange}
             usersodt={user?.SODT ?? null}

@@ -5,6 +5,7 @@ import Calendar from "@/features/availability-calendar/components/main/calendar"
 import { Location } from "@prisma/client";
 import SelectDefaultLoc from "@/features/availability-calendar/components/ui/select-default-loc";
 import { getUserLocations } from "@/actions/getLocations";
+import Link from "next/link";
 
 interface EditLocationPageProps {
   params: { id: string };
@@ -35,6 +36,21 @@ export default async function EditLocationPage({
     return (
       <div className="flex w-full h-2/3 items-center justify-center">
         Invalid location or unauthorized access.
+        <Link
+          href={`${"/new-store"}`}
+          className="
+                  border-none
+                  bg-transparent
+                  p-3 pr-10 rounded-full
+                  font-medium
+                  transition-all
+                  text-sm sm:text-xl
+                  relative
+                  group
+                "
+        >
+          Create a location
+        </Link>
       </div>
     );
   }

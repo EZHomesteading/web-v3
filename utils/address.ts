@@ -1,4 +1,4 @@
-import { Address, Coordinates } from "@/types";
+import { Address, coordObj } from "@/types";
 
 /**
  * Converts an address object to a formatted string
@@ -155,12 +155,12 @@ export function isAddressComplete(
  * @param coords An array of [latitude, longitude]
  * @returns Coordinates object
  */
-export function arrayToCoordinates(coords: number[]): Coordinates | null {
+export function arrayToCoordinates(coords: number[]): coordObj | null {
   if (!coords || coords.length < 2) return null;
 
   return {
-    lat: coords[0],
-    lng: coords[1],
+    lat: coords[1],
+    lng: coords[0],
   };
 }
 
@@ -170,7 +170,7 @@ export function arrayToCoordinates(coords: number[]): Coordinates | null {
  * @param coords Coordinates object
  * @returns Array of [latitude, longitude]
  */
-export function coordinatesToArray(coords: Coordinates): number[] {
+export function coordinatesToArray(coords: coordObj): number[] {
   return [coords.lat, coords.lng];
 }
 
@@ -182,7 +182,7 @@ export function coordinatesToArray(coords: Coordinates): number[] {
  * @returns Formatted coordinates string
  */
 export function formatCoordinates(
-  coords: Coordinates,
+  coords: coordObj,
   options: {
     precision?: number;
     separator?: string;
@@ -212,8 +212,8 @@ export function formatCoordinates(
  * @returns Distance in kilometers
  */
 export function calculateDistance(
-  coords1: Coordinates,
-  coords2: Coordinates
+  coords1: coordObj,
+  coords2: coordObj
 ): number {
   const R = 6371; // Earth's radius in kilometers
   const dLat = degreesToRadians(coords2.lat - coords1.lat);
@@ -248,7 +248,7 @@ function degreesToRadians(degrees: number): number {
  * @param coords Coordinates to validate
  * @returns Boolean indicating if coordinates are valid
  */
-export function isValidCoordinates(coords: any): coords is Coordinates {
+export function isValidCoordinates(coords: any): coords is number[] {
   return (
     coords !== null &&
     typeof coords === "object" &&
@@ -270,7 +270,7 @@ export function isValidCoordinates(coords: any): coords is Coordinates {
  * @param input String containing coordinates
  * @returns Coordinates object or null if parsing failed
  */
-export function parseCoordinatesString(input: string): Coordinates | null {
+export function parseCoordinatesString(input: string): coordObj | null {
   if (!input) return null;
 
   const standardPattern = /(-?\d+\.?\d*)[,\s]+(-?\d+\.?\d*)/;

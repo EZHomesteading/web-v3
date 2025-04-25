@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Label } from "../../../../components/ui/label";
 import {
   Select,
@@ -25,8 +25,10 @@ const outfit = Outfit({
 
 interface StepThreeProps {
   role: string;
-  unit: unitValue | undefined;
-  setunit: (value: unitValue | undefined) => void;
+  unitFormValue: string | null; // This is what's in the form
+  selectedUnitObject: unitValue | undefined; // This is the object for UnitSelect
+  setSelectedUnitObject: (unit: unitValue | undefined) => void; // For updating the unit object
+  setUnitFormValue: (value: string | null) => void; // For updating the form value
   postSODT: boolean;
   handleSODTCheckboxChange: (checked: boolean, index: number) => void;
   handleProjectHarvestCheckboxChange: (checked: boolean, index: number) => void;
@@ -39,8 +41,10 @@ interface StepThreeProps {
 }
 
 const StepThree: React.FC<StepThreeProps> = ({
-  unit,
-  setunit,
+  unitFormValue,
+  selectedUnitObject,
+  setSelectedUnitObject,
+  setUnitFormValue,
   postSODT,
   handleSODTCheckboxChange,
   handleProjectHarvestCheckboxChange,
@@ -80,26 +84,26 @@ const StepThree: React.FC<StepThreeProps> = ({
   };
 
   // Determine the price label based on unit
-  const getPriceLabel = () => {
-    if (!unit) return "Price";
+  const handleUnitSelection = (selectedUnit: unitValue | undefined) => {
+    setSelectedUnitObject(selectedUnit);
 
-    if (unit.value === "each" || unit.value === "none") {
-      return "Price per";
+    if (selectedUnit) {
+      setUnitFormValue(selectedUnit.value);
     } else {
-      return `Price per ${unit.value}`;
+      setUnitFormValue(null);
     }
   };
 
-  // Handle unit selection
-  const handleUnitChange = (selectedUnit: unitValue | undefined) => {
-    // Update the local state
-    setunit(selectedUnit);
-
-    // Update the form value if a unit is selected, otherwise set to null
-    if (selectedUnit) {
-      setValue("unit", selectedUnit.value);
+  // Determine the price label based on unit
+  const getPriceLabel = () => {
+    if (!selectedUnitObject || !selectedUnitObject.value) return "Price";
+    if (
+      selectedUnitObject.value === "each" ||
+      selectedUnitObject.value === "none"
+    ) {
+      return "Price per item";
     } else {
-      setValue("unit", null);
+      return `Price per ${selectedUnitObject.value}`;
     }
   };
 
@@ -183,7 +187,10 @@ const StepThree: React.FC<StepThreeProps> = ({
             </div>
 
             <div className="relative">
-              <UnitSelect value={unit} onChange={handleUnitChange} />
+              <UnitSelect
+                selectedUnit={selectedUnitObject}
+                onUnitChange={handleUnitSelection}
+              />
               <PiRulerThin
                 className="text-neutral-900 absolute top-5 right-2"
                 size={25}

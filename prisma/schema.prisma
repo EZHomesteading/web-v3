@@ -104,15 +104,11 @@ enum Notification {
 type notifList {
   list String[]
 }
-type coordinates{
-  lat Float
-  lng Float
-}
 
 type LocationObj {
   type        String
-  coordinates coordinates
-  address     String[]
+  coordinates Float[]
+  address     Address
   hours       Hours?
   role        UserRole @default(CONSUMER)
   isDefault   Boolean? @default(false)
@@ -172,7 +168,7 @@ model Location {
   listings            Listing[]
   orders              Order[]
   type                String
-  coordinates         coordinates
+  coordinates         Float[]
   address             Address
   hours               Hours?
   role                UserRole  @default(PRODUCER)
@@ -310,15 +306,16 @@ model Listing {
   category        String // "homemade", "unprocessed-produce", "dairy-meats", "durables" 
   subcategory     String
   stock           Int
-  unit String
+  unit            String
+  active          Boolean @default(true)
   price           Float
   description     String
   projectedStock  Int?
   harvestFeatures Boolean?
   harvestDates    String[]
-  tags String[]
+  tags            String[]
   minOrder        Int
-  images        String[]
+  images          String[]
   review          Boolean?
   harvestType     String?
   reports         Int?
@@ -382,7 +379,7 @@ model BasketItem {
 
 type proposedLoc {
   coordinates Float[]
-  address     String[]
+  address     Address
 }
 
 model Basket {
@@ -418,7 +415,7 @@ type Fees {
 }
 
 type OrderLoc {
-  address     String[]
+  address     Address
   coordinates Float[]
 }
 

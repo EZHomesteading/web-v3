@@ -6,7 +6,7 @@ import { Prisma, UserRole } from "@prisma/client";
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { address, lat, lng } = body;
+    const { address, lat, lng, name } = body;
 
     // Verify user is authenticated
     const user = await currentUser();
@@ -16,7 +16,12 @@ export async function POST(request: Request) {
 
     // Format coordinates and address for Prisma
     const coordinates = [lng, lat];
-    const formattedAddress = [address];
+    const formattedAddress = {
+      street: address[0],
+      city: address[1],
+      state: address[2],
+      zip: address[3],
+    };
 
     // First, find the user's default location if it exists
     const existingLocation = await prisma.location.findFirst({
@@ -43,6 +48,7 @@ export async function POST(request: Request) {
       // Create new location
       updatedLocation = await prisma.location.create({
         data: {
+          name: name,
           userId: user.id,
           type: "Point",
           coordinates,

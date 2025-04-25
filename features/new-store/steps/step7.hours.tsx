@@ -32,7 +32,7 @@ export default function HoursNewStoreStep({
   const handleAddTimeSlot = () => {
     if (checkOverlap([timeSlots])) {
       toast.error(
-        "Cannot add another set of hours because existing time slots overlap.",
+        "Cannot add another set of hours because existing time slots overlap."
       );
       return;
     }
@@ -73,7 +73,7 @@ export default function HoursNewStoreStep({
 
   const handleDeleteSlot = (indexToDelete: number) => {
     setTimeSlots((prevSlots) =>
-      prevSlots.filter((_, index) => index !== indexToDelete),
+      prevSlots.filter((_, index) => index !== indexToDelete)
     );
     if (activeTab === indexToDelete) setActiveTab(0);
   };
@@ -118,7 +118,7 @@ export default function HoursNewStoreStep({
   const handleTimeSlotChange = (
     slotIndex: number,
     isOpenTime: boolean,
-    newTime: string,
+    newTime: string
   ) => {
     setTimeSlots((prevSlots) => {
       const newSlots = [...prevSlots];
@@ -153,29 +153,29 @@ export default function HoursNewStoreStep({
       newHours.pickup = newHours.pickup.filter(
         (avail: Availability) =>
           !formData.selectedDays.includes(
-            weekDays[new Date(avail.date).getDay()],
-          ),
+            weekDays[new Date(avail.date).getDay()]
+          )
       );
     } else if (formData.currentConfig === "delivery") {
       newHours.delivery = newHours.delivery.filter(
         (avail: Availability) =>
           !formData.selectedDays.includes(
-            weekDays[new Date(avail.date).getDay()],
-          ),
+            weekDays[new Date(avail.date).getDay()]
+          )
       );
     } else {
       // For shared hours, update both services
       newHours.pickup = newHours.pickup.filter(
         (avail: Availability) =>
           !formData.selectedDays.includes(
-            weekDays[new Date(avail.date).getDay()],
-          ),
+            weekDays[new Date(avail.date).getDay()]
+          )
       );
       newHours.delivery = newHours.delivery.filter(
         (avail: Availability) =>
           !formData.selectedDays.includes(
-            weekDays[new Date(avail.date).getDay()],
-          ),
+            weekDays[new Date(avail.date).getDay()]
+          )
       );
     }
 
@@ -203,14 +203,8 @@ export default function HoursNewStoreStep({
     // Add new availabilities
     formData.selectedMonths.forEach((monthIndex: number) => {
       const yearToUse: number =
-        new Date(currentYear, monthIndex, 1) < currentDate
-          ? currentYear + 1
-          : currentYear;
-      const daysInMonth: number = new Date(
-        yearToUse,
-        monthIndex + 1,
-        0,
-      ).getDate();
+        monthIndex < currentDate.getMonth() ? currentYear + 1 : currentYear;
+      const daysInMonth: number = new Date(yearToUse, monthIndex, 0).getDate();
 
       for (let day = 1; day <= daysInMonth; day++) {
         const dateObj: Date = new Date(yearToUse, monthIndex, day);
@@ -243,7 +237,7 @@ export default function HoursNewStoreStep({
 
     if (!formData.currentConfig) {
       toast.error(
-        "Please decide how you would liket to fufill orders before completing this step",
+        "Please decide how you would liket to fufill orders before completing this step"
       );
       return;
     }
@@ -287,8 +281,9 @@ export default function HoursNewStoreStep({
                 {getTabTitles().map((tab, index) => (
                   <button
                     key={index}
-                    className={`px-3  ${activeTab === index ? "font-semibold border-b" : ""
-                      }`}
+                    className={`px-3  ${
+                      activeTab === index ? "font-semibold border-b" : ""
+                    }`}
                     onClick={() => handleTabClick(index)}
                   >
                     {tab.title}
@@ -331,7 +326,7 @@ export default function HoursNewStoreStep({
                 Save Changes
               </Button>
             </div>
-          ),
+          )
       )}
     </div>
   );

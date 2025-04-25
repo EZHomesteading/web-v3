@@ -134,7 +134,7 @@ const Home = ({ user }: Props) => {
               <Link
                 href={`${
                   !user
-                    ? "/auth/register?callBackURL=/create-new-location"
+                    ? "/auth/register?callBackURL=/new-store"
                     : user.locations.length === 0
                     ? "/new-store"
                     : "/create"

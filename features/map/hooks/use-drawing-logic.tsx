@@ -142,8 +142,8 @@ export const useDrawingLogic = ({
 
     const newFilteredCoops = coopInfo.filter((coop: LocationInfo) => {
       const coopLatLng = new google.maps.LatLng(
-        coop.coordinates.lat,
-        coop.coordinates.lng
+        coop.coordinates[1],
+        coop.coordinates[0]
       );
 
       return google.maps.geometry.poly.containsLocation(coopLatLng, polygon);
@@ -152,8 +152,8 @@ export const useDrawingLogic = ({
     const newFilteredProducers = producerInfo.filter(
       (producer: LocationInfo) => {
         const producerLatLng = new google.maps.LatLng(
-          producer.coordinates.lat,
-          producer.coordinates.lng
+          producer.coordinates[1],
+          producer.coordinates[0]
         );
 
         return google.maps.geometry.poly.containsLocation(

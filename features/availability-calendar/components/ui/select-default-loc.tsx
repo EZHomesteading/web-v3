@@ -16,14 +16,13 @@ const SelectDefaultLoc = ({ locations, user }: p) => {
       <div className={`mb-3`}>Please Set a Default Selling Location</div>
       <div className={`grid grid-cols-1 2xl:grid-cols-3 gap-1`}>
         {locations?.map((location: any, index: number) => (
-          <>
-            <SetDefaultButton
-              key={index}
-              street={location?.address.street}
-              userId={user?.id}
-              locationId={location?.id}
-            />
-          </>
+          <SetDefaultButton
+            key={location?.id || index}
+            index={index}
+            street={location?.address.street}
+            userId={user?.id}
+            locationId={location?.id}
+          />
         ))}
       </div>
     </div>

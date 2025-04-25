@@ -1,3 +1,5 @@
+import { string } from "zod";
+
 declare module "chat-types" {
   export type MessageActionType =
     | "ACCEPT_TIME"
@@ -48,7 +50,7 @@ declare module "chat-types" {
     name: string | null;
     type: string;
     coordinates: number[];
-    address: string[];
+    address: { city: string; state: string; street: string; zip: string };
     role: UserRole;
     SODT: number | null;
     bio: string | null;
@@ -117,7 +119,7 @@ declare module "chat-types" {
     name: string | null;
     type: string;
     coordinates: number[];
-    address: string[];
+    address: { street: string; city: string; state: string; zip: string };
     role: UserRole;
     SODT: number | null;
     bio: string | null;

@@ -1,5 +1,6 @@
 // actions/getOrderGroupWithOrders.ts
-import { OrderMap } from "@/app/(nav)/(white_nav_layout)/map/checkmap/page";
+
+import { OrderMap } from "@/app/(nav)/map/checkmap/page";
 import prisma from "@/lib/prisma";
 
 export async function getOrderGroupWithOrders(ordergroupId: string) {
@@ -48,7 +49,12 @@ export async function getOrderGroupWithOrders(ordergroupId: string) {
         : {
             name: "",
             coordinates: [0, 0],
-            address: [""],
+            address: {
+              street: "undefined",
+              city: "undefined",
+              state: "undefined",
+              zip: "undefined",
+            },
           },
     }));
 
