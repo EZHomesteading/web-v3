@@ -1,5 +1,5 @@
-import Header from "@/features/chat/components/conversation/header";
-import Body from "@/features/chat/components/conversation/body";
+import Header from "@/features/chat/components/conversation/Header";
+import Body from "@/features/chat/components/conversation/Body";
 import EmptyState from "@/components/EmptyState";
 import { redirect } from "next/navigation";
 import { getFullChatData } from "@/features/chat/hooks/get-full-chat-data";
