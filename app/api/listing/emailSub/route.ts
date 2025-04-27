@@ -18,6 +18,7 @@ export async function POST(request: Request) {
     }
   });
   const listingId = id;
+  //might be incorrect
   const oldlisting = (await getListingByIdUpdate({
     listingId,
   })) as unknown as Listing & {
