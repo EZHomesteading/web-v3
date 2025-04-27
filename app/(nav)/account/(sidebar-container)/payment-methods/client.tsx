@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Plus, X } from "lucide-react";
-import Modal from "@/features/chat/components/modals/modal";
+import Modal from "../../../../../features/chat/components/modals/modal";
 import Input from "./input";
 import { useForm } from "react-hook-form";
 import { FormValues } from "./input";
