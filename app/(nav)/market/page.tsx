@@ -28,6 +28,7 @@ const MarketComponent = dynamic(
   }
 );
 
+// In this version, we'll properly await searchParams as Next.js requires
 const ShopPage = async ({
   searchParams,
 }: {
@@ -35,27 +36,25 @@ const ShopPage = async ({
 }) => {
   const apiUrl = process.env.API_URL;
 
-  // Await the search parameters
-  const resolvedSearchParams = searchParams;
+  // Await searchParams to resolve the issue
+  const resolvedParams = await Promise.resolve(searchParams || {});
 
   let user = await getCurrentUser();
   let basketItemIds: any = [];
   let listings: ListingWithLocAndUser[] = [];
 
-  const params = new URLSearchParams({
-    ...(resolvedSearchParams?.lat && { lat: resolvedSearchParams.lat }),
-    ...(resolvedSearchParams?.lng && { lng: resolvedSearchParams.lng }),
-    ...(resolvedSearchParams?.radius && {
-      radius: resolvedSearchParams.radius,
-    }),
-    ...(resolvedSearchParams?.category && {
-      category: resolvedSearchParams.category,
-    }),
-    ...(resolvedSearchParams?.subcategory && {
-      subcategory: resolvedSearchParams.subcategory,
-    }),
-    ...(resolvedSearchParams?.q && { q: resolvedSearchParams.q }),
-  });
+  // Create params object using resolved search parameters
+  const params = new URLSearchParams();
+
+  // Only add parameters that exist
+  if (resolvedParams.lat) params.append("lat", resolvedParams.lat);
+  if (resolvedParams.lng) params.append("lng", resolvedParams.lng);
+  if (resolvedParams.radius) params.append("radius", resolvedParams.radius);
+  if (resolvedParams.category)
+    params.append("category", resolvedParams.category);
+  if (resolvedParams.subcategory)
+    params.append("subcategory", resolvedParams.subcategory);
+  if (resolvedParams.q) params.append("q", resolvedParams.q);
 
   const requests = [
     user?.id

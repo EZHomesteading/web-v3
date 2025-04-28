@@ -14,7 +14,6 @@ const CreatePopup = () => {
   const nodeRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
 
-  // Fix useEffect with dependencies
   useEffect(() => {
     const hasVisitedCreatePage = localStorage.getItem("hasVisitedCreatePage");
     if (!hasVisitedCreatePage) {
@@ -22,7 +21,6 @@ const CreatePopup = () => {
       localStorage.setItem("hasVisitedCreatePage", "true");
     }
 
-    // Add cleanup function
     return () => {
       // Cleanup any resources if needed
     };
@@ -48,12 +46,6 @@ const CreatePopup = () => {
     setShowPopup(false);
   }, []);
 
-  // Don't render anything if popup isn't showing
-  if (!showPopup) {
-    return null;
-  }
-
-  // Use useMemo for the content to avoid re-renders
   const popupContent = useMemo(
     () => (
       <>
@@ -93,7 +85,10 @@ const CreatePopup = () => {
     [handleClose, handleContinue]
   );
 
-  // Extract styles to className and reduce nesting
+  if (!showPopup) {
+    return null;
+  }
+
   return (
     <Draggable
       nodeRef={nodeRef as any}

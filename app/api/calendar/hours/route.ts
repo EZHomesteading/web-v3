@@ -28,9 +28,10 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
+  console.log("HERE");
   const data = await req.json();
   const { location, locationId } = data;
-
+  console.log("updatelocationhours", location);
   try {
     // With MongoDB, you need to update the hours field directly
     const updatedLocation = await prisma.location.update({

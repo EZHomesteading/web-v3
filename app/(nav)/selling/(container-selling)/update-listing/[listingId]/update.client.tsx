@@ -55,12 +55,15 @@ interface UpdateListingProps {
 
 const UpdateClient = ({ listing }: UpdateListingProps) => {
   const [isLoading, setIsLoading] = useState(false);
-  const [unit, setUnit] = useState<unitValue>();
+
   const [certificationChecked, setCertificationChecked] = useState(false);
   const [harvestDates, setHarvestDates] = useState<Month[]>(
     (listing.harvestDates as Month[]) || []
   );
-
+  const [unitFormValue, setUnitFormValue] = useState<string | null>(null);
+  const [selectedUnitObject, setSelectedUnitObject] = useState<
+    unitValue | undefined
+  >(undefined);
   const [checkbox1Checked, setCheckbox1Checked] = useState(false);
   const [checkbox2Checked, setCheckbox2Checked] = useState(false);
   const [checkbox3Checked, setCheckbox3Checked] = useState(false);
@@ -201,6 +204,15 @@ const UpdateClient = ({ listing }: UpdateListingProps) => {
     }))
   );
   const [deletingId, setDeletingId] = useState("");
+  const handleUnitSelection = (selectedUnit: unitValue | undefined) => {
+    setSelectedUnitObject(selectedUnit);
+
+    if (selectedUnit) {
+      setUnitFormValue(selectedUnit.value);
+    } else {
+      setUnitFormValue(null);
+    }
+  };
 
   const onDelete = useCallback(
     (id: string) => {
@@ -245,13 +257,13 @@ const UpdateClient = ({ listing }: UpdateListingProps) => {
       stock: parseInt(data.stock),
       shelfLife: parseInt(data.shelfLife),
       price: parseFloat(data.price),
-      images: watch("imageSrc"),
+      images: watch("images"),
       description: description,
       location: data.location,
       harvestFeatures: data.harvestFeatures,
       harvestDates: harvestDates,
       projectedStock: data.projectedStock,
-      unit: data.unit === "none" || data.unit === "each" ? "" : data.unit,
+      unit: unitFormValue,
     };
     axios
       .post("/api/listing/updateListing", formData)
@@ -438,11 +450,8 @@ const UpdateClient = ({ listing }: UpdateListingProps) => {
             </ul>
             <div className="flex justify-end">
               <UnitSelect
-                value={unit}
-                onChange={(value) => {
-                  setUnit(value as unitValue);
-                  setValue("quantityType", value?.value);
-                }}
+                selectedUnit={selectedUnitObject}
+                onUnitChange={handleUnitSelection}
               />
             </div>
 
@@ -600,10 +609,10 @@ const UpdateClient = ({ listing }: UpdateListingProps) => {
                     imageStates[index].isHovered ? "transform shadow-xl" : ""
                   } ${imageStates[index].isFocused ? "z-10" : "z-0"}`}
                 >
-                  {watch(`imageSrc[${index}]`) ? (
+                  {watch(`images[${index}]`) ? (
                     <>
                       <Image
-                        src={watch(`imageSrc[${index}]`)}
+                        src={watch(`images[${index}]`)}
                         fill
                         alt={`Listing Image ${index + 1}`}
                         className="object-cover rounded-xl"
@@ -612,9 +621,9 @@ const UpdateClient = ({ listing }: UpdateListingProps) => {
                         className="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded-md"
                         onClick={(e) => {
                           e.stopPropagation();
-                          const newImageSrc = [...watch("imageSrc")];
-                          newImageSrc.splice(index, 1);
-                          setValue("imageSrc", newImageSrc);
+                          const newimages = [...watch("images")];
+                          newimages.splice(index, 1);
+                          setValue("images", newimages);
                         }}
                       >
                         <BsBucket />
@@ -626,16 +635,14 @@ const UpdateClient = ({ listing }: UpdateListingProps) => {
                       <UploadButton
                         endpoint="imageUploader"
                         onClientUploadComplete={(res: { url: string }[]) => {
-                          const newImageSrc = [...watch("imageSrc")];
-                          const emptyIndex = newImageSrc.findIndex(
-                            (src) => !src
-                          );
+                          const newimages = [...watch("images")];
+                          const emptyIndex = newimages.findIndex((src) => !src);
                           if (emptyIndex !== -1) {
-                            newImageSrc[emptyIndex] = res[0].url;
+                            newimages[emptyIndex] = res[0].url;
                           } else {
-                            newImageSrc.push(res[0].url);
+                            newimages.push(res[0].url);
                           }
-                          setValue("imageSrc", newImageSrc);
+                          setValue("images", newimages);
                         }}
                         onUploadError={(error: Error) => {
                           alert(`ERROR! ${error.message}`);

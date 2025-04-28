@@ -27,7 +27,7 @@ export async function POST(request: Request) {
     });
 
     if (!listing?.locationId) {
-      return new NextResponse("Listing not found", { status: 404 });
+      return new NextResponse("Listing location not found", { status: 404 });
     }
 
     // Check for existing group with minimal data

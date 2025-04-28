@@ -135,10 +135,7 @@ const ListingsClient: React.FC<ListingsClientProps> = ({
               {harvest ? "Show Active Listings" : "Show Projected Listings"}
             </Button>
 
-            <Link
-              href="/dashboard/my-store/settings"
-              className="md:w-48 w-full "
-            >
+            <Link href="/selling/my-store/settings" className="md:w-48 w-full ">
               <Button className="md:w-48 mr-1 mb-1 w-full ">
                 Store Settings
               </Button>

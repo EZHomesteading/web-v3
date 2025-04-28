@@ -8,6 +8,7 @@ import NewStoreClient from "@/features/new-store/main/new-store-client";
 
 import authCache from "@/auth-cache";
 import { getUserLocations } from "@/actions/getLocations";
+import { createStripeConnectedAccount } from "@/actions/auth/new-stripe-acc";
 
 export const viewport: Viewport = {
   themeColor: "#fff",
@@ -20,13 +21,15 @@ export default async function Page() {
   if (!session) return;
 
   const locations = await getUserLocations({ userId: session?.user.id });
-
+  if (!session?.user?.stripeAccountId) {
+    createStripeConnectedAccount();
+  }
   const sortedLocations = locations
     ? [...locations].sort((a, b) => {
-      if (a.isDefault) return -1;
-      if (b.isDefault) return 1;
-      return 0;
-    })
+        if (a.isDefault) return -1;
+        if (b.isDefault) return 1;
+        return 0;
+      })
     : [];
 
   return (

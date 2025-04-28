@@ -37,6 +37,16 @@ const DeliveryPickupToggle = ({
   mode,
   onModeChange,
 }: DeliveryPickupToggleProps) => {
+  // Force consistent rendering between server and client
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  // Use the clientSide value for rendering
+  const clientSidePanelSide = isMounted ? panelSide : false;
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -50,7 +60,7 @@ const DeliveryPickupToggle = ({
             <PiHouseLineThin className="h-6 w-6 pr-1" />
           )}
 
-          {panelSide && (
+          {clientSidePanelSide && (
             <span>
               {mode === DeliveryPickupToggleMode.DELIVERY
                 ? "Delivery"
@@ -58,7 +68,6 @@ const DeliveryPickupToggle = ({
             </span>
           )}
 
-          {/* Make sure this div is always rendered in the same position */}
           <div className="border-r h-full pl-1" />
           <RiArrowDownSLine className="h-6 w-6 pl-1" />
         </Button>
@@ -207,7 +216,7 @@ const LocationSelector = ({
         >
           {inPanel && displayName ? (
             <div className={`w-full flex flex-col items-start`}>
-              <p>name:</p>
+              <p> {displayName}</p>
               <p
                 className={`truncate max-w-[87%] text-start text-neutral-700 text-xs`}
               >

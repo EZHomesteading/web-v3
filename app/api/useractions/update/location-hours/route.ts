@@ -11,7 +11,7 @@ export async function POST(request: Request) {
     const { address, coordinates, role, hours, displayName } =
       body.location[0] || {};
 
-    if (!Array.isArray(coordinates) || !Array.isArray(address)) {
+    if (!Array.isArray(coordinates)) {
       return NextResponse.json(
         { error: "Invalid coordinates or address format" },
         { status: 400 }
@@ -28,10 +28,20 @@ export async function POST(request: Request) {
     const { locationId, isDefault } = body;
 
     if (locationId) {
-      //console.log("Updating hours for existing location");
+      console.log("Updating hours for existing location");
       updatedLocation = await prisma.location.update({
         where: { id: locationId },
-        data: { hours },
+        data: {
+          hours,
+          name: displayName,
+          address: {
+            street: address[0],
+            city: address[1],
+            state: address[2],
+            zip: address[3],
+          },
+          coordinates,
+        },
       });
     } else {
       const locationCount = await prisma.location.count({
@@ -40,10 +50,16 @@ export async function POST(request: Request) {
 
       updatedLocation = await prisma.location.create({
         data: {
+          name: displayName,
           userId: user.id,
           type: "Point",
-          coordinates,
-          address,
+          coordinates: [coordinates[1], coordinates[0]],
+          address: {
+            street: address[0],
+            city: address[1],
+            state: address[2],
+            zip: address[3],
+          },
           role: role || UserRole.PRODUCER,
           isDefault: locationCount === 0 || isDefault,
         },

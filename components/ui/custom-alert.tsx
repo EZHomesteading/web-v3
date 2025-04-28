@@ -8,6 +8,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { cn } from "@/lib/utils";
+import { AlertDialogTitle } from "@radix-ui/react-alert-dialog";
 
 interface p {
   onClick?: () => void;
@@ -50,6 +51,7 @@ export default function Alert({
   }
   return (
     <AlertDialog onOpenChange={setOpen} open={open}>
+      <AlertDialogTitle className="hidden">{headingText}</AlertDialogTitle>
       <AlertDialogTrigger
         className={cn(
           "text-md sm:text-xl font-light w-full my-2 border py-4 rounded-sm text-white justify-center text-center flex relative bg-red-500/80",
