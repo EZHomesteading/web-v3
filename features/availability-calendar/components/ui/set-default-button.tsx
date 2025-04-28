@@ -20,7 +20,7 @@ const SetDefaultButton = ({
 }) => {
   const handleSetDefault = async () => {
     try {
-      const response = await axios.post("/api/location/update/set-default", {
+      const response = await axios.post("/api/locations/set-default", {
         userId,
         locationId,
       });

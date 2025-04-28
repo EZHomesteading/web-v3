@@ -31,6 +31,7 @@ const LocationModal: React.FC<LocationModalProps> = ({
   const [selectedLocation, setSelectedLocation] = useState<Location | null>(
     null
   );
+  const [selectedName, setSelectedName] = useState<string>("");
   const [isSaving, setIsSaving] = useState(false);
   const startSearchBoxRef = useRef<GooglePlace | null>(null);
   const autocompleteInputRef = useRef<HTMLInputElement>(null);
@@ -54,6 +55,9 @@ const LocationModal: React.FC<LocationModalProps> = ({
       lng: place.geometry.location.lng(),
     });
   };
+  const handleNameSelected = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSelectedName(event.target.value);
+  };
 
   const handleSave = async () => {
     if (!selectedLocation) return;
@@ -61,6 +65,7 @@ const LocationModal: React.FC<LocationModalProps> = ({
     try {
       setIsSaving(true);
       await axios.post("/api/useractions/update/newlocation", {
+        name: selectedName,
         address: selectedLocation.address,
         lat: selectedLocation.lat,
         lng: selectedLocation.lng,
@@ -111,7 +116,13 @@ const LocationModal: React.FC<LocationModalProps> = ({
                 This will be saved to your profile for use with later orders.
               </p>
             </div>
-
+            <Input
+              type="text"
+              placeholder="Name this location"
+              className="w-full text-lg p-4 h-12"
+              value={selectedName}
+              onChange={handleNameSelected}
+            />
             <div>
               <Autocomplete
                 onLoad={(autocomplete: GooglePlace) => {

@@ -38,6 +38,7 @@ import {
   TimeSlot,
   UserRole,
 } from "@/types";
+import ClientOnly from "@/components/client/client-only";
 
 // Define types to replace Prisma imports
 
@@ -399,89 +400,91 @@ const Calendar = ({ location, id, mk, locations, userId }: CalendarProps) => {
 
   const renderCalendarContent = () => (
     <>
-      <div className={`sticky top-0 z-10 w-full ${OutfitFont.className}`}>
-        <div
-          className="flex justify-start sm:justify-end items-center gap-px sm:px-3 pt-2 px-1 overflow-x-auto scrollbar-hide gap-x-1 flex-nowrap"
-          style={{ overflowX: "scroll", WebkitOverflowScrolling: "touch" }}
-        >
-          <LocationSelector
-            id={id}
-            address={location?.address}
-            locations={locations}
-            pathname={pathname}
-            inPanel={false}
-          />
-          <DeliveryPickupToggle
-            panelSide={panelSide}
-            onModeChange={handleDeliveryPickupModeChange}
-            mode={deliveryPickupMode}
-          />{" "}
-          <Button
-            onClick={() => {
-              setIsBasePanelOpen(!isBasePanelOpen);
-              setPanelStack([]);
-            }}
-            variant="outline"
-            className="relative select-none hover:bg-inherit rounded-full flex items-center justify-start bg-inherit ml-1 text-xs mr-2 sm:text-sm px-2 sm:px-4"
+      <ClientOnly>
+        <div className={`sticky top-0 z-10 w-full ${OutfitFont.className}`}>
+          <div
+            className="flex justify-start sm:justify-end items-center gap-px sm:px-3 pt-2 px-1 overflow-x-auto scrollbar-hide gap-x-1 flex-nowrap"
+            style={{ overflowX: "scroll", WebkitOverflowScrolling: "touch" }}
           >
-            {panelSide && (
-              <>
-                Settings{" "}
-                <div className={`border-r h-full ${panelSide && "pl-1"}`} />
-              </>
-            )}
-
-            <PiGearThin
-              className={`h-5 w-5 sm:h-6 sm:w-6 ${panelSide && "pl-1"}`}
+            <LocationSelector
+              id={id}
+              address={location?.address}
+              locations={locations}
+              pathname={pathname}
+              inPanel={false}
             />
-            {!panelSide && (
-              <>
-                <div className="border-r h-full pl-1" />
-                <RiArrowDownSLine className="h-6 w-6 pl-1" />
-              </>
-            )}
-          </Button>
-        </div>
-        <div className="grid grid-cols-7 gap-px w-full border-b border-gray-200 select-none">
-          {daysOfWeek.map((day) => (
-            <div key={day} className="text-center font-bold p-2">
-              {day}
-            </div>
-          ))}
-        </div>
-      </div>
-      <div
-        className="flex-grow overflow-y-auto"
-        ref={containerRef}
-        onMouseUp={handleMouseUp}
-        onMouseLeave={() => {
-          setIsSelecting(false);
-          setSelectionMode(null);
-        }}
-        style={{ height: "calc(100vh - 150px)" }}
-      >
-        <div className="pt-4">{renderAllMonths()}</div>
-      </div>
+            <DeliveryPickupToggle
+              panelSide={panelSide}
+              onModeChange={handleDeliveryPickupModeChange}
+              mode={deliveryPickupMode}
+            />{" "}
+            <Button
+              onClick={() => {
+                setIsBasePanelOpen(!isBasePanelOpen);
+                setPanelStack([]);
+              }}
+              variant="outline"
+              className="relative select-none hover:bg-inherit rounded-full flex items-center justify-start bg-inherit ml-1 text-xs mr-2 sm:text-sm px-2 sm:px-4"
+            >
+              {panelSide && (
+                <>
+                  Settings{" "}
+                  <div className={`border-r h-full ${panelSide && "pl-1"}`} />
+                </>
+              )}
 
-      {showModifyButton && (
-        <div className="fixed bottom-[120px] left-1/2 transform -translate-x-1/2 z-50">
-          <Button
-            className="bg-slate-900 text-white hover:bg-slate-500 transition-colors duration-200 rounded-full shadow-lg"
-            onClick={() => {
-              setIsBasePanelOpen(true);
-              setPanelStack([
-                {
-                  content: renderPanelContent(0),
-                  onClose: () => setPanelStack([]),
-                },
-              ]);
-              setShowModifyButton(false);
-            }}
-          >
-            {getSelectionDescription}
-          </Button>
+              <PiGearThin
+                className={`h-5 w-5 sm:h-6 sm:w-6 ${panelSide && "pl-1"}`}
+              />
+              {!panelSide && (
+                <>
+                  <div className="border-r h-full pl-1" />
+                  <RiArrowDownSLine className="h-6 w-6 pl-1" />
+                </>
+              )}
+            </Button>
+          </div>
+          <div className="grid grid-cols-7 gap-px w-full border-b border-gray-200 select-none">
+            {daysOfWeek.map((day) => (
+              <div key={day} className="text-center font-bold p-2">
+                {day}
+              </div>
+            ))}
+          </div>
         </div>
-      )}
+        <div
+          className="flex-grow overflow-y-auto"
+          ref={containerRef}
+          onMouseUp={handleMouseUp}
+          onMouseLeave={() => {
+            setIsSelecting(false);
+            setSelectionMode(null);
+          }}
+          style={{ height: "calc(100vh - 150px)" }}
+        >
+          <div className="pt-4">{renderAllMonths()}</div>
+        </div>
+
+        {showModifyButton && (
+          <div className="fixed bottom-[120px] left-1/2 transform -translate-x-1/2 z-50">
+            <Button
+              className="bg-slate-900 text-white hover:bg-slate-500 transition-colors duration-200 rounded-full shadow-lg"
+              onClick={() => {
+                setIsBasePanelOpen(true);
+                setPanelStack([
+                  {
+                    content: renderPanelContent(0),
+                    onClose: () => setPanelStack([]),
+                  },
+                ]);
+                setShowModifyButton(false);
+              }}
+            >
+              {getSelectionDescription}
+            </Button>
+          </div>
+        )}
+      </ClientOnly>
     </>
   );
 
@@ -534,12 +537,10 @@ const Calendar = ({ location, id, mk, locations, userId }: CalendarProps) => {
 
     try {
       // Use the API endpoint instead of direct Prisma call
+      console.log(updatedHours);
       const response = await axios.post("/api/calendar/hours", {
         location: [
           {
-            address: location?.address,
-            coordinates: location?.coordinates,
-            role: location?.role,
             hours: updatedHours,
           },
         ],
@@ -701,31 +702,33 @@ const Calendar = ({ location, id, mk, locations, userId }: CalendarProps) => {
   }, [selectedDaysCount]);
 
   return (
-    <StackingPanelLayout
-      location={location}
-      id={id}
-      panels={panelStack.map((panel, index) => ({
-        ...panel,
-        content: renderPanelContent(index),
-        onClose: () => {
-          panel.onClose();
-          if (index === panelStack.length - 1 && !panelSide) {
-            setIsBasePanelOpen(false);
-          }
-          handleClosePanel();
-        },
-      }))}
-      mainContentVariants={mainContentVariants}
-      panelSide={panelSide}
-      mk={mk}
-      isBasePanelOpen={isBasePanelOpen}
-      setIsBasePanelOpen={setIsBasePanelOpen}
-      onPanelClose={handleClosePanel}
-      locations={locations}
-      userId={userId}
-    >
-      {renderCalendarContent()}
-    </StackingPanelLayout>
+    <ClientOnly>
+      <StackingPanelLayout
+        location={location}
+        id={id}
+        panels={panelStack.map((panel, index) => ({
+          ...panel,
+          content: renderPanelContent(index),
+          onClose: () => {
+            panel.onClose();
+            if (index === panelStack.length - 1 && !panelSide) {
+              setIsBasePanelOpen(false);
+            }
+            handleClosePanel();
+          },
+        }))}
+        mainContentVariants={mainContentVariants}
+        panelSide={panelSide}
+        mk={mk}
+        isBasePanelOpen={isBasePanelOpen}
+        setIsBasePanelOpen={setIsBasePanelOpen}
+        onPanelClose={handleClosePanel}
+        locations={locations}
+        userId={userId}
+      >
+        {renderCalendarContent()}
+      </StackingPanelLayout>
+    </ClientOnly>
   );
 };
 

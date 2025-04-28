@@ -625,7 +625,7 @@ const AvailabilityMap: React.FC<AvailabilityMapProps> = ({
     },
     []
   );
-
+  console.log(initLoc);
   // if (!isLoaded) {
   //   return <div>Loading maps...</div>;
   // }
@@ -649,7 +649,7 @@ const AvailabilityMap: React.FC<AvailabilityMapProps> = ({
           <span>
             {enteredDate
               ? `If you depart from ${
-                  initLoc.address
+                  initLoc.address.street
                 } on ${getDisplayText()}, circles around
             sellers indicate their availability at that time.`
               : `If you depart from ${initLoc.address} right now, circles around
