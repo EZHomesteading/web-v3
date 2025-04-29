@@ -438,9 +438,6 @@ const SearchLocation: React.FC<SearchLocationProps> = ({ apiKey }) => {
                   >
                     {suggestion.place_id === "near_me_custom_id" ? (
                       <div className="flex items-center">
-                        <span className="material-icons text-blue-500 mr-2">
-                          my_location
-                        </span>
                         <span className="font-medium">Near Me</span>
                         <span className="text-gray-500 text-xs ml-2">
                           (Use current location)
