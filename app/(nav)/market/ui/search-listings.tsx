@@ -136,6 +136,20 @@ const SearchLocation: React.FC<SearchLocationProps> = ({ apiKey }) => {
   const fetchLocationSuggestions = debounce((input: string) => {
     if (!input || input.length < 2 || !placesServiceRef.current) return;
 
+    // Create a custom "Near Me" suggestion
+    const nearMeSuggestion: google.maps.places.AutocompletePrediction = {
+      description: "Near Me (Use current location)",
+      place_id: "near_me_custom_id",
+      structured_formatting: {
+        main_text: "Near Me",
+        main_text_matched_substrings: [],
+        secondary_text: "Use current location",
+      },
+      matched_substrings: [],
+      terms: [],
+      types: [],
+    };
+
     placesServiceRef.current.getPlacePredictions(
       {
         input,
@@ -147,10 +161,14 @@ const SearchLocation: React.FC<SearchLocationProps> = ({ apiKey }) => {
           status === google.maps.places.PlacesServiceStatus.OK &&
           predictions
         ) {
-          setSuggestions(predictions);
+          // Add Near Me option as the first suggestion
+          const allSuggestions = [nearMeSuggestion, ...predictions];
+          setSuggestions(allSuggestions);
           setShowLocationSuggestions(true);
         } else {
-          setSuggestions([]);
+          // Even if there are no Google suggestions, still show Near Me
+          setSuggestions([nearMeSuggestion]);
+          setShowLocationSuggestions(true);
         }
       }
     );
@@ -194,10 +212,17 @@ const SearchLocation: React.FC<SearchLocationProps> = ({ apiKey }) => {
   const handleLocationSelect = (
     suggestion: google.maps.places.AutocompletePrediction
   ) => {
+    setShowLocationSuggestions(false);
+
+    // Check if this is our custom "Near Me" option
+    if (suggestion.place_id === "near_me_custom_id") {
+      handleNearMeClick();
+      return;
+    }
+
     if (!geocoderRef.current) return;
 
     setAddress(suggestion.description);
-    setShowLocationSuggestions(false);
 
     geocoderRef.current.geocode(
       { placeId: suggestion.place_id },
@@ -229,9 +254,13 @@ const SearchLocation: React.FC<SearchLocationProps> = ({ apiKey }) => {
 
         setCoordinates({ lat, lng });
         setAddress("Near Me");
+        setShowLocationSuggestions(false);
 
         // Optionally get the actual address
         reverseGeocode(lat, lng);
+
+        // Keep focus on location input
+        locationInputRef.current?.focus();
       },
       (error) => {
         console.error("Error getting location:", error);
@@ -250,7 +279,7 @@ const SearchLocation: React.FC<SearchLocationProps> = ({ apiKey }) => {
     setIsLoadingListings(true);
 
     try {
-      const response = await axios.get(`/api/listing/listingSuggestions`, {
+      const response = await axios.get(`/api/listing/search`, {
         params: { q: query, limit: 5 },
       });
 
@@ -319,17 +348,39 @@ const SearchLocation: React.FC<SearchLocationProps> = ({ apiKey }) => {
 
   // Effect for handling location input changes
   useEffect(() => {
-    if (address) {
-      fetchLocationSuggestions(address);
+    if (focusedInput === "location") {
+      // If input is blank, still show suggestions with Near Me
+      if (!address) {
+        const nearMeSuggestion: google.maps.places.AutocompletePrediction = {
+          description: "Near Me (Use current location)",
+          place_id: "near_me_custom_id",
+          structured_formatting: {
+            main_text: "Near Me",
+            main_text_matched_substrings: [],
+            secondary_text: "Use current location",
+          },
+          matched_substrings: [],
+          terms: [],
+          types: [],
+        };
+        setSuggestions([nearMeSuggestion]);
+        setShowLocationSuggestions(true);
+      } else {
+        fetchLocationSuggestions(address);
+      }
     } else {
-      setSuggestions([]);
+      setShowLocationSuggestions(false);
     }
-  }, [address]);
+  }, [address, focusedInput]);
 
   // Effect for handling search query changes
   useEffect(() => {
-    fetchListingSuggestions(searchQuery);
-  }, [searchQuery]);
+    if (focusedInput === "query") {
+      fetchListingSuggestions(searchQuery);
+    } else {
+      setShowListingSuggestions(false);
+    }
+  }, [searchQuery, focusedInput]);
 
   return (
     <>
@@ -371,21 +422,39 @@ const SearchLocation: React.FC<SearchLocationProps> = ({ apiKey }) => {
           />
 
           {/* Location Suggestions */}
-          {showLocationSuggestions && suggestions.length > 0 && (
-            <div className="absolute mt-1 text-black shadow-lg z-50 w-full max-w-full rounded-xl py-3 bg-white border">
-              {suggestions.map((suggestion) => (
-                <div
-                  key={suggestion.place_id}
-                  className="px-4 py-3 flex items-center text-sm hover:bg-gray-200 cursor-pointer"
-                  onMouseDown={() => handleLocationSelect(suggestion)}
-                >
-                  <span className="overflow-hidden text-black overflow-ellipsis whitespace-nowrap">
-                    {suggestion.description}
-                  </span>
-                </div>
-              ))}
-            </div>
-          )}
+          {showLocationSuggestions &&
+            suggestions.length > 0 &&
+            focusedInput === "location" && (
+              <div className="absolute mt-1 text-black shadow-lg z-50 w-full max-w-full rounded-xl py-3 bg-white border">
+                {suggestions.map((suggestion) => (
+                  <div
+                    key={suggestion.place_id}
+                    className={`px-4 py-3 flex items-center text-sm hover:bg-gray-200 cursor-pointer ${
+                      suggestion.place_id === "near_me_custom_id"
+                        ? "bg-gray-50"
+                        : ""
+                    }`}
+                    onMouseDown={() => handleLocationSelect(suggestion)}
+                  >
+                    {suggestion.place_id === "near_me_custom_id" ? (
+                      <div className="flex items-center">
+                        <span className="material-icons text-blue-500 mr-2">
+                          my_location
+                        </span>
+                        <span className="font-medium">Near Me</span>
+                        <span className="text-gray-500 text-xs ml-2">
+                          (Use current location)
+                        </span>
+                      </div>
+                    ) : (
+                      <span className="overflow-hidden text-black overflow-ellipsis whitespace-nowrap">
+                        {suggestion.description}
+                      </span>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
         </div>
 
         {/* Query Input */}
@@ -414,45 +483,36 @@ const SearchLocation: React.FC<SearchLocationProps> = ({ apiKey }) => {
           />
 
           {/* Listing Suggestions */}
-          {showListingSuggestions && listings.length > 0 && (
-            <div className="absolute bg-white max-w-[910px] h-auto w-full left-0 top-16 rounded-xl border py-3 z-50">
-              {listings.map((listing) => (
-                <div
-                  key={listing.id}
-                  className="p-1 cursor-pointer hover:bg-gray-200"
-                  onMouseDown={() => handleListingSelect(listing)}
-                >
-                  <div className="flex items-center justify-between w-full p-1 px-2">
-                    {listing.title}
-                    {listing.subCategory && (
-                      <span className="text-sm text-gray-500">
-                        {listing.subCategory}
-                      </span>
-                    )}
+          {showListingSuggestions &&
+            listings.length > 0 &&
+            focusedInput === "query" && (
+              <div className="absolute bg-white max-w-[910px] h-auto w-full left-0 top-16 rounded-xl border py-3 z-50">
+                {listings.map((listing) => (
+                  <div
+                    key={listing.id}
+                    className="p-1 cursor-pointer hover:bg-gray-200"
+                    onMouseDown={() => handleListingSelect(listing)}
+                  >
+                    <div className="flex items-center justify-between w-full p-1 px-2">
+                      {listing.title}
+                      {listing.subCategory && (
+                        <span className="text-sm text-gray-500">
+                          {listing.subCategory}
+                        </span>
+                      )}
+                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
-          )}
+                ))}
+              </div>
+            )}
         </div>
 
-        {/* Search Button */}
         <button
           onClick={handleSearch}
           className="absolute right-3 text-black top-1/2 transform -translate-y-1/2 z-10"
         >
           <IoIosSearch className="text-2xl text-white bg-black rounded-full p-1" />
         </button>
-
-        {/* Near Me Button */}
-        {focusedInput === "location" && !address && (
-          <button
-            className="absolute top-full mt-2 py-1 px-4 bg-white border-[1px] h-12 rounded-lg text-gray-700 w-full z-20"
-            onMouseDown={handleNearMeClick}
-          >
-            Near Me
-          </button>
-        )}
       </div>
     </>
   );
