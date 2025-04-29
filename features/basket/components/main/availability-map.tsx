@@ -329,7 +329,7 @@ const AvailabilityMap: React.FC<AvailabilityMapProps> = ({
       nextOpenTime: string;
     }>
   >([]);
-
+  // console.log("HERE", hereCoordinates[0]);
   const LocationSearchBox = useCallback(
     ({
       onPlaceSelect,
@@ -403,7 +403,10 @@ const AvailabilityMap: React.FC<AvailabilityMapProps> = ({
 
   useEffect(() => {
     if (userLoc?.[0]?.coordinates) {
-      setHereCoordinates(userLoc[0].coordinates);
+      setHereCoordinates({
+        lat: userLoc[0].coordinates[1],
+        lng: userLoc[0].coordinates[0],
+      });
       setInitLoc(userLoc[0]);
       setMapCenter({
         lat: userLoc[0].coordinates[1],
@@ -641,7 +644,10 @@ const AvailabilityMap: React.FC<AvailabilityMapProps> = ({
         onClose={() => setIsRouteModalOpen(false)}
         locations={locations}
         googleMapsApiKey={mapsKey}
-        initialLocation={initLoc.coordinates}
+        initialLocation={{
+          lat: initLoc.coordinates[1],
+          lng: initLoc.coordinates[0],
+        }}
         setPickupTimes={setPickupTimes}
       />
       <Card className="p-4 mb-4">
@@ -652,7 +658,9 @@ const AvailabilityMap: React.FC<AvailabilityMapProps> = ({
                   initLoc.address.street
                 } on ${getDisplayText()}, circles around
             sellers indicate their availability at that time.`
-              : `If you depart from ${initLoc.address} right now, circles around
+              : `If you depart from ${
+                  initLoc.address.street
+                } right now, circles around
             sellers indicate their availability. Please choose a departure time${" "}`}
           </span>
         </div>
@@ -774,10 +782,9 @@ const AvailabilityMap: React.FC<AvailabilityMapProps> = ({
             }}
           >
             <MarkerF
-              position={{
-                lat: hereCoordinates.lat,
-                lng: hereCoordinates.lng,
-              }}
+              position={
+                new google.maps.LatLng(hereCoordinates.lat, hereCoordinates.lng)
+              }
               icon={{
                 url: "/icons/clipart2825061.png",
                 scaledSize: new google.maps.Size(64, 76),

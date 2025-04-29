@@ -38,7 +38,7 @@ const RouteOptimizerModal: React.FC<RouteOptimizerModalProps> = ({
     }
     onClose();
   };
-
+  console.log(initialLocation);
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogContent
