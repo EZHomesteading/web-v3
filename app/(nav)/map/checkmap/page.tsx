@@ -16,6 +16,7 @@ export type OrderMap = {
 
 import { redirect } from "next/navigation";
 import { getOrderGroupWithOrders } from "@/actions/gerOrderGroupOrders";
+import ClientOnly from "@/components/client/client-only";
 
 const RouteOptimizerPage = async ({
   searchParams,
@@ -52,6 +53,7 @@ const RouteOptimizerPage = async ({
   if (!orders.length) {
     redirect("/dashboard");
   }
+  console.log(startLoc);
   let defaultLocation = { lat: 37.0345267, lng: -76.6381116 };
   if (user.locations?.length > 0) {
     const firstLocation = user.locations[0];

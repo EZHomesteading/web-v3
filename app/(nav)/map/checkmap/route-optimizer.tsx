@@ -7,6 +7,7 @@ import {
   useLoadScript,
   DirectionsRenderer,
   Autocomplete,
+  OverlayView,
 } from "@react-google-maps/api";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -16,7 +17,6 @@ import { Label } from "@/components/ui/label";
 import { OutfitFont } from "@/components/fonts";
 import { OrderMap } from "./page";
 import { Navigation } from "lucide-react"; // Import navigation icon
-import { OverlayView } from "@react-google-maps/api";
 import {
   formatDuration,
   metersToMiles,
@@ -27,6 +27,7 @@ interface FixedRouteOptimizerProps {
   orders: OrderMap[];
   googleMapsApiKey: string;
   startLoc: number[];
+  currentUserLoc: number[];
   endLoc: number[];
 }
 interface RouteSegment {
@@ -39,6 +40,7 @@ const RouteOptimizer = ({
   orders,
   googleMapsApiKey,
   startLoc,
+  currentUserLoc,
   endLoc,
 }: FixedRouteOptimizerProps) => {
   const { isLoaded } = useLoadScript({
@@ -48,14 +50,39 @@ const RouteOptimizer = ({
 
   const [userLocation, setUserLocation] = useState<any>(null);
   const [endLocation, setEndLocation] = useState<any>(null);
+  const [useCurrentLocation, setUseCurrentLocation] = useState(false);
 
   useEffect(() => {
     if (!isLoaded) return;
-    setUserLocation(new google.maps.LatLng(startLoc[0], startLoc[1]));
+    // Set end location only - start location is handled in the useCurrentLocation effect
     if (endLoc?.length === 2) {
       setEndLocation(new google.maps.LatLng(endLoc[0], endLoc[1]));
     }
-  }, [isLoaded, startLoc, endLoc]);
+  }, [isLoaded, endLoc]);
+
+  // Effect to handle current location changes
+  useEffect(() => {
+    if (!isLoaded) return;
+
+    if (useCurrentLocation === true && navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setUserLocation(
+            new google.maps.LatLng(currentUserLoc[0], currentUserLoc[1])
+          );
+        },
+        (error) => {
+          console.error("Error getting location:", error);
+          // Fall back to startLoc if geolocation fails
+          setUserLocation(new google.maps.LatLng(startLoc[0], startLoc[1]));
+        }
+      );
+    } else {
+      // Strictly use the provided startLoc when not using current location
+      setUserLocation(new google.maps.LatLng(startLoc[0], startLoc[1]));
+    }
+  }, [isLoaded, startLoc, useCurrentLocation]);
+
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [zoom, setZoom] = useState(12);
   const [optimizedRoute, setOptimizedRoute] = useState<OrderMap[]>([]);
@@ -254,29 +281,6 @@ const RouteOptimizer = ({
     }
   };
 
-  useEffect(() => {
-    if (!isLoaded) return;
-
-    setUserLocation(new google.maps.LatLng(startLoc[0], startLoc[1]));
-
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setUserLocation(
-            new google.maps.LatLng(
-              position.coords.latitude,
-              position.coords.longitude
-            )
-          );
-        },
-        (error) => {
-          console.error("Error getting location:", error);
-          setUserLocation(new google.maps.LatLng(startLoc[0], startLoc[1]));
-        }
-      );
-    }
-  }, [isLoaded, startLoc]);
-
   if (!isLoaded) return <div>Loading...</div>;
 
   return (
@@ -303,6 +307,21 @@ const RouteOptimizer = ({
               </Button>
               <div className="space-y-4">
                 <div className="space-y-2">
+                  {/* Use Current Location Toggle */}
+                  <label
+                    className={`${OutfitFont.className} flex items-center gap-2`}
+                  >
+                    <Switch
+                      checked={useCurrentLocation}
+                      onCheckedChange={(checked) => {
+                        setUseCurrentLocation(checked);
+                        clearMap();
+                      }}
+                    />
+                    <span>Use Current Location</span>
+                  </label>
+
+                  {/* Different End Location Toggle - existing code */}
                   <label
                     className={`${OutfitFont.className} flex items-center gap-2`}
                   >
@@ -435,8 +454,7 @@ const RouteOptimizer = ({
                             {" "}
                             <span>
                               {" "}
-                              {index + 1}. {order.location.name}Pickup
-                              Time:
+                              {index + 1}. {order.location.name}Pickup Time:
                             </span>
                             <span className="text-blue-600 font-medium">
                               {formatTime(order.pickupDate)}

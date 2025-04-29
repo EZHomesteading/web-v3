@@ -37,10 +37,10 @@ async function handleBasketProcessing(
             select: {
               id: true,
               title: true,
-              quantityType: true,
+              unit: true,
               stock: true,
               price: true,
-              subCategory: true,
+              subcategory: true,
               minOrder: true,
             },
           },
@@ -135,7 +135,7 @@ async function createConversationAndNotify(order: any) {
     items.map(async (item: any) => {
       const listing = item.listing;
       return listing
-        ? `${item.quantity} ${listing.quantityType} of ${listing.title}`
+        ? `${item.quantity} ${listing.unit} of ${listing.title}`
         : "";
     })
   );

@@ -26,7 +26,8 @@ export default function LocationProvider({
       <RouteOptimizer
         orders={orders}
         googleMapsApiKey={googleMapsApiKey}
-        startLoc={initialLocation}
+        startLoc={startLoc}
+        currentUserLoc={initialLocation}
         endLoc={endLoc}
       />
     </div>
