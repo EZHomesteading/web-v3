@@ -1,3 +1,4 @@
+import { Listing, Location } from "@/types";
 import { string } from "zod";
 
 declare module "chat-types" {
@@ -44,34 +45,6 @@ declare module "chat-types" {
     options: MessageOption[];
   }
 
-  interface Location {
-    id: string;
-    userId: string;
-    name: string | null;
-    type: string;
-    coordinates: number[];
-    address: { city: string; state: string; street: string; zip: string };
-    role: UserRole;
-    SODT: number | null;
-    bio: string | null;
-    isDefault: boolean;
-    showPreciseLocation: boolean;
-    createdAt: Date;
-    updatedAt: Date;
-    hours: {
-      delivery: {
-        date: Date;
-        capacity: number | null;
-        timeSlots: { open: number; close: number }[];
-      }[];
-      pickup: {
-        date: Date;
-        capacity: number | null;
-        timeSlots: { open: number; close: number }[];
-      }[];
-    } | null;
-  }
-
   type OtherUserChat = {
     id: string;
     name: string;
@@ -113,22 +86,7 @@ declare module "chat-types" {
   }
 
   // Then update your Location type to use these interfaces:
-  interface Location {
-    id: string;
-    userId: string;
-    name: string | null;
-    type: string;
-    coordinates: number[];
-    address: { street: string; city: string; state: string; zip: string };
-    role: UserRole;
-    SODT: number | null;
-    bio: string | null;
-    isDefault: boolean;
-    showPreciseLocation: boolean;
-    createdAt: Date;
-    updatedAt: Date;
-    hours: Hours | null;
-  }
+
   interface ChatMessage {
     id: string;
     body: string | null;
@@ -167,14 +125,6 @@ declare module "chat-types" {
     location: Location;
   }
 
-  interface ChatListing {
-    id: string;
-    title: string;
-    price: number;
-    unit: string;
-    images: string[];
-  }
-
   interface FullChatData {
     conversation: {
       id: string;
@@ -184,7 +134,7 @@ declare module "chat-types" {
     currentUser: ChatUser;
     otherUser: OtherUserChat | null;
     order: ChatOrder | null;
-    listings: ChatListing[];
+    listings: Listing[];
     messages: ChatMessage[];
   }
   type FullMessageType = Message & {

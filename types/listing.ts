@@ -1,4 +1,4 @@
-import { Basket } from "./basket";
+import { Basket } from "@prisma/client";
 import { Location } from "./location";
 import { User } from "./user";
 
@@ -21,6 +21,7 @@ export type Listing = {
   unit: string;
 
   //optional fields that should be completely omitted in the db if not present to avoid bloat
+  harvestDates?: string[] | undefined;
   harvestFeatures?: boolean | undefined;
   projectedStock?: number; // does this need to be refactored?
   SODT?: number;

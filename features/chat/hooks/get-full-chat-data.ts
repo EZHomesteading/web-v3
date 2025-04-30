@@ -6,10 +6,10 @@ import type {
   ChatOrder,
   ChatUser,
   ChatMessage,
-  ChatListing,
   OtherUserChat,
-  Location,
 } from "chat-types";
+import { Listing, Location } from "@/types";
+
 interface OrderItem {
   listing: {
     id: string;
@@ -188,11 +188,21 @@ const getFullChatData = async (
     // Extract listing IDs from the quantity array
     const listingIds = extractListingIds(order?.items);
 
-    const listings: ChatListing[] =
+    const listings: Listing[] =
       listingIds.length > 0
         ? await prisma.listing.findMany({
             where: { id: { in: listingIds } },
             select: {
+              stock: true,
+              minOrder: true,
+              shelfLife: true,
+              rating: true,
+              createdAt: true,
+              locationId: true,
+              category: true,
+              subcategory: true,
+              description: true,
+              userId: true,
               id: true,
               title: true,
               price: true,
@@ -219,7 +229,6 @@ const getFullChatData = async (
         id: user.id,
         name: user.name,
         role: user.role,
-        phone: user.phone || undefined,
         email: user.email,
         url: user.url || undefined,
         location: null, // Add this if it's required by your ChatUser type
