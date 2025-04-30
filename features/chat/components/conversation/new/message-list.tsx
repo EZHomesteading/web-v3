@@ -2,6 +2,7 @@
 import React, { memo } from "react";
 import MessageBox from "../message-box";
 import { MessageListProps } from "./types";
+import { Listing } from "@/types";
 
 export const MessageList: React.FC<MessageListProps> = memo(
   function MessageList({
@@ -21,7 +22,7 @@ export const MessageList: React.FC<MessageListProps> = memo(
             messagesLength={messages.length}
             listing={
               message.messageOrder === "HARVEST"
-                ? adminMessages[i]?.listing
+                ? (adminMessages[i]?.listing as unknown as Listing)
                 : null
             }
             orderGroupId={orderGroupId}

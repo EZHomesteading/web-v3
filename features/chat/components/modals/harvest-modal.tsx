@@ -11,9 +11,10 @@ import {
 import Modal from "@/features/chat/components/modals/harvest-modal.ui";
 import { Button } from "@/components/ui/button";
 import axios from "axios";
-import { Listing } from "@prisma/client";
+
 import { useRouter } from "next/navigation";
 import Toast from "@/components/ui/toast";
+import { Listing } from "@/types";
 
 interface ConfirmModalProps {
   isOpen?: boolean;

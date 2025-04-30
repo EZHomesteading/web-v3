@@ -9,7 +9,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { format } from "date-fns";
 import axios from "axios";
 import CancelModal from "../modals/cancel-modal";
-import { Listing, OrderStatus, UserRole } from "@prisma/client";
+import { OrderStatus, UserRole } from "@prisma/client";
 import { PiNewspaperClippingThin } from "react-icons/pi";
 import {
   AlertDialog,
@@ -27,7 +27,6 @@ import ChatConfirmModal from "../modals/chat-confirm";
 
 import HarvestModal from "../modals/harvest-modal";
 import {
-  ChatListing,
   ChatMessage,
   ChatOrder,
   ChatUser,
@@ -40,10 +39,12 @@ import { getMessageOptions } from "../../utils/messageOptions";
 import { MessageActions } from "../../utils/message-actions";
 import { ImageUpload } from "../../utils/image-upload";
 import { useRouter } from "next/navigation";
+import { MessageWithListing } from "./new/types";
+import { Listing } from "@/types";
 //import DateTimePicker from "./customtimemodal";
 
 interface MessageBoxProps {
-  listings: ChatListing[];
+  listings: Listing[];
   data: ChatMessage;
   listing: Listing | null;
   isLast?: boolean;
@@ -159,7 +160,7 @@ const MessageBox: React.FC<MessageBoxProps> = ({
   const getMessageByStatus = async (status: OrderStatus) => {
     let message = "";
     if (status === "SELLER_ACCEPTED" && order?.fulfillmentType === "PICKUP") {
-      message = `Yes, That time works, Your order will be ready at that time. at ${order?.location?.address[0]}, ${order?.location?.address[1]}, ${order?.location?.address[2]}. ${order?.location?.address[3]}.`;
+      message = `Yes, That time works, Your order will be ready at that time. at ${order?.location?.address.street}, ${order?.location?.address.city}, ${order?.location?.address.state}. ${order?.location?.address.zip}.`;
       // } else if (
       //   (order?.fulfillmentType === "PICKUP" &&
       //     status === "SELLER_RESCHEDULED") ||
@@ -301,7 +302,7 @@ const MessageBox: React.FC<MessageBoxProps> = ({
         });
       } else {
         await axios.post("/api/chat/messages", {
-          message: `Your order is ready to be picked up at ${order?.location?.address[0]}, ${order?.location?.address[1]}, ${order?.location?.address[2]}. ${order?.location?.address[3]}!`,
+          message: `Your order is ready to be picked up at ${order?.location?.address.street}, ${order?.location?.address.city}, ${order?.location?.address.state}. ${order?.location?.address.zip}!`,
           messageOrder: "READY_FOR_PICKUP",
           conversationId: convoId,
           otherUserId: otherUsersId,

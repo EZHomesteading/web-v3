@@ -1,4 +1,6 @@
 // File: types.ts
+
+import { Listing } from "@/types";
 import { ChatMessage, ChatOrder, ChatUser, OtherUserChat } from "chat-types";
 
 export interface BodyProps {
@@ -10,14 +12,6 @@ export interface BodyProps {
   conversationId: string;
   orderGroupId: string | null;
   listings: Listing[];
-}
-
-export interface Listing {
-  id: string;
-  title: string;
-  price: number;
-  unit: string;
-  images: string[];
 }
 
 export interface MessageWithListing {
