@@ -62,7 +62,7 @@ const ShopPage = async ({
           `${apiUrl}/get-many?collection=BasketItem&key=userId&value=${user.id}&fields=listingId`
         ).then((res) => res.json())
       : Promise.resolve([]),
-    fetch(`${apiUrl}/market?${params.toString()}`).then((res) => res.json()),
+    fetch(`${apiUrl}/v1/market?${params.toString()}`).then((res) => res.json()),
   ];
   const [basketItems, marketData] = await Promise.all(requests);
 
