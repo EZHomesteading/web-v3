@@ -33,7 +33,7 @@ export default function MonthsNewStoreStep({
 
       updateFormData("selectedMonths", newSelectedMonths);
     },
-    [formData.selectedMonths, updateFormData],
+    [formData.selectedMonths, updateFormData]
   );
 
   const handleMouseDown = (monthIndex: number) => {
@@ -56,14 +56,14 @@ export default function MonthsNewStoreStep({
 
     const projection = generateAvailabilityProjection(
       formData.hours,
-      formData.selectedMonths,
+      formData.selectedMonths
     );
 
     updateFormData("hours", projection);
   }, [formData.selectedMonths]);
 
   return (
-    <div className="flex flex-col items-center">
+    <div className="flex flex-col mt-[5%] items-center">
       <div
         className="grid grid-cols-3 sm:grid-cols-4 gap-2"
         onMouseLeave={handleMouseUp}
@@ -74,11 +74,13 @@ export default function MonthsNewStoreStep({
             key={month}
             onMouseDown={() => handleMouseDown(index)}
             onMouseEnter={() => handleMouseEnter(index)}
-            className={`p-8 sm:p-12 rounded-xl border-[1px] shadow-md select-none ${OutfitFont.className
-              } ${formData.selectedMonths && formData.selectedMonths.includes(index)
+            className={`p-8 sm:p-12 rounded-xl border-[1px] shadow-md select-none ${
+              OutfitFont.className
+            } ${
+              formData.selectedMonths && formData.selectedMonths.includes(index)
                 ? "bg-[#ced9bb]/20 !border-[#ced9bb]"
                 : "bg-white"
-              }`}
+            }`}
           >
             {month}
           </button>
@@ -90,7 +92,7 @@ export default function MonthsNewStoreStep({
 
 export function generateAvailabilityProjection(
   hours: Hours,
-  selectedMonths: number[],
+  selectedMonths: number[]
 ): Hours {
   if (!hours || !selectedMonths.length) {
     return { pickup: [], delivery: [] };
@@ -149,11 +151,11 @@ export function generateAvailabilityProjection(
   });
 
   result.pickup.sort(
-    (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
+    (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
   );
 
   result.delivery.sort(
-    (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
+    (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
   );
 
   return result;

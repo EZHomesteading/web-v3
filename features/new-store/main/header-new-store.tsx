@@ -76,11 +76,15 @@ export default function HeaderNewStore({
 
   return (
     <>
-      <div className={`${OutfitFont.className} text-2xl`}>{title}</div>
+      <div
+        className={`${OutfitFont.className} items-center text-center text-2xl`}
+      >
+        {title}
+      </div>
       {descriptions.map((description: string, index: number) => (
         <div
           key={index}
-          className={`text-xs text-neutral-500 ${OutfitFont.className}`}
+          className={`text-xs text-center text-neutral-500 ${OutfitFont.className}`}
         >
           {description}
         </div>

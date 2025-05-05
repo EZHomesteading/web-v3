@@ -78,7 +78,7 @@ export default function FulfillmentNewStoreStep({
   updateFormData,
 }: NewStoreCoreProps) {
   return (
-    <div className="grid grid-cols-1 gap-2 w-full sm:max-w-[66%] mb-32 sm:grid-cols-2">
+    <div className="grid grid-cols-1 gap-2 w-full sm:max-w-[66%] mb-32 mt-[10%] sm:grid-cols-2">
       {options.map((option: Option) => (
         <button
           key={option.value}
@@ -86,9 +86,11 @@ export default function FulfillmentNewStoreStep({
             updateFormData("fulfillmentStyle", option.value);
             updateFormData("currentConfig", option.currentConfig);
           }}
-          className={`${OutfitFont.className
-            } flex flex-col items-justify-start text-start p-3 w-full rounded-lg border transition ${formData.fulfillmentStyle === option.value ? option.bg : "bg-white"
-            }`}
+          className={`${
+            OutfitFont.className
+          } flex flex-col items-justify-start text-start p-3 w-full rounded-lg border transition ${
+            formData.fulfillmentStyle === option.value ? option.bg : "bg-white"
+          }`}
         >
           <div className="flex items-center space-x-2">
             <span>{option.icon}</span>
@@ -97,8 +99,9 @@ export default function FulfillmentNewStoreStep({
           {option.description.map((line: string, idx: number) => (
             <p
               key={idx}
-              className={`text-xs py-[1px] text-neutral-500 ${idx === 2 && "!italic"
-                }`}
+              className={`text-xs py-[1px] text-neutral-500 ${
+                idx === 2 && "!italic"
+              }`}
             >
               {line}
             </p>

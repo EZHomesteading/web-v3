@@ -45,28 +45,35 @@ export default async function Page() {
 
 function MaxLocations({ locations }: { locations: Location[] }) {
   return (
-    <div
-      className={`${OutfitFont.className} flex flex-col items-center justify-center h-screen gap-y-2`}
-    >
-      You have reached the maximum of 3 selling locations
-      <Link
-        className={` border-[1px] font-semibold rounded-xl w-[300px] h-[100px] shadow-md flex flex-col items-center justify-center`}
-        href={`/`}
+    // Using a wrapper div with responsive scaling classes
+    <div className="flex items-center justify-center min-h-screen w-full">
+      <div
+        className={`${OutfitFont.className} flex flex-col items-center justify-center gap-y-2 md:gap-y-3 w-full max-w-screen-xl mx-auto px-4`}
       >
-        Go to Home
-      </Link>
-      {locations?.map((location, index) => (
+        <h2 className="text-lg md:text-xl lg:text-2xl font-medium text-center">
+          You have reached the maximum of 3 selling locations
+        </h2>
         <Link
-          key={index}
-          className={` border-[1px] rounded-xl w-[300px] h-[100px] shadow-md flex flex-col items-center justify-center`}
-          href={`/selling/availability-calendar/${location.id}`}
+          className={`border-[1px] font-semibold rounded-xl w-full max-w-xs h-24 md:h-28 lg:h-32 shadow-md flex flex-col items-center justify-center transition-all hover:shadow-lg`}
+          href={`/`}
         >
-          <span className="font-semibold">
-            {getLocationTitle(location, index)}
-          </span>
-          {location?.address?.street}
+          Go to Home
         </Link>
-      ))}
+        <div className="w-full flex flex-col items-center gap-y-2 md:gap-y-3">
+          {locations?.map((location, index) => (
+            <Link
+              key={index}
+              className={`border-[1px] rounded-xl w-full max-w-xs h-24 md:h-28 lg:h-32 shadow-md flex flex-col items-center justify-center transition-all hover:shadow-lg`}
+              href={`/selling/availability-calendar/${location.id}`}
+            >
+              <span className="font-semibold">
+                {getLocationTitle(location, index)}
+              </span>
+              {location?.address?.street}
+            </Link>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }

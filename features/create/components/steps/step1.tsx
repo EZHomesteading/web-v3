@@ -6,6 +6,7 @@ import {
   GiJellyBeans,
   GiOlive,
   GiRopeCoil,
+  GiShinyApple,
   GiWheat,
 } from "react-icons/gi";
 import { LuBeef } from "react-icons/lu";
@@ -69,7 +70,7 @@ interface SubCategorySelectionProps {
   onGoBack: () => void;
 }
 const subcategoryIcons: Record<string, React.ReactNode> = {
-  fruit: <GiAppleCore size={30} />,
+  fruit: <GiShinyApple size={30} />,
   vegetables: <GiCarrot size={30} />,
   nuts: <GiCoconuts size={30} />,
   herbs: <GiHerbsBundle size={30} />,

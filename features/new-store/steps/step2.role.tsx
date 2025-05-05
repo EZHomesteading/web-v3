@@ -9,7 +9,7 @@ export default function RoleNewStoreStep({
 }: NewStoreCoreProps) {
   console.log(
     formData.role,
-    "role in /Users/zachshort/web-ezh/features/new-store/steps/step2.role.tsx",
+    "role in /Users/zachshort/web-ezh/features/new-store/steps/step2.role.tsx"
   );
   const options = [
     {
@@ -29,24 +29,28 @@ export default function RoleNewStoreStep({
       value: UserRole.PRODUCER,
       icon: <PiStorefrontThin size={24} />,
       description: [
-        "Sell directly to anyone",
-        "Recommended for market stand owners looking to expand by sourcing goods from producers and reselling",
-        "Greater time commitment but greater rewards",
-        "Co-ops traditionally handle orders on-site",
+        "Sell Only to Co-Ops",
+        "Recommended for people looking to sell excess produce at discounted rates.",
+        "Producers typically deliver their bulk goods to Co-Ops",
+        "Less time commitment",
       ],
       bg: "bg-[#ced9bb]/20 !border-[#ced9bb]",
     },
   ];
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-[15%]">
       {options.map((option) => (
         <button
           key={option.label}
           onClick={() => {
             updateFormData("role", option.value);
           }}
-          className={`${OutfitFont.className} rounded-xl text-black p-6 text-start w-full border max-w-96 ${formData.role === option.value && option.bg}`}
+          className={`${
+            OutfitFont.className
+          } rounded-xl text-black p-6 text-start w-full border max-w-96 ${
+            formData.role === option.value && option.bg
+          }`}
         >
           <div className="flex items-center space-x-2">
             {option.icon}

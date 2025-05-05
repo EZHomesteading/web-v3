@@ -77,14 +77,14 @@ function calculateServiceScores(hours: Availability[]) {
 
     const workingCoverage = calculateTimeSlotCoverage(
       hour.timeSlots,
-      960,
-      1200
+      900,
+      1140
     );
 
     const retireeCoverage = calculateTimeSlotCoverage(
       hour.timeSlots,
       600,
-      1200
+      1140
     );
 
     const weekendModifier = isWeekend ? (isSunday ? 0.3 : 0.1) : 1;

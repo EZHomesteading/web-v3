@@ -11,6 +11,7 @@ import Toast from "@/components/ui/toast";
 import { OutfitFont } from "@/components/fonts";
 import { NewStoreCoreProps } from "../utils";
 import { formatAddressToString } from "@/utils/address-helpers";
+import { Input } from "@/components/ui/input";
 
 const libraries: Libraries = ["places", "drawing", "geometry"];
 
@@ -24,6 +25,12 @@ export default function LocationNewStoreStep({
   apiKey,
 }: Props) {
   const fullAddress = formatAddressToString(formData.address || {});
+  const [selectedName, setSelectedName] = useState<string>("");
+  const handleNameSelected = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSelectedName(event.target.value);
+    updateFormData("name", event.target.value);
+  };
+
   const [address, setAddress] = useState(fullAddress);
   const [currentCenter, setCurrentCenter] = useState<google.maps.LatLngLiteral>(
     formData?.coordinates[1]
@@ -144,6 +151,15 @@ export default function LocationNewStoreStep({
 
   return (
     <>
+      <div className="flex flex-col w-50 items-center justify-center gap-1 mb-4 mt-2">
+        <Input
+          type="text"
+          placeholder="Name this location"
+          className="w-full text-lg p-4 h-12"
+          value={selectedName}
+          onChange={handleNameSelected}
+        />
+      </div>
       <PlacesAutocomplete
         value={address}
         onChange={handleChange}

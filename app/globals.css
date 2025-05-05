@@ -525,3 +525,29 @@ body::-webkit-scrollbar {
 .borderBlack {
   border-color: #000 !important ;
 }
+:root {
+  --scale-factor: 1;
+}
+
+@media (min-width: 1920px) {
+  :root {
+    --scale-factor: 1.2;
+  }
+}
+
+/* Optional: Create more scale steps for different screen sizes */
+@media (min-width: 2560px) {
+  :root {
+    --scale-factor: 1.4;
+  }
+}
+
+html {
+  font-size: calc(16px * var(--scale-factor));
+}
+
+/* Add this class to elements you want to scale proportionally */
+.scale-with-screen {
+  transform: scale(var(--scale-factor));
+  transform-origin: center center;
+}

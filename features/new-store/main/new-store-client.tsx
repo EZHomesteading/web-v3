@@ -46,7 +46,7 @@ export default function NewStoreClient({
     const data = {
       userId: user.id,
       role: formData.role,
-      name: "test name",
+      name: formData.name,
       address: formData.address,
       coordinates: [formData.coordinates[1], formData.coordinates[0]],
 

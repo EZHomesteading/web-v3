@@ -10,12 +10,12 @@ const FinishNewStoreStep = ({ formData }: { formData: NewStoreFormData }) => {
       <MonthsSection formData={formData} />
       <div className="h-[600px]">
         <WeelkyScheduleChart
-          location={formData}
+          locationHours={formData.hours}
           barColor={`rgb(148 163 184)`}
           showSubTitle={false}
           viewBoxHeight={600}
           viewBoxWidth={750}
-          handleDayClick={() => { }}
+          handleDayClick={() => {}}
           editHours={false}
         />
       </div>
@@ -35,10 +35,11 @@ function MonthsSection({ formData }: { formData: NewStoreFormData }) {
             {monthsOfTheYear.map((month, index) => (
               <button
                 key={month}
-                className={`p-8 2xl:p-[3.75rem] hover:cursor-auto text-sm border-[1px] shadow-md rounded-md ${formData.selectedMonths.includes(index)
+                className={`p-8 2xl:p-[3.75rem] hover:cursor-auto text-sm border-[1px] shadow-md rounded-md ${
+                  formData.selectedMonths.includes(index)
                     ? "bg-black text-white"
                     : "bg-white text-black"
-                  }`}
+                }`}
               >
                 {month}
               </button>
