@@ -150,11 +150,11 @@ async function createConversationAndNotify(order: any) {
     order.seller.name
   }! I just ordered ${titles} from you, please drop them off at ${
     order.buyer.location && order.buyer.location[0]
-      ? `${order.buyer.location[0]?.address[0]}, ${order.buyer.location[0]?.address[1]}, ${order.buyer.location[0]?.address[2]}. ${order.buyer.location[0]?.address[3]}`
+      ? `${order.buyer.location[0]?.address.street}, ${order.buyer.location[0]?.address.city}, ${order.buyer.location[0]?.address.state}. ${order.buyer.location[0]?.address.zip}`
       : order.buyer.location && order.buyer.location[1]
-      ? `${order.buyer.location[1]?.address[0]}, ${order.buyer.location[1]?.address[1]}, ${order.buyer.location[1]?.address[2]}. ${order.buyer.location[1]?.address[3]}`
+      ? `${order.buyer.location[0]?.address.street}, ${order.buyer.location[0]?.address.city}, ${order.buyer.location[0]?.address.state}. ${order.buyer.location[0]?.address.zip}`
       : order.buyer.location && order.buyer.location[2]
-      ? `${order.buyer.location[2]?.address[0]}, ${order.buyer.location[2]?.address[1]}, ${order.buyer.location[2]?.address[2]}. ${order.buyer.location[2]?.address[3]}`
+      ? `${order.buyer.location[0]?.address.street}, ${order.buyer.location[0]?.address.city}, ${order.buyer.location[0]?.address.state}. ${order.buyer.location[0]?.address.zip}`
       : "this user has no locations set"
   } during my open hours. My hours can be viewed in More Options.`;
   await fetch(

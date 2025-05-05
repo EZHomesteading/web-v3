@@ -5,6 +5,7 @@ import { OutfitFont } from "@/components/fonts";
 import { NewStoreCoreProps } from "../utils";
 import WeelkyScheduleChart from "../ui/weekly-schedule-chart-new-store";
 import AvailabilityScore from "@/features/market/utils/availability-score";
+import ResponsiveSVGWrapper from "../ui/chart-wrapper";
 
 interface ReviewLocProps extends NewStoreCoreProps {
   onFinish: (hours: any, fulfillmentStyle: string) => void;
@@ -56,7 +57,7 @@ export default function ReviewNewStoreStep({
 
       updateFormData("selectedMonths", newSelectedMonths);
     },
-    [formData.selectedMonths, updateFormData],
+    [formData.selectedMonths, updateFormData]
   );
 
   const handleMouseDown = (monthIndex: number) => {
@@ -93,7 +94,7 @@ export default function ReviewNewStoreStep({
   };
 
   function calculateAvailabilityScores(
-    hours: Hours | null | undefined,
+    hours: Hours | null | undefined
   ): ScoreResult {
     if (!hours) {
       return {
@@ -126,7 +127,7 @@ export default function ReviewNewStoreStep({
 
     next7Days.forEach((date) => {
       const availability = relevantAvailabilities.find(
-        (a) => new Date(a.date).toISOString().split("T")[0] === date,
+        (a) => new Date(a.date).toISOString().split("T")[0] === date
       );
 
       if (!availability) return;
@@ -141,13 +142,13 @@ export default function ReviewNewStoreStep({
       const workingCoverage = calculateTimeSlotCoverage(
         availability.timeSlots,
         960, // 4pm in minutes (16 * 60)
-        1200, // 8pm in minutes (20 * 60)
+        1200 // 8pm in minutes (20 * 60)
       );
 
       const retireeCoverage = calculateTimeSlotCoverage(
         availability.timeSlots,
         600, // 10am in minutes (10 * 60)
-        1200, // 8pm in minutes (20 * 60)
+        1200 // 8pm in minutes (20 * 60)
       );
 
       const weekendModifier = isWeekend ? (isSunday ? 0.3 : 0.1) : 1;
@@ -166,7 +167,7 @@ export default function ReviewNewStoreStep({
     const finalRetireeScore = normalizeScore(retireeScore);
 
     const combinedScore = Math.ceil(
-      (finalWorkingmanScore + finalRetireeScore) / 2,
+      (finalWorkingmanScore + finalRetireeScore) / 2
     );
 
     return {
@@ -179,7 +180,7 @@ export default function ReviewNewStoreStep({
   function calculateTimeSlotCoverage(
     timeSlots: TimeSlot[],
     targetStart: number,
-    targetEnd: number,
+    targetEnd: number
   ): number {
     let totalCoverage = 0;
     const targetHours = targetEnd - targetStart;
@@ -232,7 +233,7 @@ export default function ReviewNewStoreStep({
         updateFormData={updateFormData}
         handleMouseEnter={handleMouseEnter}
         handleMouseUp={handleMouseUp}
-        handleDayClick={() => { }}
+        handleDayClick={() => {}}
       />
     </>
   );
@@ -292,28 +293,53 @@ function AvailabilityFeedback({
       ) : (
         <AvailabilityScore scores={scores} type="delivery" />
       )}
-      {/* {hours?.pickup?.length === 0 ? null : (
-        <div className={`flex items-center text-md w-[80%] ${pickupColor}`}>
-          {pickupScore === 1
-            ? "Your pickup availability might not fit most peoples schedules. While we understand that the best part of having your own store is that you get to choose the hours, we reccomend having a more broad schedule prioritizing times that most people are off work. Generally the hours of 4pm to 8pm for the average working individual, bonus points for catering to the retired population during the hours of around 10 am to 8 pm."
-            : pickupScore === 2
-            ? "Your pickup availability is pretty good, but it could be better. While we understand that the best part of having your own store is that you get to choose the hours, we reccomend having a more broad schedule prioritizing times that most people are off work. Generally the hours of 4pm to 8pm for the average working individual, bonus points for catering to the retired population during the hours of around 10 am to 8 pm."
-            : pickupScore === 3
-            ? "You have fantastic pickup availability, if you keep these hours whenever you have produce you will maximise sales!"
-            : "ERROR"}
-        </div>
-      )}
-      {hours?.delivery?.length === 0 ? null : (
-        <div className={`flex items-center text-md w-[80%] ${deliveryColor}`}>
-          {deliveryScore === 1
-            ? "Your delivery availability might not fit most peoples schedules.While we understand that the best part of having your own store is that you get to choose the hours, we reccomend having a more broad schedule prioritizing times that most people are off work. Generally the hours of 4pm to 8pm for the average working individual, bonus points for catering to the retired population during the hours of around 10 am to 8 pm."
-            : deliveryScore === 2
-            ? "Your delivery availability is pretty good, but it could be better. While we understand that the best part of having your own store is that you get to choose the hours, we reccomend having a more broad schedule prioritizing times that most people are off work. Generally the hours of 4pm to 8pm for the average working individual, bonus points for catering to the retired populationj during the hours of around 10 am to 8 pm.."
-            : deliveryScore === 3
-            ? "You have fantastic delivery availability, if you keep these hours whenever you have produce you will maximise sales!"
-            : "ERROR"}
-        </div>
-      )} */}
+      <div className="w-full flex flex-row justify-center text-xs items-center ">
+        {hours?.pickup?.length === 0 ? null : (
+          <div
+            className={`rounded-lg shadow-md p-4 m-2 max-w-[33%] ${
+              pickupScore === 3
+                ? "bg-green-50"
+                : pickupScore === 2
+                ? "bg-yellow-50"
+                : "bg-red-50"
+            }`}
+          >
+            <h3 className="font-semibold mb-1">Pickup Hours</h3>
+            <p className={`text-md ${pickupColor}`}>
+              {pickupScore === 1
+                ? "Your pickup hours may not fit most peoples schedules. EZH reccomends a schedule prioritizing times that most people are off work. Generally the hours of 4pm to 8pm for the average working individual, bonus points for catering to the retired population during the hours of around 10 am to 8 pm."
+                : pickupScore === 2
+                ? "Your pickup hours are decent, but could be better. EZH reccomends a schedule prioritizing times that most people are off work. Generally the hours of 4pm to 8pm for the average working individual, bonus points for catering to the retired population during the hours of around 10 am to 8 pm."
+                : pickupScore === 3
+                ? "You have fantastic pickup availability, if you keep these hours whenever you have produce you will maximise sales!"
+                : "ERROR"}
+            </p>
+          </div>
+        )}
+
+        {hours?.delivery?.length === 0 ? null : (
+          <div
+            className={`rounded-lg shadow-md p-4 m-2 max-w-[33%] ${
+              deliveryScore === 3
+                ? "bg-green-50"
+                : deliveryScore === 2
+                ? "bg-yellow-50"
+                : "bg-red-50"
+            }`}
+          >
+            <h3 className="font-semibold mb-1">Delivery Hours</h3>
+            <p className={`text-md ${deliveryColor}`}>
+              {deliveryScore === 1
+                ? "Your delivery hours might not fit most peoples schedules. EZH reccomends having a more broad schedule prioritizing times that most people are off work. Generally the hours of 4pm to 8pm for the average working individual, bonus points for catering to the retired population during the hours of around 10 am to 8 pm."
+                : deliveryScore === 2
+                ? "Your delivery hours are decent, but could be better. EZH reccomends having a more broad schedule prioritizing times that most people are off work. Generally the hours of 4pm to 8pm for the average working individual, bonus points for catering to the retired populationj during the hours of around 10 am to 8 pm."
+                : deliveryScore === 3
+                ? "You have fantastic delivery availability, if you keep these hours whenever you have produce you will maximise sales!"
+                : "ERROR"}
+            </p>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
@@ -355,11 +381,12 @@ function ScheduleDisplay({
                   key={month}
                   onMouseDown={() => handleMouseDown(index)}
                   onMouseEnter={() => handleMouseEnter(index)}
-                  className={`p-8 2xl:p-[3.75rem] text-sm border-[1px] shadow-md rounded-md ${formData?.selectedMonths &&
-                      formData?.selectedMonths.includes(index)
+                  className={`p-8 2xl:p-[3.75rem] text-sm border-[1px] shadow-md rounded-md ${
+                    formData?.selectedMonths &&
+                    formData?.selectedMonths.includes(index)
                       ? "bg-black text-white"
                       : "bg-white text-black"
-                    }`}
+                  }`}
                 >
                   {month}
                 </button>
@@ -368,16 +395,17 @@ function ScheduleDisplay({
           </div>
         </div>
       </div>
-      <div className="h-[600px]">
-        <WeelkyScheduleChart
-          location={formData}
-          handleDayClick={handleDayClick}
-          barColor={`rgb(148 163 184)`}
-          showSubTitle={true}
-          viewBoxHeight={600}
-          viewBoxWidth={750}
-        />
-      </div>
+
+      {/* <ResponsiveSVGWrapper width={700} height={500} className="w-full h-full"> */}
+      <WeelkyScheduleChart
+        locationHours={formData.hours}
+        handleDayClick={handleDayClick}
+        barColor={`rgb(148 163 184)`}
+        showSubTitle={true}
+        viewBoxHeight={600}
+        viewBoxWidth={750}
+      />
+      {/* </ResponsiveSVGWrapper> */}
     </div>
   );
 }

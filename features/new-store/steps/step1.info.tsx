@@ -2,7 +2,7 @@ import { OutfitFont } from "@/components/fonts";
 
 const InfoNewStoreStep = () => {
   return (
-    <div className="flex flex-col justify-center items-center h-full px-20">
+    <div className="flex flex-col justify-center items-center mt-[20%] h-full px-20">
       <div
         className={`w-full max-w-2xl flex flex-col items-start text-start ${OutfitFont.className}`}
       >

@@ -1,8 +1,8 @@
-import { Location } from "@/types";
-import { useEffect, useRef } from "react";
+import { Hours } from "@/types";
+import { useEffect, useRef, useState } from "react";
 
 interface p {
-  location?: Location;
+  locationHours?: Hours;
   handleDayClick?: any;
   showSubTitle?: boolean;
   bgColor?: string;
@@ -14,8 +14,8 @@ interface p {
   editHours?: boolean;
 }
 
-const WeelkyScheduleChart = ({
-  location,
+const WeeklyScheduleChart = ({
+  locationHours,
   title = "Weekly Schedule",
   handleDayClick,
   showSubTitle = false,
@@ -28,6 +28,7 @@ const WeelkyScheduleChart = ({
 }: p) => {
   const svgRef = useRef<SVGSVGElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const [scale, setScale] = useState(1);
 
   const padding = 50;
   const titleHeight = 50;
@@ -38,11 +39,14 @@ const WeelkyScheduleChart = ({
     viewBoxHeight - graphTop - padding - buttonHeight - bottomSpacing;
   const dayWidth = (viewBoxWidth - padding * 2) / 7;
   const hourHeight = graphHeight / 8;
+
+  // Base font sizes that will scale with viewport
   const baseFontSize = Math.min(viewBoxWidth, viewBoxHeight) * 0.025; // 2.5% of smallest viewBox dimension
   const titleFontSize = baseFontSize * 1.4;
   const subtitleFontSize = baseFontSize * 0.8;
   const dayLabelFontSize = baseFontSize * 0.75;
   const hourLabelFontSize = baseFontSize * 0.7;
+
   const weekDays = [
     "Sunday",
     "Monday",
@@ -52,55 +56,81 @@ const WeelkyScheduleChart = ({
     "Friday",
     "Saturday",
   ];
+
   useEffect(() => {
     const handleResize = () => {
       if (svgRef.current && containerRef.current) {
+        // Get the container dimensions
         const containerWidth = containerRef.current.clientWidth;
         const containerHeight = containerRef.current.clientHeight;
 
+        // Calculate how much we need to scale to fit the container
         const scaleX = containerWidth / viewBoxWidth;
         const scaleY = containerHeight / viewBoxHeight;
 
-        const scale = Math.min(scaleX, scaleY);
+        // Use the minimum scale to ensure the entire chart fits
+        const newScale = Math.min(scaleX, scaleY);
+        setScale(newScale);
 
-        const scaledWidth = viewBoxWidth * scale;
-        const scaledHeight = viewBoxHeight * scale;
+        // Apply width and height based on the scale
+        const scaledWidth = viewBoxWidth * newScale;
+        const scaledHeight = viewBoxHeight * newScale;
 
+        // Apply styles to the SVG element
         if (svgRef.current) {
           svgRef.current.style.width = `${scaledWidth}px`;
           svgRef.current.style.height = `${scaledHeight}px`;
-          svgRef.current.style.transform = "none";
+          svgRef.current.style.maxWidth = "100%";
+          svgRef.current.style.maxHeight = "100%";
         }
       }
     };
 
+    // Listen for window resize events
     window.addEventListener("resize", handleResize);
-    handleResize(); // Initial call
+    // Initial calculation
+    handleResize();
 
+    // Get the CSS root scale factor if we want to make this component scale with the global scaling
+    const rootScale = parseFloat(
+      getComputedStyle(document.documentElement).getPropertyValue(
+        "--scale-factor"
+      ) || "1"
+    );
+    if (rootScale > 1 && containerRef.current) {
+      containerRef.current.classList.add("scale-with-screen");
+    }
+
+    // Clean up event listener
     return () => window.removeEventListener("resize", handleResize);
   }, [viewBoxWidth, viewBoxHeight]);
+
   const getDayNameFromSlot = (dayIndex: number) => {
     return weekDays[dayIndex];
   };
+
   return (
     <div
       ref={containerRef}
-      className="w-full h-full flex items-start justify-center"
-      style={{ minHeight: "450px" }}
+      className="w-full h-full flex items-center justify-center"
+      style={{
+        minHeight: "450px",
+        transformOrigin: "center center",
+      }}
     >
       <svg
         ref={svgRef}
         viewBox={`0 0 ${viewBoxWidth} ${viewBoxHeight}`}
         preserveAspectRatio="xMidYMid meet"
+        className="max-w-full max-h-full"
       >
         {/* gradient for inside */}
         <defs>
           <linearGradient id="bgGradient" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="30%" stopColor="#f4f4f5" />{" "}
-            {/*#cbd5e1 #94a3b8 #64748b #475569 */}
+            <stop offset="30%" stopColor="#f4f4f5" />
             <stop offset="49%" stopColor="#d9b759" />
             <stop offset="51%" stopColor="#d9b759" />
-            <stop offset="80%" stopColor="#f4f4f5" /> {/**/}
+            <stop offset="80%" stopColor="#f4f4f5" />
           </linearGradient>
           <filter id="dropShadow" height="130%">
             <feGaussianBlur in="SourceAlpha" stdDeviation="3" />
@@ -115,7 +145,7 @@ const WeelkyScheduleChart = ({
           </filter>
         </defs>
 
-        {/* main black background */}
+        {/* main background */}
         <rect
           x={0}
           y={0}
@@ -234,7 +264,7 @@ const WeelkyScheduleChart = ({
         ))}
 
         {/*time slot rects*/}
-        {location?.hours?.pickup.map(
+        {locationHours?.pickup.map(
           (pickup: { date: { getDay: () => any }; timeSlots: any[] }) => {
             const dayIndex = pickup.date.getDay();
             const dayName = getDayNameFromSlot(dayIndex);
@@ -282,9 +312,11 @@ const WeelkyScheduleChart = ({
     </div>
   );
 };
+
 const formatHour = (hour: number) => {
   if (hour === 0 || hour === 24) return "12 AM";
   if (hour === 12) return "Noon";
   return hour > 12 ? `${hour - 12} PM` : `${hour} AM`;
 };
-export default WeelkyScheduleChart;
+
+export default WeeklyScheduleChart;
