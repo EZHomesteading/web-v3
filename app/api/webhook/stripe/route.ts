@@ -13,7 +13,7 @@ export const config = {
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   // Use the API version your project expects
-  apiVersion: "2025-02-24.acacia",
+  apiVersion: "2025-04-30.basil",
 });
 const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET!;
 
