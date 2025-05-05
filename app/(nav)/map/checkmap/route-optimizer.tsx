@@ -640,14 +640,6 @@ const RouteOptimizer = ({
         {orders.map((order) => (
           <React.Fragment key={order.id}>
             <MarkerF
-              label={{
-                text: order.location.name || order.name || "NO NAME SET",
-                className: "marker-label",
-                color: "black",
-                fontFamily: "Arial",
-                fontSize: "14px",
-                fontWeight: "bold",
-              }}
               position={
                 new google.maps.LatLng(
                   order.location.coordinates[1],

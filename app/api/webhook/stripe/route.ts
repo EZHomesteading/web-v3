@@ -157,9 +157,9 @@ async function createConversationAndNotify(order: any) {
       ? `${order.buyer.location[0]?.address.street}, ${order.buyer.location[0]?.address.city}, ${order.buyer.location[0]?.address.state}. ${order.buyer.location[0]?.address.zip}`
       : "this user has no locations set"
   } during my open hours. My hours can be viewed in More Options.`;
-  await fetch(
-    `${process.env.API_URL}/resend/new-order?email=${order.seller.email}`
-  );
+  // await fetch(
+  //   `${process.env.API_URL}/resend/new-order?email=${order.seller.email}`
+  // );
   // Send email notification if enabled
   // if (order.seller.notifications?.includes("EMAIL_NEW_ORDERS")) {
   //   const emailParams = {

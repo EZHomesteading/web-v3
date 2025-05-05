@@ -85,9 +85,12 @@ export default function PaymentComponent({
         throw firstPaymentResult.error;
       }
 
-      // If there's only one payment, redirect now
+      // If there's only one payment, wait 10 seconds then redirect
       if (paymentIntents.length === 1) {
-        window.location.href = `${window.location.origin}/`;
+        setMessage("Payment successful! Redirecting you in 10 seconds...");
+        setTimeout(() => {
+          window.location.href = `${window.location.origin}/`;
+        }, 10000);
         return;
       }
 
@@ -124,9 +127,11 @@ export default function PaymentComponent({
         }
       }
 
-      // All payments successful, redirect
-      window.location.href = `${window.location.origin}/chat`;
-      setMessage("Payment successful");
+      // All payments successful, show message and wait 10 seconds before redirecting
+      setMessage("Payment successful! Redirecting you in 10 seconds...");
+      setTimeout(() => {
+        window.location.href = `${window.location.origin}/chat`;
+      }, 10000);
     } catch (error: any) {
       setMessage(`Payment failed: ${error.message}`);
       setIsLoading(false);
