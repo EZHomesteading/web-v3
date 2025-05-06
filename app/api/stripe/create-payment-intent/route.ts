@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
   } = await request.json();
   console.log(sellerStripeID);
   if (!sellerStripeID) {
-    return;
+    return NextResponse.json({ error: "NOSELLERID" }, { status: 503 });
   }
   try {
     if (orderId === null) {

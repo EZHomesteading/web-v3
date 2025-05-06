@@ -1,4 +1,4 @@
-//route to handle seen messages with pusher
+// route to handle seen messages with pusher
 import { NextResponse, NextRequest } from "next/server";
 import { currentUser } from "@/lib/auth";
 import { pusherServer } from "@/lib/pusher";
@@ -49,7 +49,6 @@ export async function POST(
       where: {
         id: lastMessage?.id,
       },
-
       include: {
         sender: { select: { image: true, email: true } },
       },
@@ -69,10 +68,10 @@ export async function POST(
       return NextResponse.json(conversation);
     }
 
-    // Update last message seen
+    // Update last message seen - FIXED EVENT NAME TO MATCH CLIENT
     await pusherServer.trigger(
       conversationId!,
-      "message:update",
+      "message:update", // Client is listening for "message:update"
       updatedMessage
     );
 

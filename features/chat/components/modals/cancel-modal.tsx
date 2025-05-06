@@ -52,13 +52,13 @@ const CancelModal: React.FC<ConfirmModalProps> = ({
     });
 
     if (isSeller === true) {
-      axios.post("/api/useractions/checkout/update-order", {
+      axios.post("/api/useractions/update/update-order", {
         orderId: order?.id,
         status: "CANCELED",
         completedAt: new Date(),
       });
     } else {
-      axios.post("/api/useractions/checkout/update-order", {
+      axios.post("/api/useractions/update/update-order", {
         orderId: order?.id,
         status: "CANCELED",
         completedAt: new Date(),
@@ -84,7 +84,7 @@ const CancelModal: React.FC<ConfirmModalProps> = ({
           if (session.data?.user.role === "COOP") {
             //if seller is coop
             axios
-              .post("/api/useractions/checkout/update-order", {
+              .post("/api/useractions/update/update-order", {
                 orderId: order?.id,
                 status: "CANCELED",
                 completedAt: new Date(),
@@ -96,7 +96,7 @@ const CancelModal: React.FC<ConfirmModalProps> = ({
           } else {
             //if seller is producer(can be else as consumers cant create listings)
             axios
-              .post("/api/useractions/checkout/update-order", {
+              .post("/api/useractions/update/update-order", {
                 orderId: order?.id,
                 status: "CANCELED",
                 completedAt: new Date(),
@@ -116,7 +116,7 @@ const CancelModal: React.FC<ConfirmModalProps> = ({
             ) {
               //if both users are coop's
               axios
-                .post("/api/useractions/checkout/update-order", {
+                .post("/api/useractions/update/update-order", {
                   orderId: order?.id,
                   status: "CANCELED",
                   completedAt: new Date(),
@@ -128,7 +128,7 @@ const CancelModal: React.FC<ConfirmModalProps> = ({
             } else {
               //if only person cancelling is coop buying from producer
               axios
-                .post("/api/useractions/checkout/update-order", {
+                .post("/api/useractions/update/update-order", {
                   orderId: order?.id,
                   status: "CANCELED",
                   completedAt: new Date(),
@@ -141,7 +141,7 @@ const CancelModal: React.FC<ConfirmModalProps> = ({
           } else {
             //if consumer cancels
             axios
-              .post("/api/useractions/checkout/update-order", {
+              .post("/api/useractions/update/update-order", {
                 orderId: order?.id,
                 status: "CANCELED",
                 completedAt: new Date(),

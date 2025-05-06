@@ -27,7 +27,7 @@ const EscalateModal: React.FC<ConfirmModalProps> = ({
   const onDelete = useCallback(() => {
     setIsLoading(true);
     const data = { orderId, status: "DISPUTE_UNDER_REVIEW" };
-    axios.post("/api/useractions/checkout/update-order", {
+    axios.post("/api/useractions/update/update-order", {
       orderId: orderId,
       status: "DISPUTE_UNDER_REVIEW",
     });

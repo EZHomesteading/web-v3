@@ -201,7 +201,7 @@ const MessageBox: React.FC<MessageBoxProps> = ({
     if (status === "COMPLETED") {
       try {
         // First API call
-        await axios.post("/api/useractions/checkout/update-order", {
+        await axios.post("/api/useractions/update/update-order", {
           orderId: order?.id,
           status: status,
           completedAt: new Date(),
@@ -246,7 +246,7 @@ const MessageBox: React.FC<MessageBoxProps> = ({
       }
       //coop seller confirms order pickup time
     } else {
-      await axios.post("/api/useractions/checkout/update-order", {
+      await axios.post("/api/useractions/update/update-order", {
         orderId: order?.id,
         status: status,
       });
@@ -296,7 +296,7 @@ const MessageBox: React.FC<MessageBoxProps> = ({
           conversationId: convoId,
           otherUserId: otherUsersId,
         });
-        await axios.post("/api/useractions/checkout/update-order", {
+        await axios.post("/api/useractions/update/update-order", {
           orderId: order?.id,
           status: "DELIVERED",
         });
@@ -307,7 +307,7 @@ const MessageBox: React.FC<MessageBoxProps> = ({
           conversationId: convoId,
           otherUserId: otherUsersId,
         });
-        await axios.post("/api/useractions/checkout/update-order", {
+        await axios.post("/api/useractions/update/update-order", {
           orderId: order?.id,
           status: "READY_FOR_PICKUP",
         });
