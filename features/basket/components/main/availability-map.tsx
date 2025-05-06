@@ -68,6 +68,7 @@ interface AvailabilityMapProps {
   setPickupTimes: any;
   locations: any[];
   startDelay: number;
+  pickupTimes: any;
 }
 
 const DateTimePicker: React.FC<DateTimePickerProps> = ({
@@ -261,6 +262,7 @@ const AvailabilityMap: React.FC<AvailabilityMapProps> = ({
   mapsKey,
   setPickupTimes,
   startDelay,
+  pickupTimes,
 }) => {
   // Early return if userLoc is invalid
   if (
@@ -665,13 +667,19 @@ const AvailabilityMap: React.FC<AvailabilityMapProps> = ({
           </span>
         </div>
         <div className="flex justify-between items-center">
-          <button
+          <style>{pulseAnimation}</style>
+          <Button
             ref={datePickerTriggerRef}
             onClick={() => setIsDatePickerOpen(true)}
-            className="flex items-center justify-center rounded-full border px-3 py-2 text-sm  hover:bg-gray-50 transition-colors"
+            className={`flex items-center justify-center rounded-full border px-3 py-2 text-sm  hover:bg-gray-500 transition-colors`}
+            style={
+              !selectedDate || !selectedTime
+                ? { animation: "pulse 2s infinite" }
+                : {}
+            }
           >
             {getDisplayText()}
-          </button>
+          </Button>
           <Button
             variant="outline"
             size="default"
@@ -750,12 +758,20 @@ const AvailabilityMap: React.FC<AvailabilityMapProps> = ({
       </Dialog>
       <div className="h-[400px] rounded-lg overflow-hidden relative">
         {selectedDate && selectedTime && (
-          <Button
-            className="absolute top-4 left-1/2 -translate-x-1/2 z-10 bg-blue-600 hover:bg-blue-700 shadow-lg"
-            onClick={() => setIsRouteModalOpen(true)}
-          >
-            Create a Route for {getDisplayText()}
-          </Button>
+          <div>
+            <style>{pulseAnimation}</style>
+            <Button
+              className="absolute top-4 left-1/2 -translate-x-1/2 z-10 bg-green-600 hover:bg-green-700 shadow-lg"
+              onClick={() => setIsRouteModalOpen(true)}
+              style={
+                selectedDate && selectedTime && !pickupTimes
+                  ? { animation: "pulse 1s infinite" }
+                  : {}
+              }
+            >
+              Create a Route for {getDisplayText()}
+            </Button>
+          </div>
         )}
         <div className="h-[400px] rounded-lg overflow-hidden">
           <GoogleMap
@@ -887,3 +903,16 @@ const AvailabilityMap: React.FC<AvailabilityMapProps> = ({
 };
 
 export default React.memo(AvailabilityMap);
+const pulseAnimation = `
+  @keyframes pulse {
+    0% {
+      box-shadow: 0 0 0 0 rgba(10, 10, 246, 0.7);
+    }
+    80% {
+      box-shadow: 0 0 0 10px rgba(10, 10, 246, 0);
+    }
+    100% {
+      box-shadow: 0 0 0 0 rgba(10, 10, 246, 0);
+    }
+  }
+`;
