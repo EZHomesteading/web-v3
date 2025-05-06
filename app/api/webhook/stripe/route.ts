@@ -6,7 +6,7 @@ import webPush, { PushSubscription } from "web-push";
 import { headers } from "next/headers";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2025-02-24.acacia",
+  apiVersion: "2025-02-24.basil",
 });
 
 const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET!;
@@ -361,15 +361,14 @@ export async function POST(request: NextRequest) {
 
   try {
     const stripeSignature = (await headers()).get(`stripe-signature`);
-    console.log(stripeSignature);
     event = stripe.webhooks.constructEvent(
-      JSON.stringify(await request.text()),
+      await request.text(),
       stripeSignature as string,
       endpointSecret
     );
   } catch (err) {
     console.error(err);
-    return NextResponse.json({ error: "Webhook error" }, { status: 400 });
+    return NextResponse.json({ error: "Webhook error" }, { status: 4000 });
   }
 
   if (event.type === "payment_intent.succeeded") {
