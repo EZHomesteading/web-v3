@@ -4,22 +4,23 @@ import Stripe from "stripe";
 import { basketStatus } from "@prisma/client";
 import webPush, { PushSubscription } from "web-push";
 
-// NOTE: In Next.js App Router (route.js), the bodyParser config works differently
-// We'll handle the raw body directly in the handler
+// Configure as edge function for better raw body handling
+export const config = {
+  runtime: "edge",
+};
 
+// Use the API version that matches your webhook events
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  // Use the API version your project expects
-  apiVersion: "2025-02-24.acacia",
+  apiVersion: "2023-10-16", // Match the version in your webhook events
 });
 
 const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET!;
 
-// Rest of your business logic functions remain the same
+// Original business logic function - preserved as is
 async function handleBasketProcessing(
   buyerId: string,
   paymentIntent: Stripe.PaymentIntent
 ) {
-  // Your existing implementation...
   // Get the basketId from the payment intent metadata
   const basketId = paymentIntent.metadata.basketId;
 
@@ -121,8 +122,8 @@ async function handleBasketProcessing(
   return order;
 }
 
+// Original conversation and notification function - preserved as is
 async function createConversationAndNotify(order: any) {
-  // Your existing implementation...
   // Create new conversation for each order
   const conversation = await prisma.conversation.create({
     data: {
@@ -276,6 +277,7 @@ async function createConversationAndNotify(order: any) {
   return conversation;
 }
 
+// Modified POST handler to use raw buffer approach
 export async function POST(request: NextRequest) {
   try {
     console.log("Webhook request received");
@@ -285,9 +287,6 @@ export async function POST(request: NextRequest) {
       "Request headers:",
       Object.fromEntries(request.headers.entries())
     );
-
-    // CRITICAL FIX: Get the raw body as text before any processing
-    const rawBody = await request.text();
 
     // Get the Stripe signature header
     const sig = request.headers.get("stripe-signature");
@@ -300,9 +299,15 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // CRITICAL FIX: Use clone and read as buffer to avoid body parsing issues
+    const clonedRequest = request.clone();
+    const buffer = await clonedRequest.arrayBuffer();
+    const rawBody = Buffer.from(buffer).toString("utf8");
+
     // Log verification details for debugging
     console.log("Stripe Signature:", sig);
     console.log("Raw Body Preview:", rawBody.substring(0, 100) + "...");
+    console.log("Raw Body Length:", rawBody.length);
     console.log(
       "Webhook Secret (length):",
       endpointSecret ? endpointSecret.length : "missing"
@@ -311,35 +316,56 @@ export async function POST(request: NextRequest) {
     let event: Stripe.Event;
 
     try {
-      // Version-tolerant approach: Try with your configured version first
+      // Verify with raw buffer body
       event = stripe.webhooks.constructEvent(rawBody, sig, endpointSecret);
     } catch (mainErr: any) {
-      console.error(`Initial webhook verification failed: ${mainErr.message}`);
+      console.error(`Webhook verification failed: ${mainErr.message}`);
 
-      // If that fails, try creating another Stripe instance with the version from the event
+      // Enhanced error logging
+      console.error("Error details:", {
+        name: mainErr.name,
+        type: mainErr.type,
+        message: mainErr.message,
+        partialStack: mainErr.stack?.substring(0, 300),
+      });
+
+      // Try to see if body modification is the issue
       try {
-        // Create a fallback Stripe instance with the version from the webhook
-        // Parse the raw body to get the API version
         const parsedBody = JSON.parse(rawBody);
-        const eventApiVersion = parsedBody.api_version;
+        console.log("Event API version:", parsedBody.api_version);
 
-        console.log(`Attempting with event's API version: ${eventApiVersion}`);
+        // Try with event's API version if different
+        if (parsedBody.api_version && parsedBody.api_version !== "2023-10-16") {
+          console.log(
+            `Attempting with event's API version: ${parsedBody.api_version}`
+          );
 
-        // Create a temporary Stripe instance with that version
-        const tempStripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-          apiVersion: eventApiVersion as any, // Type cast to bypass TS restrictions
-        });
+          // Create a temporary Stripe instance with that version
+          const tempStripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+            apiVersion: parsedBody.api_version as any,
+          });
 
-        // Try verification again
-        event = tempStripe.webhooks.constructEvent(
-          rawBody,
-          sig,
-          endpointSecret
-        );
-      } catch (fallbackErr: any) {
-        console.error(
-          `Fallback webhook verification also failed: ${fallbackErr.message}`
-        );
+          try {
+            // Try verification again
+            event = tempStripe.webhooks.constructEvent(
+              rawBody,
+              sig,
+              endpointSecret
+            );
+            console.log("Verification succeeded with event's API version!");
+          } catch (versionErr: any) {
+            console.error(
+              `Version-specific verification failed: ${versionErr.message}`
+            );
+          }
+        } else {
+          console.log("Event API version matches or is not specified");
+        }
+      } catch (parseErr) {
+        console.error("Error parsing webhook body:", parseErr);
+      }
+
+      if (!event) {
         return NextResponse.json(
           { error: `Webhook Error: ${mainErr.message}` },
           { status: 400 }
@@ -379,7 +405,10 @@ export async function POST(request: NextRequest) {
           });
         }
 
-        return NextResponse.json({ received: true }, { status: 200 });
+        return NextResponse.json(
+          { received: true, orderId: createdOrder.id },
+          { status: 200 }
+        );
       } catch (error) {
         console.error("Error processing payment success:", error);
         return NextResponse.json(
@@ -390,7 +419,10 @@ export async function POST(request: NextRequest) {
     }
 
     // Handle other webhook events if needed
-    return NextResponse.json({ received: true }, { status: 200 });
+    return NextResponse.json(
+      { received: true, eventType: event.type },
+      { status: 200 }
+    );
   } catch (error) {
     console.error("Unexpected webhook error:", error);
     return NextResponse.json(
