@@ -4,17 +4,14 @@ import Stripe from "stripe";
 import { basketStatus } from "@prisma/client";
 import webPush, { PushSubscription } from "web-push";
 
-// IMPORTANT: Configure Next.js to NOT parse the body automatically
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-};
+// NOTE: In Next.js App Router (route.js), the bodyParser config works differently
+// We'll handle the raw body directly in the handler
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   // Use the API version your project expects
-  apiVersion: "2025-04-30.basil",
+  apiVersion: "2025-02-24.acacia",
 });
+
 const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET!;
 
 // Rest of your business logic functions remain the same
@@ -281,6 +278,14 @@ async function createConversationAndNotify(order: any) {
 
 export async function POST(request: NextRequest) {
   try {
+    console.log("Webhook request received");
+
+    // Log all headers for debugging
+    console.log(
+      "Request headers:",
+      Object.fromEntries(request.headers.entries())
+    );
+
     // CRITICAL FIX: Get the raw body as text before any processing
     const rawBody = await request.text();
 
@@ -295,21 +300,51 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Log the signature and first part of the body for debugging
+    // Log verification details for debugging
     console.log("Stripe Signature:", sig);
     console.log("Raw Body Preview:", rawBody.substring(0, 100) + "...");
+    console.log(
+      "Webhook Secret (length):",
+      endpointSecret ? endpointSecret.length : "missing"
+    );
 
     let event: Stripe.Event;
 
     try {
-      // Pass the raw body string directly to constructEvent
+      // Version-tolerant approach: Try with your configured version first
       event = stripe.webhooks.constructEvent(rawBody, sig, endpointSecret);
-    } catch (err: any) {
-      console.error(`Webhook signature verification failed: ${err.message}`);
-      return NextResponse.json(
-        { error: `Webhook Error: ${err.message}` },
-        { status: 400 }
-      );
+    } catch (mainErr: any) {
+      console.error(`Initial webhook verification failed: ${mainErr.message}`);
+
+      // If that fails, try creating another Stripe instance with the version from the event
+      try {
+        // Create a fallback Stripe instance with the version from the webhook
+        // Parse the raw body to get the API version
+        const parsedBody = JSON.parse(rawBody);
+        const eventApiVersion = parsedBody.api_version;
+
+        console.log(`Attempting with event's API version: ${eventApiVersion}`);
+
+        // Create a temporary Stripe instance with that version
+        const tempStripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+          apiVersion: eventApiVersion as any, // Type cast to bypass TS restrictions
+        });
+
+        // Try verification again
+        event = tempStripe.webhooks.constructEvent(
+          rawBody,
+          sig,
+          endpointSecret
+        );
+      } catch (fallbackErr: any) {
+        console.error(
+          `Fallback webhook verification also failed: ${fallbackErr.message}`
+        );
+        return NextResponse.json(
+          { error: `Webhook Error: ${mainErr.message}` },
+          { status: 400 }
+        );
+      }
     }
 
     // Signature verification succeeded, process the event
