@@ -9,27 +9,32 @@ interface UpdateOrderParams {
 }
 
 export const chatService = {
-  async updateOrderStatus({ orderId, status, message, pickupDate }: UpdateOrderParams) {
+  async updateOrderStatus({
+    orderId,
+    status,
+    message,
+    pickupDate,
+  }: UpdateOrderParams) {
     if (message) {
-      await axios.post("/api/chat/messages", { 
+      await axios.post("/api/chat/messages", {
         message,
         orderId,
-        status 
+        status,
       });
     }
-    
-    await axios.post("/api/useractions/checkout/update-order", {
+
+    await axios.post("/api/useractions/update/update-order", {
       orderId,
       status,
-      ...(pickupDate && { pickupDate })
+      ...(pickupDate && { pickupDate }),
     });
   },
-  
+
   async uploadImage(orderId: string, imageUrl: string) {
     await axios.post("/api/chat/messages", {
       message: imageUrl,
       messageOrder: "img",
-      orderId
+      orderId,
     });
-  }
+  },
 };

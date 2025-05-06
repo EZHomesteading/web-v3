@@ -23,11 +23,19 @@ export const useConversation = (
 
   // Setup Pusher subscriptions
   useEffect(() => {
+    if (!conversationId) return;
+
+    console.log(`Subscribing to Pusher channel: ${conversationId}`);
+
     const messageHandler = async (message: FullMessageType) => {
+      console.log("Received new message via Pusher:", message);
       try {
-        await axios.post(`/api/chat/conversations/${conversationId}/seen`, {
-          seen: false,
-        });
+        // Mark the message as seen if it's not from the current user
+        if (message.sender.email !== sessionStorage.getItem("userEmail")) {
+          await axios.post(`/api/chat/conversations/${conversationId}/seen`, {
+            seen: true,
+          });
+        }
 
         handleNewMessage(message);
         bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -37,6 +45,7 @@ export const useConversation = (
     };
 
     const updateMessageHandler = (newMessage: FullMessageType) => {
+      console.log("Received message update via Pusher:", newMessage);
       handleMessageUpdate(newMessage);
 
       // If updating the last message, scroll to bottom
@@ -48,22 +57,26 @@ export const useConversation = (
       }
     };
 
-    pusherClient.subscribe(conversationId);
-    pusherClient.bind("messages:new", messageHandler);
-    pusherClient.bind("message:update", updateMessageHandler);
+    // Subscribe to the channel
+    const channel = pusherClient.subscribe(conversationId);
+
+    // Bind event handlers
+    channel.bind("messages:new", messageHandler);
+    channel.bind("message:update", updateMessageHandler);
 
     // Cleanup function to unsubscribe and unbind event handlers
     return () => {
+      console.log(`Unsubscribing from Pusher channel: ${conversationId}`);
+      channel.unbind("messages:new", messageHandler);
+      channel.unbind("message:update", updateMessageHandler);
       pusherClient.unsubscribe(conversationId);
-      pusherClient.unbind("messages:new", messageHandler);
-      pusherClient.unbind("message:update", updateMessageHandler);
     };
   }, [
     conversationId,
-    messages,
     handleNewMessage,
     handleMessageUpdate,
     bottomRef,
+    // Remove messages from dependency array to prevent unnecessary resubscriptions
   ]);
 
   return { markMessageAsSeen };

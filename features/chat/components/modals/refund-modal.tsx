@@ -40,7 +40,7 @@ const RefundModal: React.FC<ConfirmModalProps> = ({
       paymentId: paymentId,
     });
     axios.post(`/api/chat/dispute/updateDispute/`, data);
-    axios.post("/api/useractions/checkout/update-order", {
+    axios.post("/api/useractions/update/update-order", {
       orderId: orderId,
       status: "REFUNDED",
       completedAt: new Date(),

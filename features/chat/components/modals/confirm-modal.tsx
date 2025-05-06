@@ -27,7 +27,7 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({
 
   const onDelete = useCallback(() => {
     setIsLoading(true);
-    axios.post("/api/useractions/checkout/update-order", {
+    axios.post("/api/useractions/update/update-order", {
       conversationId: null,
       orderId: orderId,
       status: "COMPLETED",

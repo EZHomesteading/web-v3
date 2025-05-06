@@ -74,7 +74,7 @@ const DisputeModal = ({
     };
     try {
       await axios.post("/api/chat/dispute", data);
-      axios.post("/api/useractions/checkout/update-order", {
+      axios.post("/api/useractions/update/update-order", {
         orderId: orderId,
         status: "DISPUTED",
       });

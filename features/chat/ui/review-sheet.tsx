@@ -110,7 +110,7 @@ const SheetContentF = React.forwardRef<
         reviewerId: reviewerId,
         buyer: buyer,
       });
-      axios.post("/api/useractions/checkout/update-order", {
+      axios.post("/api/useractions/update/update-order", {
         orderId: orderId,
         status: 19,
         completedAt: new Date(),

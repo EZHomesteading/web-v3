@@ -150,7 +150,7 @@ const DisputeComponent = ({ disputes }: p) => {
     axios.post("/api/stripe/refund-payment", {
       paymentId: dispute.order.paymentIntentId,
     });
-    axios.post("/api/useractions/checkout/update-order", {
+    axios.post("/api/useractions/update/update-order", {
       orderId: dispute.order.id,
       status: 20,
       completedAt: new Date(),
@@ -172,7 +172,7 @@ const DisputeComponent = ({ disputes }: p) => {
     setIsLoading(true);
     const data = { orderId: dispute.order.id, status: 3 };
     axios.post(`/api/chat/dispute/updateDispute/`, data);
-    axios.post("/api/useractions/checkout/update-order", {
+    axios.post("/api/useractions/update/update-order", {
       orderId: dispute.order.id,
       status: 21,
       completedAt: new Date(),
