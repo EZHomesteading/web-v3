@@ -350,6 +350,7 @@ const DetailedBasketGridContent: React.FC<DetailedBasketGridProps> = ({
                 locations={locations}
                 mapsKey={mapsKey}
                 setPickupTimes={setPickupTimes}
+                pickupTimes={pickupTimes}
               />
             </div>
           </div>
