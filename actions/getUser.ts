@@ -440,10 +440,11 @@ const getUserStore = async (params: IStoreParams): Promise<any | null> => {
             location: {
               select: {
                 address: true,
+                hours: true,
               },
             },
             stock: true,
-            subcateory: true,
+            subcategory: true,
           },
         },
         locations: {

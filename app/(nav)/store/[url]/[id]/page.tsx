@@ -48,7 +48,7 @@ const StorePage = async ({ params }: StorePageProps) => {
                 </div>
                 <div className={`h-1 w-1 bg-black rounded-full`} />
                 <p className={`font-light cursor-pointer text-sm`}>
-                  {data.location?.address[1]}, {data?.location?.address[2]}
+                  {data.location?.address.city}, {data?.location?.address.state}
                 </p>
               </div>
             </div>

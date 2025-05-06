@@ -31,9 +31,7 @@ export const useMarkerLogic = ({
   const handleMarkerClick = useCallback(
     async (coordinate: number[], id: string) => {
       try {
-        const response = await fetch(
-          `/api/useractions/user/marker-info?id=${id}`
-        );
+        const response = await fetch(`/api/useractions/marker-info?id=${id}`);
         const markerData = await response.json();
         setSelectedMarker({
           coordinates: coordinate,
