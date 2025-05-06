@@ -10,11 +10,21 @@ export const useMapLogic = ({
   initialCoordinates,
   mapRef,
 }: UseMapLogicProps) => {
-  const [currentCenter, setCurrentCenter] = useState(initialCoordinates);
+  // Change the state type to use number[] format for center
+  const [currentCenter, setCurrentCenter] = useState<number[]>([
+    initialCoordinates.lat,
+    initialCoordinates.lng,
+  ]);
   const [zoom, setZoom] = useState(11);
 
+  // Convert currentCenter back to { lat, lng } format for Google Maps
+  const mapCenter = {
+    lat: currentCenter[0],
+    lng: currentCenter[1],
+  };
+
   const mapOptions: google.maps.MapOptions = {
-    center: currentCenter,
+    center: mapCenter, // Use the converted format
     zoom: zoom,
     mapId: "86bd900426b98c0a",
     zoomControl: false,
@@ -50,10 +60,8 @@ export const useMapLogic = ({
     if (mapRef.current) {
       const newCenter = mapRef.current.getCenter();
       if (newCenter) {
-        setCurrentCenter({
-          lat: newCenter.lat(),
-          lng: newCenter.lng(),
-        });
+        // Use number[] format for currentCenter
+        setCurrentCenter([newCenter.lat(), newCenter.lng()]);
       }
     }
   };

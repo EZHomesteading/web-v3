@@ -40,18 +40,12 @@ const VendorsMap = ({ coops, producers, coordinates, mk, user }: MapProps) => {
 
   // Convert data to proper format
   const coopInfo = coops.map((coop: MapUser) => ({
-    coordinates: {
-      lat: coop.coordinates[1],
-      lng: coop.coordinates[0],
-    },
+    coordinates: coop.coordinates,
     id: coop.id,
   }));
 
   const producerInfo = producers.map((producer: MapUser) => ({
-    coordinates: {
-      lat: producer.coordinates[1],
-      lng: producer.coordinates[0],
-    },
+    coordinates: producer.coordinates,
     id: producer.id,
   }));
 
@@ -98,6 +92,7 @@ const VendorsMap = ({ coops, producers, coordinates, mk, user }: MapProps) => {
     defaultShowProducers: user?.role === UserRole.CONSUMER ? true : false,
   });
 
+  // No need to adapt here since useMarkerLogic is already correct
   const {
     selectedMarker,
     handleMarkerClick,
