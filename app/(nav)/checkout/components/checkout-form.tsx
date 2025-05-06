@@ -89,6 +89,7 @@ export default function CheckoutForm({
   userLoc,
   userEmail,
 }: CheckoutFormProps) {
+  console.log(baskets);
   const [paymentIntents, setPaymentIntents] = useState<PaymentIntentData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -133,7 +134,7 @@ export default function CheckoutForm({
 
           const seller = await sellerResponse.json();
           const sellerStripeID = seller?.data.stripeAccountId;
-          console.log("POR QUES", sellerStripeID);
+          console.log("POR QUES", basket.id);
           const response = await axios.post(
             "/api/stripe/create-payment-intent",
             {
@@ -146,9 +147,8 @@ export default function CheckoutForm({
               orderGroupId: new URLSearchParams(window.location.search).get(
                 "orderGroupId"
               ),
-              metadata: {
-                basketId: basket.id,
-              },
+
+              basketId: basket.id,
             }
           );
 
@@ -232,8 +232,7 @@ export default function CheckoutForm({
                   <div className="flex flex-col gap-2">
                     <div className="flex items-baseline gap-4">
                       <h3 className="text-base font-semibold">
-                        {basket.location.name ||
-                          basket.location.user.name}
+                        {basket.location.name || basket.location.user.name}
                       </h3>
                       <span className="text-sm text-gray-600">
                         $
@@ -288,8 +287,7 @@ export default function CheckoutForm({
                               </h4>
                               <p className="mt-1 text-sm text-gray-500">
                                 {item.quantity}{" "}
-                                {item.listing.unit ||
-                                  item.listing.subcateory}
+                                {item.listing.unit || item.listing.subcateory}
                               </p>
                             </div>
                             <p className="text-sm font-medium">

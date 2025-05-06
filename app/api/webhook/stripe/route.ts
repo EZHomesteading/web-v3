@@ -16,7 +16,7 @@ async function handleBasketProcessing(
 ) {
   // Get the basketId from the payment intent metadata
   const basketId = paymentIntent.metadata.basketId;
-
+  console.log(paymentIntent);
   if (!basketId) {
     throw new Error("No basketId found in payment intent metadata");
   }

@@ -65,6 +65,7 @@ export default function PaymentComponent({
       await axios.post("/api/stripe/update-payment-intent", {
         paymentIntentId: paymentIntents[0].clientSecret.split("_secret")[0],
         customerId: customerData.customerId,
+        basketId: paymentIntents[0].basketId,
       });
 
       const firstPaymentResult = await stripe.confirmPayment({
@@ -113,6 +114,7 @@ export default function PaymentComponent({
         await axios.post("/api/stripe/update-payment-intent", {
           paymentIntentId: paymentIntents[i].clientSecret.split("_secret")[0],
           customerId: customerData.customerId,
+          basketId: paymentIntents[0].basketId,
         });
 
         const { error } = await stripe.confirmCardPayment(
