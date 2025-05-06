@@ -3,7 +3,7 @@ import { getNavUser, getVendorLocsMap, NavUser } from "@/actions/getUser";
 import Map from "@/app/(nav)/map/map";
 import { UserRole } from "@prisma/client";
 import type { Viewport } from "next";
-import MapPopup from "@/app/(nav)/info-modals/map-info-modal";
+//import MapPopup from "@/app/(nav)/info-modals/map-info-modal";
 
 export const viewport: Viewport = {
   themeColor: "white",
@@ -40,7 +40,7 @@ const MapPage = async () => {
           user={user}
         />
       </div>
-      <MapPopup />
+      {/* <MapPopup /> */}
     </div>
   );
 };

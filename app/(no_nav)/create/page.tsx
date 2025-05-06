@@ -1,6 +1,6 @@
 import CreateClient from "@/features/create/components/main/create.client";
 import type { Viewport } from "next";
-import CreatePopup from "@/app/(nav)/info-modals/create-info-modal";
+//import CreatePopup from "@/app/(nav)/info-modals/create-info-modal";
 import { getUserLocations } from "@/actions/getLocations";
 import { auth } from "@/auth";
 import { UserRole } from "@prisma/client";
@@ -35,7 +35,7 @@ const Page = async ({
         locations={locations}
         defaultLocation={defaultLocation}
       />
-      <CreatePopup />
+      {/* <CreatePopup /> */}
     </>
   );
 };
