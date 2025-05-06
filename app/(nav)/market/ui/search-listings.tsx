@@ -1,11 +1,12 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Script from "next/script";
 import axios from "axios";
 import qs from "query-string";
 import debounce from "lodash/debounce";
+import Fuse from "fuse.js";
 
 // Icons
 import { IoIosSearch } from "react-icons/io";
@@ -42,6 +43,7 @@ const SearchLocation: React.FC<SearchLocationProps> = ({ apiKey }) => {
     google.maps.places.AutocompletePrediction[]
   >([]);
   const [listings, setListings] = useState<Listing[]>([]);
+  const [allListings, setAllListings] = useState<Listing[]>([]);
   const [showLocationSuggestions, setShowLocationSuggestions] = useState(false);
   const [showListingSuggestions, setShowListingSuggestions] = useState(false);
   const [isLoadingListings, setIsLoadingListings] = useState(false);
@@ -56,6 +58,36 @@ const SearchLocation: React.FC<SearchLocationProps> = ({ apiKey }) => {
   // Hooks
   const router = useRouter();
   const searchParams = useSearchParams();
+
+  // Fetch all listings for search suggestions
+  useEffect(() => {
+    const fetchAllListings = async () => {
+      try {
+        const response = await fetch(`/api/listing/listingSuggestions`);
+        const data = await response.json();
+        if (data.listings) {
+          setAllListings(data.listings);
+        }
+      } catch (error) {
+        console.error("Error fetching all listings:", error);
+      }
+    };
+
+    fetchAllListings();
+  }, []);
+
+  // Initialize Fuse.js for fuzzy search
+  const fuse = useMemo(() => {
+    const options = {
+      keys: ["title", "subCategory"],
+      threshold: 0.6,
+      distance: 100,
+      ignoreLocation: true,
+      shouldSort: true,
+      minMatchCharLength: 3,
+    };
+    return new Fuse<Listing>(allListings, options);
+  }, [allListings]);
 
   // Initialize Google Maps services when the script loads
   const handleGoogleMapsLoaded = () => {
@@ -268,9 +300,61 @@ const SearchLocation: React.FC<SearchLocationProps> = ({ apiKey }) => {
     );
   };
 
-  // Fetch listing suggestions based on user query
-  const fetchListingSuggestions = debounce(async (query: string) => {
-    if (!query || query.length < 2) {
+  // Search term preprocessing
+  const preprocessTerm = (term: string) =>
+    term
+      .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "")
+      .toLowerCase()
+      .trim();
+
+  // Remove duplicate listings
+  const removeDuplicates = (listings: Listing[]): Listing[] => {
+    const uniqueListings = new Map<string, Listing>();
+    listings.forEach((listing) => {
+      const key = `${listing.title}`;
+      if (!uniqueListings.has(key)) {
+        uniqueListings.set(key, listing);
+      }
+    });
+    return Array.from(uniqueListings.values());
+  };
+
+  // Search using a single term
+  const searchSingleTerm = (term: string): Listing[] => {
+    const preprocessedTerm = preprocessTerm(term);
+    return fuse.search(preprocessedTerm).map((result) => result.item);
+  };
+
+  // Search using multiple terms
+  const searchMultipleTerms = (
+    terms: string[],
+    originalQuery: string
+  ): Listing[] => {
+    const preprocessedQuery = preprocessTerm(originalQuery);
+    return allListings.filter((listing) => {
+      const preprocessedTitle = preprocessTerm(listing.title);
+      const preprocessedSubCategory = preprocessTerm(listing.subCategory || "");
+
+      if (
+        preprocessedTitle.includes(preprocessedQuery) ||
+        preprocessedSubCategory.includes(preprocessedQuery)
+      ) {
+        return true;
+      }
+
+      return terms.every((term) => {
+        const preprocessedTerm = preprocessTerm(term);
+        return (
+          preprocessedTitle.includes(preprocessedTerm) ||
+          preprocessedSubCategory.includes(preprocessedTerm)
+        );
+      });
+    });
+  };
+
+  // Advanced search function using Fuse.js
+  const handleSearchName = debounce((query: string) => {
+    if (!query) {
       setListings([]);
       setShowListingSuggestions(false);
       return;
@@ -279,16 +363,25 @@ const SearchLocation: React.FC<SearchLocationProps> = ({ apiKey }) => {
     setIsLoadingListings(true);
 
     try {
-      const response = await axios.get(`/api/listing/search`, {
-        params: { q: query, limit: 5 },
-      });
+      const searchTerms = query.split(/\s+/).filter((term) => term.length > 0);
 
-      if (response.data.listings) {
-        setListings(response.data.listings);
-        setShowListingSuggestions(true);
+      let searchResults;
+      if (searchTerms.length === 1) {
+        searchResults = searchSingleTerm(searchTerms[0]);
+      } else {
+        const multiTermResults = searchMultipleTerms(searchTerms, query);
+        searchResults =
+          multiTermResults.length > 0
+            ? multiTermResults
+            : searchSingleTerm(query);
       }
+
+      // Ensure duplicates are removed before setting the state
+      const uniqueResults = removeDuplicates(searchResults);
+      setListings(uniqueResults.slice(0, 5));
+      setShowListingSuggestions(true);
     } catch (error) {
-      console.error("Error fetching listing suggestions:", error);
+      console.error("Error searching listings:", error);
       setListings([]);
     } finally {
       setIsLoadingListings(false);
@@ -376,7 +469,7 @@ const SearchLocation: React.FC<SearchLocationProps> = ({ apiKey }) => {
   // Effect for handling search query changes
   useEffect(() => {
     if (focusedInput === "query") {
-      fetchListingSuggestions(searchQuery);
+      handleSearchName(searchQuery);
     } else {
       setShowListingSuggestions(false);
     }
@@ -486,12 +579,12 @@ const SearchLocation: React.FC<SearchLocationProps> = ({ apiKey }) => {
               <div className="absolute bg-white max-w-[910px] h-auto w-full left-0 top-16 rounded-xl border py-3 z-50">
                 {listings.map((listing) => (
                   <div
-                    key={listing.id}
+                    key={listing.id || listing.title}
                     className="p-1 cursor-pointer hover:bg-gray-200"
                     onMouseDown={() => handleListingSelect(listing)}
                   >
                     <div className="flex items-center justify-between w-full p-1 px-2">
-                      {listing.title}
+                      <span>{listing.title}</span>
                       {listing.subCategory && (
                         <span className="text-sm text-gray-500">
                           {listing.subCategory}
