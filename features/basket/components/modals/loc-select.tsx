@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Autocomplete } from "@react-google-maps/api";
 import { useRouter } from "next/navigation";
 import axios from "axios";
+import { parseAddressString } from "@/utils/address-helpers";
 
 type GooglePlace = google.maps.places.Autocomplete;
 
@@ -15,7 +16,7 @@ interface LocationModalProps {
 }
 
 interface Location {
-  address: string;
+  address: string[];
   lat: number;
   lng: number;
 }
@@ -48,9 +49,16 @@ const LocationModal: React.FC<LocationModalProps> = ({
 
   const handlePlaceSelected = (place: google.maps.places.PlaceResult) => {
     if (!place.geometry?.location) return;
-
+    const addressObj = parseAddressString(
+      place.formatted_address || ("" as string)
+    );
     setSelectedLocation({
-      address: place.formatted_address || "",
+      address: [
+        addressObj.street as string,
+        addressObj.city as string,
+        addressObj.state as string,
+        addressObj.zip as string,
+      ],
       lat: place.geometry.location.lat(),
       lng: place.geometry.location.lng(),
     });
@@ -63,6 +71,7 @@ const LocationModal: React.FC<LocationModalProps> = ({
     if (!selectedLocation) return;
 
     try {
+      console.log(selectedLocation?.address);
       setIsSaving(true);
       await axios.post("/api/useractions/update/newlocation", {
         name: selectedName,
