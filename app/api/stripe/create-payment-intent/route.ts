@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2025-02-24.acacia",
+  apiVersion: "2025-04-30.basil",
 });
 
 export async function POST(request: NextRequest) {
@@ -11,6 +11,7 @@ export async function POST(request: NextRequest) {
     totalSum,
     userId,
     orderTotals,
+    basketId,
     body,
     email,
     orderId,
@@ -40,6 +41,7 @@ export async function POST(request: NextRequest) {
         userId,
         orderGroupId: JSON.stringify(orderGroupId),
         sellerStripeID,
+        basketId,
       },
       receipt_email: email,
     });
