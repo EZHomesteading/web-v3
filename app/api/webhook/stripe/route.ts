@@ -3,20 +3,14 @@ import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 import { basketStatus } from "@prisma/client";
 import webPush, { PushSubscription } from "web-push";
+import { headers } from "next/headers";
 
-// Configure as edge function for better raw body handling
-export const config = {
-  runtime: "edge",
-};
-
-// Use the API version that matches your webhook events
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2023-10-16", // Match the version in your webhook events
+  apiVersion: "2025-02-24.acacia",
 });
 
 const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET!;
 
-// Original business logic function - preserved as is
 async function handleBasketProcessing(
   buyerId: string,
   paymentIntent: Stripe.PaymentIntent
@@ -122,7 +116,6 @@ async function handleBasketProcessing(
   return order;
 }
 
-// Original conversation and notification function - preserved as is
 async function createConversationAndNotify(order: any) {
   // Create new conversation for each order
   const conversation = await prisma.conversation.create({
@@ -165,6 +158,83 @@ async function createConversationAndNotify(order: any) {
       ? `${order.buyer.location[0]?.address.street}, ${order.buyer.location[0]?.address.city}, ${order.buyer.location[0]?.address.state}. ${order.buyer.location[0]?.address.zip}`
       : "this user has no locations set"
   } during my open hours. My hours can be viewed in More Options.`;
+  // await fetch(
+  //   `${process.env.API_URL}/resend/new-order?email=${order.seller.email}`
+  // );
+  // Send email notification if enabled
+  // if (order.seller.notifications?.includes("EMAIL_NEW_ORDERS")) {
+  //   const emailParams = {
+  //     Destination: {
+  //       ToAddresses: [order.seller.email || "shortzach396@gmail.com"],
+  //     },
+  //     Message: {
+  //       Body: {
+  //         Html: {
+  //           Data: `
+  //             <div style="width: 100%; display: flex; font-family: 'Outfit', sans-serif; color: white; box-sizing: border-box;">
+  //               <div style="display: flex; flex-direction: column; background-color: #ced9bb; padding: 16px; border-radius: 8px; width: 100%; max-width: 320px; box-sizing: border-box;">
+  //                 <header style="font-size: 24px; display: flex; flex-direction: row; align-items: center; margin-bottom: 16px; width: 100%;">
+  //                   <img src="https://i.ibb.co/TB7dMtk/ezh-logo-no-text.png" alt="EZHomesteading Logo" width="50" height="50" style="margin-right: 8px;" />
+  //                   <span>EZHomesteading</span>
+  //                 </header>
+  //                 <h1 style="font-size: 20px; margin-bottom: 8px;">Hi, ${
+  //                   order.seller.name
+  //                 }</h1>
+  //                 <p style="font-size: 14px; margin-bottom: 16px;">You have a new order from ${
+  //                   order.buyer.name
+  //                 }</p>
+
+  //                 <p style="font-size: 18px; margin-bottom: 8px;">Order Details:</p>
+  //                 <div style="margin-bottom: 8px;">
+  //                   <p style="font-size: 16px; margin-bottom: 4px;">Items:</p>
+  //                   <ul style="font-size: 14px;">
+  //                     ${titles
+  //                       .split(", ")
+  //                       .map((item) => `<li>${item}</li>`)
+  //                       .join("")}
+  //                   </ul>
+  //                 </div>
+  //                 <div style="margin-bottom: 8px;">
+  //                   <p style="font-size: 16px; margin-bottom: 4px;">Pickup Date:</p>
+  //                   <p style="font-size: 14px;">${order.pickupDate.toLocaleString()}</p>
+  //                 </div>
+  //                 <div>
+  //                   <p style="font-size: 16px; margin-bottom: 4px;">Order Total:</p>
+  //                   <p style="font-size: 14px;">$${order.totalPrice.toFixed(
+  //                     2
+  //                   )}</p>
+  //                 </div>
+
+  //                 <a href="https://ezhomesteading.com/chat/${
+  //                   conversation.id
+  //                 }" style="text-decoration: none; margin-bottom: 8px; width: 100%;">
+  //                   <button style="background-color: #64748b; border-radius: 9999px; padding: 8px 16px; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); color: #ffffff; width: 100%; text-align: center;">
+  //                     Go to conversation
+  //                   </button>
+  //                 </a>
+  //                 <a href="https://ezhomesteading.com/dashboard/orders/seller" style="text-decoration: none; width: 100%;">
+  //                   <button style="background-color: #64748b; border-radius: 9999px; padding: 8px 16px; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); color: #ffffff; width: 100%; text-align: center;">
+  //                     Go to sell orders
+  //                   </button>
+  //                 </a>
+  //               </div>
+  //             </div>
+  //           `,
+  //         },
+  //       },
+  //       Subject: {
+  //         Data: "New Order Received",
+  //       },
+  //     },
+  //     Source: "disputes@ezhomesteading.com",
+  //   };
+
+  //   try {
+  //     await sesClient.send(new SendEmailCommand(emailParams));
+  //   } catch (error) {
+  //     console.error("Error sending email to the seller:", error);
+  //   }
+  // }
 
   // Create message and send notifications based on fulfillment type
   if (order.fulfillmentType === "PICKUP") {
@@ -277,157 +347,66 @@ async function createConversationAndNotify(order: any) {
   return conversation;
 }
 
-// Modified POST handler to use raw buffer approach
 export async function POST(request: NextRequest) {
-  try {
-    console.log("Webhook request received");
+  const sig = await request.headers.get("stripe-signature");
 
-    // Log all headers for debugging
-    console.log(
-      "Request headers:",
-      Object.fromEntries(request.headers.entries())
-    );
-
-    // Get the Stripe signature header
-    const sig = request.headers.get("stripe-signature");
-
-    if (!sig) {
-      console.error("Missing Stripe signature");
-      return NextResponse.json(
-        { error: "Missing Stripe signature" },
-        { status: 400 }
-      );
-    }
-
-    // CRITICAL FIX: Use clone and read as buffer to avoid body parsing issues
-    const clonedRequest = request.clone();
-    const buffer = await clonedRequest.arrayBuffer();
-    const rawBody = Buffer.from(buffer).toString("utf8");
-
-    // Log verification details for debugging
-    console.log("Stripe Signature:", sig);
-    console.log("Raw Body Preview:", rawBody.substring(0, 100) + "...");
-    console.log("Raw Body Length:", rawBody.length);
-    console.log(
-      "Webhook Secret (length):",
-      endpointSecret ? endpointSecret.length : "missing"
-    );
-
-    let event: Stripe.Event;
-
-    try {
-      // Verify with raw buffer body
-      event = stripe.webhooks.constructEvent(rawBody, sig, endpointSecret);
-    } catch (mainErr: any) {
-      console.error(`Webhook verification failed: ${mainErr.message}`);
-
-      // Enhanced error logging
-      console.error("Error details:", {
-        name: mainErr.name,
-        type: mainErr.type,
-        message: mainErr.message,
-        partialStack: mainErr.stack?.substring(0, 300),
-      });
-
-      // Try to see if body modification is the issue
-      try {
-        const parsedBody = JSON.parse(rawBody);
-        console.log("Event API version:", parsedBody.api_version);
-
-        // Try with event's API version if different
-        if (parsedBody.api_version && parsedBody.api_version !== "2023-10-16") {
-          console.log(
-            `Attempting with event's API version: ${parsedBody.api_version}`
-          );
-
-          // Create a temporary Stripe instance with that version
-          const tempStripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-            apiVersion: parsedBody.api_version as any,
-          });
-
-          try {
-            // Try verification again
-            event = tempStripe.webhooks.constructEvent(
-              rawBody,
-              sig,
-              endpointSecret
-            );
-            console.log("Verification succeeded with event's API version!");
-          } catch (versionErr: any) {
-            console.error(
-              `Version-specific verification failed: ${versionErr.message}`
-            );
-          }
-        } else {
-          console.log("Event API version matches or is not specified");
-        }
-      } catch (parseErr) {
-        console.error("Error parsing webhook body:", parseErr);
-      }
-
-      if (!event) {
-        return NextResponse.json(
-          { error: `Webhook Error: ${mainErr.message}` },
-          { status: 400 }
-        );
-      }
-    }
-
-    // Signature verification succeeded, process the event
-    console.log("Webhook event verified:", event.type);
-
-    if (event.type === "payment_intent.succeeded") {
-      try {
-        const paymentIntent = event.data.object as Stripe.PaymentIntent;
-        const buyerId = paymentIntent.metadata.userId;
-        const orderGroupId = paymentIntent.metadata.orderGroupId;
-
-        // Process this specific payment intent's basket
-        const createdOrder = await handleBasketProcessing(
-          buyerId,
-          paymentIntent
-        );
-
-        // Process conversation and notification
-        await createConversationAndNotify(createdOrder);
-
-        // Update order group if it exists
-        if (orderGroupId) {
-          await prisma.orderGroup.update({
-            where: {
-              id: orderGroupId.replace(/['"]+/g, ""),
-            },
-            data: {
-              orderids: {
-                push: createdOrder.id.toString(),
-              },
-            },
-          });
-        }
-
-        return NextResponse.json(
-          { received: true, orderId: createdOrder.id },
-          { status: 200 }
-        );
-      } catch (error) {
-        console.error("Error processing payment success:", error);
-        return NextResponse.json(
-          { error: "Failed to process payment success" },
-          { status: 500 }
-        );
-      }
-    }
-
-    // Handle other webhook events if needed
+  if (!sig) {
     return NextResponse.json(
-      { received: true, eventType: event.type },
-      { status: 200 }
-    );
-  } catch (error) {
-    console.error("Unexpected webhook error:", error);
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
+      { error: "Missing Stripe signature" },
+      { status: 400 }
     );
   }
+
+  let event: Stripe.Event;
+
+  try {
+    const stripeSignature = (await headers()).get(`stripe-signature`);
+    event = stripe.webhooks.constructEvent(
+      await request.text(),
+      stripeSignature as string,
+      endpointSecret
+    );
+  } catch (err) {
+    console.error(err);
+    return NextResponse.json({ error: "Webhook error" }, { status: 400 });
+  }
+
+  if (event.type === "payment_intent.succeeded") {
+    try {
+      const paymentIntent = event.data.object as Stripe.PaymentIntent;
+      const buyerId = paymentIntent.metadata.userId;
+      const orderGroupId = paymentIntent.metadata.orderGroupId;
+
+      // Process this specific payment intent's basket
+      const createdOrder = await handleBasketProcessing(buyerId, paymentIntent);
+
+      // Process conversation and notification
+      await createConversationAndNotify(createdOrder);
+
+      // Update order group if it exists
+      if (orderGroupId) {
+        await prisma.orderGroup.update({
+          where: {
+            id: orderGroupId.replace(/['"]+/g, ""),
+          },
+          data: {
+            orderids: {
+              push: createdOrder.id.toString(),
+            },
+          },
+        });
+      }
+
+      return NextResponse.json({ received: true }, { status: 200 });
+    } catch (error) {
+      console.error("Error processing payment success:", error);
+      return NextResponse.json(
+        { error: "Failed to process payment success" },
+        { status: 500 }
+      );
+    }
+  }
+
+  // Handle other webhook events if needed
+  return NextResponse.json({ received: true }, { status: 200 });
 }
