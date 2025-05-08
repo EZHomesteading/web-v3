@@ -143,6 +143,17 @@ const SearchLocation: React.FC<SearchLocationProps> = ({ apiKey }) => {
         setAddress(address || "");
         setCoordinates(coordinates || null);
         setSearchQuery(searchQuery || "");
+        if (coordinates && searchQuery) {
+          router.push(
+            `/market?lat=${coordinates.lat}&lng=${coordinates.lng}&q=${searchQuery}&radius=20`
+          );
+        } else if (coordinates && !searchQuery) {
+          router.push(
+            `/market?lat=${coordinates.lat}&lng=${coordinates.lng}&radius=20`
+          );
+        } else if (!coordinates && searchQuery) {
+          router.push(`/market?q=${searchQuery}`);
+        }
       } catch (error) {
         console.error("Failed to parse stored search state:", error);
       }
@@ -156,6 +167,9 @@ const SearchLocation: React.FC<SearchLocationProps> = ({ apiKey }) => {
       coordinates,
       searchQuery,
     };
+    if (state.address === "") {
+      state.coordinates = null;
+    }
     sessionStorage.setItem("searchLocationState", JSON.stringify(state));
   };
 
@@ -403,13 +417,13 @@ const SearchLocation: React.FC<SearchLocationProps> = ({ apiKey }) => {
 
     const query: Record<string, string | null> = {
       ...(searchQuery ? { q: searchQuery } : {}),
-      ...(coordinates
-        ? {
+      ...(!coordinates || !address
+        ? {}
+        : {
             lat: coordinates.lat.toString(),
             lng: coordinates.lng.toString(),
             radius: "20", // Default radius in miles
-          }
-        : {}),
+          }),
     };
 
     const url = qs.stringifyUrl(
@@ -474,7 +488,9 @@ const SearchLocation: React.FC<SearchLocationProps> = ({ apiKey }) => {
       setShowListingSuggestions(false);
     }
   }, [searchQuery, focusedInput]);
-
+  useEffect(() => {
+    initializeFromURL();
+  }, []);
   return (
     <>
       {/* Load Google Maps Script */}

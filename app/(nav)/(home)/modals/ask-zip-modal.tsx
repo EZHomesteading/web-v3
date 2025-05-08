@@ -85,6 +85,13 @@ const AskZipModal = ({ isOpen, onClose }: AskZipModalProps) => {
         zip: zipCode,
       });
 
+      const state = {
+        address: zipCode,
+        coordinates: { lat: coords.lat.toString(), lng: coords.lng.toString() },
+      };
+
+      sessionStorage.setItem("searchLocationState", JSON.stringify(state));
+
       onClose();
       router.push(`/market?${searchParams.toString()}`);
     } catch (error) {
