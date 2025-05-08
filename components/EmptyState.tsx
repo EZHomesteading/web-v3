@@ -56,7 +56,13 @@ const EmptyState: React.FC<EmptyStateProps> = ({
       <Heading center title={title} subtitle={subtitle} />
       <div className="w-48 mt-4">
         {showReset && (
-          <Button variant="outline" onClick={() => router.push("/market")}>
+          <Button
+            variant="outline"
+            onClick={() => {
+              sessionStorage.setItem("searchLocationState", JSON.stringify(""));
+              window.location.href = "/market";
+            }}
+          >
             Remove all filters
           </Button>
         )}
