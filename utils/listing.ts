@@ -20,13 +20,13 @@ export function formatShelfLife(shelfLife?: number) {
   }
 
   const now = new Date();
-  const date = addDays(now, shelfLife);
+  const date = addDays(now, shelfLife as number);
   const dateString = format(date, "MMM dd, yyy");
 
   return `Estimated Expiry - ${dateString}`;
 }
 
-export function formatPrice(priceInCents:number) {
+export function formatPrice(priceInCents: number) {
   if (typeof priceInCents !== "number") return "$0.00";
 
   const dollars = (priceInCents / 100).toFixed(2);

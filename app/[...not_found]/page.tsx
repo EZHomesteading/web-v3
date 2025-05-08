@@ -3,6 +3,7 @@ import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { OutfitFont } from "@/components/fonts";
+import BackButton from "./backbutton";
 
 const Page404 = () => {
   return (
@@ -25,13 +26,7 @@ const Page404 = () => {
           Looks like you got lost in the corn maze... or maybe we gave you bad
           directions.
         </p>
-        <Link
-          href={`/`}
-          className="flex items-center gap-2 px-6 py-3 bg-emerald-500 text-white rounded-full hover:bg-green-600 transition-colors"
-        >
-          <ArrowLeft size={20} />
-          Back to Homepage
-        </Link>
+        <BackButton />
         <p className="text-sm text-gray-300 absolute bottom-5 max-w-md px-4">
           Is this our fault or yours? We don't like to point fingers, but its
           probably ours. We're a small team, sorry.

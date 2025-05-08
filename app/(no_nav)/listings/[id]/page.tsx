@@ -3,15 +3,14 @@ import { getUnique } from "@/actions/getListings";
 import ListingHead from "./components/listing-head";
 import { OutfitFont } from "@/components/fonts";
 import Link from "next/link";
-import {
-  PiArrowLeftThin,
-  PiBasketThin,
-} from "react-icons/pi";
+import { PiBasketThin } from "react-icons/pi";
 import { auth } from "@/auth";
 import Avatar from "@/components/Avatar";
 import SendMessageComponent from "./components/send-message-component";
 import { Viewport } from "next";
 import Page404 from "@/app/[...not_found]/page";
+
+import BackButton from "./components/back-button";
 
 export const viewport: Viewport = {
   themeColor: "#fff",
@@ -27,32 +26,31 @@ export default async function ListingPage({
   // function createSearchParamsString(
   //   params: Record<string, string | string[] | undefined> | null | undefined
   // ): string {
-    // if (!params) return "";
+  // if (!params) return "";
 
-    // const searchParams = new URLSearchParams();
+  // const searchParams = new URLSearchParams();
 
-    // // Iterate over the object and add each valid key-value pair
-    // Object.entries(params).forEach(([key, value]) => {
-    //   if (value !== undefined) {
-    //     if (Array.isArray(value)) {
-    //       // Handle array values
-    //       value.forEach((val) => {
-    //         searchParams.append(key, val);
-    //       });
-    //     } else if (typeof value === "string") {
-    //       // Handle string values
-    //       searchParams.append(key, value);
-    //     }
-    //     // Skip undefined or symbol values
-    //   }
-    // });
-    //
-    // return searchParams.toString();
+  // // Iterate over the object and add each valid key-value pair
+  // Object.entries(params).forEach(([key, value]) => {
+  //   if (value !== undefined) {
+  //     if (Array.isArray(value)) {
+  //       // Handle array values
+  //       value.forEach((val) => {
+  //         searchParams.append(key, val);
+  //       });
+  //     } else if (typeof value === "string") {
+  //       // Handle string values
+  //       searchParams.append(key, value);
+  //     }
+  //     // Skip undefined or symbol values
+  //   }
+  // });
+  //
+  // return searchParams.toString();
   // }
 
   // Use the function in your code
   // const marketCallback = searchParams && createSearchParamsString(searchParams)
-    
 
   const session = await auth();
   try {
@@ -97,7 +95,7 @@ export default async function ListingPage({
         console.error("Error fetching basket items:", error);
       }
     }
-    console.log(listing)
+    console.log(listing);
 
     return (
       <>
@@ -110,14 +108,7 @@ export default async function ListingPage({
               className={`h-16  flex justify-between items-center w-full  pr-2 lg:pr-0 pl-1 lg:pl-0`}
             >
               <div className={`flex items-center justify-start space-x-3 `}>
-                <Link
-                  // href={`/market${marketCallback && `?${marketCallback}`}`}
-		  href="/"
-                  prefetch={true}
-                  className={`rounded-full border text-black p-3`}
-                >
-                  <PiArrowLeftThin />
-                </Link>
+                <BackButton className={""} />
                 <div className={` text-3xl font-medium sm:block hidden`}>
                   {listing.title}
                 </div>
@@ -147,7 +138,8 @@ export default async function ListingPage({
                   {listing.title}
                 </div>
                 <div className={`text-sm sm:text-2xl mt-[-5px]`}>
-                  {listing.location.address.city}, {listing.location.address.state}
+                  {listing.location.address.city},{" "}
+                  {listing.location.address.state}
                 </div>
                 <div
                   className={`flex items-center justify-start space-x-1 text-sm mb-3`}

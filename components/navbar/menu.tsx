@@ -83,7 +83,7 @@ const UserMenu: React.FC<Props> = ({
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({ userId: user?.id }),
-            },
+            }
           ),
           axios.post("/api/useractions/update", {
             role: UserRole.PRODUCER,
@@ -100,7 +100,7 @@ const UserMenu: React.FC<Props> = ({
       } catch (error) {
         console.error("Error in consumer API calls:", error);
         toast.warning(
-          "Some account setup steps failed. Please contact support.",
+          "Some account setup steps failed. Please contact support."
         );
       }
     }
@@ -127,19 +127,31 @@ const UserMenu: React.FC<Props> = ({
         key: "chat",
         icon: iconMap.PiChatCircleThin,
         label: "Chat",
-        onClick: () => router.push("/chat"),
+        onClick: () => {
+          if (pathname !== "/chat") {
+            router.push("/chat");
+          }
+        },
       },
       {
         key: "map",
         icon: iconMap.PiMapTrifoldThin,
         label: "Map",
-        onClick: () => router.push("/map"),
+        onClick: () => {
+          if (pathname !== "/map") {
+            router.push("/map");
+          }
+        },
       },
       {
         key: "market",
         icon: iconMap.PiStorefrontThin,
         label: "Market",
-        onClick: () => router.push("/market"),
+        onClick: () => {
+          if (pathname !== "/market") {
+            router.push("/market");
+          }
+        },
       },
       {
         key: "create",
@@ -167,7 +179,7 @@ const UserMenu: React.FC<Props> = ({
 
     return icons
       .filter(
-        (icon) => "component" in icon || (user ? true : icon.key !== "create"),
+        (icon) => "component" in icon || (user ? true : icon.key !== "create")
       )
       .slice(0, isMdOrLarger ? 6 : 5)
       .map((icon) => {
@@ -213,9 +225,10 @@ const UserMenu: React.FC<Props> = ({
             ].map((item, index) => (
               <li
                 key={item.href}
-                className={`w-full ${index === 1 &&
+                className={`w-full ${
+                  index === 1 &&
                   "border-t-[1px] border-b-[1px] my-10 py-10 border-black"
-                  }`}
+                }`}
               >
                 <Link
                   href={item.href}
@@ -354,7 +367,7 @@ const UserMenu: React.FC<Props> = ({
                     let callbackUrl = window.location.href;
                     const encodedCallbackUrl = encodeURIComponent(callbackUrl);
                     router.push(
-                      `/auth/login?callbackUrl=${encodedCallbackUrl}`,
+                      `/auth/login?callbackUrl=${encodedCallbackUrl}`
                     );
                   }}
                 />
@@ -477,7 +490,7 @@ const UserMenu: React.FC<Props> = ({
                     let callbackUrl = window.location.href;
                     const encodedCallbackUrl = encodeURIComponent(callbackUrl);
                     router.push(
-                      `/auth/login?callbackUrl=${encodedCallbackUrl}`,
+                      `/auth/login?callbackUrl=${encodedCallbackUrl}`
                     );
                   }}
                 />
