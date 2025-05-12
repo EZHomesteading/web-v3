@@ -1,7 +1,7 @@
 // app/(nav)/map/components/map-container.tsx
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { UserRole } from "@prisma/client";
 import { Libraries } from "@googlemaps/js-api-loader";
 import { useLoadScript } from "@react-google-maps/api";

@@ -31,10 +31,10 @@ const MarkerInfoWindow = ({
           <Avatar image={selectedMarker.user.image} />
           <ul className="flex flex-col ml-1 pl-1">
             <h1 className={`${OutfitFont.className} text-sm`}>
-              {selectedMarker.user.name}
+              {selectedMarker.name}
             </h1>
             <p className={`${OutfitFont.className} text-xs text-gray-600`}>
-              {selectedMarker.user.firstName}
+              {selectedMarker.user.name}
             </p>
           </ul>
           <Link

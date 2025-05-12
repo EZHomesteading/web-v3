@@ -10,21 +10,26 @@ export const useMapLogic = ({
   initialCoordinates,
   mapRef,
 }: UseMapLogicProps) => {
-  // Change the state type to use number[] format for center
+  // Change the state to use [lng, lat] format to match your marker logic
   const [currentCenter, setCurrentCenter] = useState<number[]>([
-    initialCoordinates.lat,
     initialCoordinates.lng,
+    initialCoordinates.lat,
   ]);
-  const [zoom, setZoom] = useState(11);
+
+  const [zoom, setZoom] = useState(
+    initialCoordinates.lat === 39.5 && initialCoordinates.lng === -98.35
+      ? 5
+      : 10
+  );
 
   // Convert currentCenter back to { lat, lng } format for Google Maps
   const mapCenter = {
-    lat: currentCenter[0],
-    lng: currentCenter[1],
+    lng: currentCenter[0],
+    lat: currentCenter[1],
   };
 
   const mapOptions: google.maps.MapOptions = {
-    center: mapCenter, // Use the converted format
+    center: mapCenter,
     zoom: zoom,
     mapId: "86bd900426b98c0a",
     zoomControl: false,
@@ -34,7 +39,7 @@ export const useMapLogic = ({
     keyboardShortcuts: false,
     clickableIcons: true,
     disableDefaultUI: true,
-    maxZoom: 13,
+    maxZoom: 12,
     scrollwheel: true,
     minZoom: 4,
     gestureHandling: "greedy",
@@ -60,8 +65,8 @@ export const useMapLogic = ({
     if (mapRef.current) {
       const newCenter = mapRef.current.getCenter();
       if (newCenter) {
-        // Use number[] format for currentCenter
-        setCurrentCenter([newCenter.lat(), newCenter.lng()]);
+        // Use [lng, lat] format for currentCenter
+        setCurrentCenter([newCenter.lng(), newCenter.lat()]);
       }
     }
   };

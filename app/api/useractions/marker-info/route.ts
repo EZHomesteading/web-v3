@@ -9,6 +9,7 @@ export async function GET(request: Request) {
     const locVendor = await prisma.location.findUnique({
       where: { id: id as string },
       select: {
+        name: true,
         listings: {
           select: {
             images: true,

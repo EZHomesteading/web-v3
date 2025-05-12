@@ -1,17 +1,6 @@
+"use client";
 import { useState, useEffect, useCallback } from "react";
-
-interface MarkerInfo {
-  coordinates: number[];
-  listings: {
-    images: string[];
-  };
-  user: {
-    name: string;
-    firstName: string;
-    url: string;
-    image: string;
-  };
-}
+import { MarkerInfo } from "../types/map-types";
 
 interface UseMarkerLogicProps {
   mapRef: React.MutableRefObject<google.maps.Map | null>;
@@ -27,13 +16,25 @@ export const useMarkerLogic = ({
   setZoom,
 }: UseMarkerLogicProps) => {
   const [selectedMarker, setSelectedMarker] = useState<MarkerInfo | null>(null);
+  const [previousCenter, setPreviousCenter] = useState<number[] | null>(null);
+  const [previousZoom, setPreviousZoom] = useState<number | null>(null);
 
   const handleMarkerClick = useCallback(
     async (coordinate: number[], id: string) => {
       try {
         const response = await fetch(`/api/useractions/marker-info?id=${id}`);
         const markerData = await response.json();
+
+        // Store the current center before changing
+        if (mapRef.current) {
+          const currentCenter = mapRef.current.getCenter();
+          if (currentCenter) {
+            setPreviousCenter([currentCenter.lng(), currentCenter.lat()]);
+          }
+        }
+
         setSelectedMarker({
+          name: markerData.name,
           coordinates: coordinate,
           listings: {
             images: markerData.listings.images,
@@ -51,12 +52,23 @@ export const useMarkerLogic = ({
         console.error("Error fetching marker info:", error);
       }
     },
-    [setCurrentCenter, setZoom]
+    [setCurrentCenter, setZoom, mapRef]
   );
 
   const handleInfoWindowClose = useCallback(() => {
+    // Restore to previous center and zoom if available
+    if (previousCenter && mapRef.current) {
+      setCurrentCenter(previousCenter);
+      setPreviousCenter(null);
+    }
+
+    if (previousZoom && mapRef.current) {
+      setZoom(previousZoom);
+      setPreviousZoom(null);
+    }
+
     setSelectedMarker(null);
-  }, []);
+  }, [previousCenter, previousZoom, setCurrentCenter, setZoom, mapRef]);
 
   const handleMapClick = useCallback(
     (event: google.maps.MapMouseEvent) => {

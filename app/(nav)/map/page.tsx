@@ -19,7 +19,7 @@ const MapPage = async () => {
   if (user?.role === UserRole.PRODUCER || user?.role === UserRole.COOP) {
     producers = await getVendorLocsMap({ role: UserRole.PRODUCER });
   }
-  const defaultLocation = { lat: 30.58, lng: -70.46 };
+  const defaultLocation = { lat: 39.5, lng: -98.35 };
   const initialLocation = user?.locations
     ? user.locations[0]
       ? {
