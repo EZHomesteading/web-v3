@@ -103,8 +103,6 @@ const SearchClient: React.FC<ProductSelectProps> = ({
 
       // Limit to 6 results for UI display
       const limitedResults = uniqueResults.slice(0, 6);
-
-      // Always include the custom action option
       return [...limitedResults, customAction];
     },
     [searchProducts, getAll, subcat, customAction]
@@ -135,10 +133,9 @@ const SearchClient: React.FC<ProductSelectProps> = ({
     if (event.key === "Enter" || event.key === "Tab") {
       event.preventDefault();
 
-      addDebugLog(`Key pressed: ${event.key} with input: "${inputValue}"`);
+      // addDebugLog(`Key pressed: ${event.key} with input: "${inputValue}"`);
 
       loadOptions(inputValue).then((options) => {
-        // Remove the custom action option for exact match checking
         const regularOptions = options.filter(
           (opt) => opt.value !== "custom-action"
         );
@@ -147,7 +144,7 @@ const SearchClient: React.FC<ProductSelectProps> = ({
           (option) => option.label.toLowerCase() === inputValue.toLowerCase()
         );
 
-        addDebugLog(`Exact match found: ${Boolean(exactMatch)}`);
+        // addDebugLog(`Exact match found: ${Boolean(exactMatch)}`);
 
         if (!exactMatch && inputValue.trim() !== "") {
           setCustomTitleInput(inputValue);

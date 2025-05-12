@@ -4184,7 +4184,7 @@ const getlistings = async () => {
     }
   } catch (error) {
     console.error("Error fetching listings:", error);
-    return defaultProducts; // Return default products in case of error
+    return defaultProducts;
   }
 };
 
