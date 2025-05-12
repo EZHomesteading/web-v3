@@ -10,6 +10,7 @@ export interface LocationInfo {
 
 export interface MarkerInfo {
   coordinates: number[];
+  name: string;
   listings: {
     images: string[];
   };
