@@ -34,6 +34,7 @@ import {
 import { FaTools } from "react-icons/fa";
 import { IoFastFoodOutline } from "react-icons/io5";
 import { category } from "../../types/create";
+import { useEffect } from "react";
 // import NotSureModal from "../notSureModal";
 export type Category =
   | "unprocessed-produce"
@@ -68,6 +69,7 @@ interface SubCategorySelectionProps {
   subcategory: subcategory;
   setsubcategory: (subcateory: subcategory) => void;
   onGoBack: () => void;
+  handleNext: () => void;
 }
 const subcategoryIcons: Record<string, React.ReactNode> = {
   fruit: <GiShinyApple size={30} />,
@@ -234,11 +236,17 @@ const SubCategorySelection: React.FC<SubCategorySelectionProps> = ({
   subcategory,
   setsubcategory,
   onGoBack,
+  handleNext,
 }) => {
   if (!isValidCategory(category)) {
     return null;
   }
-
+  useEffect(() => {
+    // Only proceed if subcategory is set (not initial empty state)
+    if (subcategory) {
+      handleNext();
+    }
+  }, [subcategory]);
   return (
     <div className="w-full max-w-[1000px] mx-auto">
       <GoBackButton onClick={onGoBack} />
@@ -248,7 +256,9 @@ const SubCategorySelection: React.FC<SubCategorySelectionProps> = ({
             key={sub}
             title={sub.replace("-", " ")}
             isSelected={subcategory === sub}
-            onClick={() => setsubcategory(sub)}
+            onClick={() => {
+              setsubcategory(sub);
+            }}
             icon
           />
         ))}
@@ -264,6 +274,7 @@ interface ProductCategorySelectionProps {
   setcategory: (category: Category) => void;
   subcategory: subcategory;
   setsubcategory: (subcateory: subcategory) => void;
+  handleNext: () => void;
 }
 
 const ProductCategorySelection: React.FC<ProductCategorySelectionProps> = ({
@@ -272,6 +283,7 @@ const ProductCategorySelection: React.FC<ProductCategorySelectionProps> = ({
   handlePrevious,
   setsubcategory,
   setcategory,
+  handleNext,
 }) => {
   return (
     <div className="flex  justify-center items-start min-h-screen w-full">
@@ -298,6 +310,7 @@ const ProductCategorySelection: React.FC<ProductCategorySelectionProps> = ({
                 setcategory("");
                 setsubcategory("");
               }}
+              handleNext={handleNext}
             />
           )}
         </div>

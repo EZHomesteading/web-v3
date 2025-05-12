@@ -1,11 +1,11 @@
-"use Client";
+"use client";
 import { useState, useEffect, useMemo } from "react";
 import { getProducts } from "./products";
 import Fuse from "fuse.js";
 
 type Product = {
   title: string;
-  subcateory: string;
+  subcategory: string;
   photo: string;
 };
 
@@ -33,7 +33,7 @@ const useProducts = () => {
       products.map((product) => ({
         value: product.title,
         label: product.title,
-        cat: product.subcateory,
+        cat: product.subcategory,
         photo: product.photo,
       })),
     [products]
@@ -42,11 +42,11 @@ const useProducts = () => {
   const fuse = useMemo(() => {
     const options = {
       keys: ["label"],
-      threshold: 0.6,
-      distance: 100,
+      threshold: 0.6, // Try a higher threshold like 0.6 for more matches
+      distance: 100, // Increased from typical defaults
       ignoreLocation: true,
       shouldSort: true,
-      minMatchCharLength: 2,
+      minMatchCharLength: 1, // Changed from 2 to 1 to match shorter terms
     };
     return new Fuse<FormattedProduct>(formattedProducts, options);
   }, [formattedProducts]);
@@ -61,7 +61,21 @@ const useProducts = () => {
 
   const searchSingleTerm = (term: string) => {
     const preprocessedTerm = preprocessTerm(term);
-    return fuse.search(preprocessedTerm).map((result) => result.item);
+    console.log("Searching for single term:", preprocessedTerm);
+    const results = fuse.search(preprocessedTerm).map((result) => result.item);
+    console.log("Found results:", results.length);
+
+    // If Fuse returns no results with a single term longer than 3 chars,
+    // fallback to a more lenient includes search
+    if (results.length === 0 && preprocessedTerm.length > 3) {
+      console.log("Falling back to includes search");
+      return formattedProducts.filter((product) => {
+        const preprocessedLabel = preprocessTerm(product.label);
+        return preprocessedLabel.includes(preprocessedTerm);
+      });
+    }
+
+    return results;
   };
 
   const searchMultipleTerms = (terms: string[], originalQuery: string) => {
@@ -85,16 +99,21 @@ const useProducts = () => {
   const searchProducts = (query: string) => {
     if (!query) return formattedProducts;
 
+    // Add debugging
+    console.log("Searching for:", query);
+
     const searchTerms = query.split(/\s+/).filter((term) => term.length > 0);
+    console.log("Search terms:", searchTerms);
 
     if (searchTerms.length === 1) {
       return searchSingleTerm(searchTerms[0]);
     } else {
       const multiTermResults = searchMultipleTerms(searchTerms, query);
+      console.log("Multi-term results:", multiTermResults.length);
 
       return multiTermResults.length > 0
         ? multiTermResults
-        : searchSingleTerm(query);
+        : searchSingleTerm(query); // Search the whole query as fallback
     }
   };
 

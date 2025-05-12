@@ -1,12 +1,11 @@
-"use client";
 import React, { useState, useEffect } from "react";
-import { Textarea } from "../../../../components/ui/textarea";
+import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "../../../../components/ui/checkbox";
-import { Label } from "../../../../components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 import SearchClient from "../ui/search-client";
-import { FormattedProduct } from "@/features/create/hooks/use-product";
-import useProducts from "@/features/create/hooks/use-product";
+import { FormattedProduct } from "../../hooks/use-product";
+import useProducts from "../../hooks/use-product";
 import { FieldValues, UseFormSetValue } from "react-hook-form";
 
 interface StepTwoProps {
@@ -14,7 +13,7 @@ interface StepTwoProps {
   title: string;
   setTitle: (value: string) => void;
   setReview: (value: boolean) => void;
-  setimage: (images: string[]) => void;
+  setimage: (imageSrc: string[]) => void;
   description: string;
   setDescription: (value: string) => void;
   tag: string;
@@ -198,7 +197,7 @@ const StepTwo: React.FC<StepTwoProps> = ({
           }}
           value={description}
         />
-        <hr />
+        {/* <hr />
         <div className="w-full">
           <div className="mb-1 ml-[2px] text-sm">
             Tags are used to help users search for your products.
@@ -262,7 +261,7 @@ const StepTwo: React.FC<StepTwoProps> = ({
               </Button>
             ))}
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );
