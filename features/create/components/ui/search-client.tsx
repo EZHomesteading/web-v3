@@ -1,7 +1,6 @@
-"use client";
 import React, { useCallback, useState, useEffect, useRef } from "react";
 import AsyncSelect from "react-select/async";
-import { FormattedProduct } from "@/features/create/hooks/use-product";
+import { FormattedProduct } from "../../hooks/use-product";
 import {
   Dialog,
   DialogContent,
@@ -21,7 +20,7 @@ interface ProductSelectProps {
   customActionLabel: string;
   searchProducts: (query: string) => FormattedProduct[];
   getAll: () => FormattedProduct[];
-  onCustomTitleSet: () => void; // New prop
+  onCustomTitleSet: () => void;
   className?: string;
 }
 
@@ -44,6 +43,7 @@ const SearchClient: React.FC<ProductSelectProps> = ({
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [customTitleInput, setCustomTitleInput] = useState("");
   const selectRef = useRef<any>(null);
+  const [debugLog, setDebugLog] = useState<string[]>([]);
 
   useEffect(() => {
     if (value) {
@@ -62,18 +62,36 @@ const SearchClient: React.FC<ProductSelectProps> = ({
     photo: "",
   };
 
+  // Debug log utility
+  // const addDebugLog = (message: string) => {
+  //   setDebugLog((prev) => [...prev, message]);
+  //   console.log(`[Debug] ${message}`);
+  // };
+
   const loadOptions = useCallback(
     async (input: string) => {
+      // addDebugLog(`Loading options for input: "${input}"`);
       let results: FormattedProduct[];
 
-      if (input === "") {
+      if (input.trim() === "") {
         results = getAll().filter((product) => product.cat.includes(subcat));
+        // addDebugLog(
+        //   `Empty input, filtered results from getAll(): ${results.length}`
+        // );
       } else {
-        results = searchProducts(input).filter((product) =>
-          product.cat.includes(subcat)
-        );
+        const searchResults = searchProducts(input);
+        // addDebugLog(
+        //   `Search returned ${searchResults.length} results for "${input}"`
+        // );
+
+        results = searchResults.filter((product) => {
+          console.log(product.cat);
+          return product.cat.includes(subcat);
+        });
+        //addDebugLog(`After subcat filter: ${results.length} results`);
       }
 
+      // Ensure we have unique results by label
       const uniqueLabels = new Set();
       const uniqueResults = results.filter((product) => {
         if (!uniqueLabels.has(product.label)) {
@@ -83,8 +101,10 @@ const SearchClient: React.FC<ProductSelectProps> = ({
         return false;
       });
 
+      // Limit to 6 results for UI display
       const limitedResults = uniqueResults.slice(0, 6);
 
+      // Always include the custom action option
       return [...limitedResults, customAction];
     },
     [searchProducts, getAll, subcat, customAction]
@@ -114,17 +134,26 @@ const SearchClient: React.FC<ProductSelectProps> = ({
   const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
     if (event.key === "Enter" || event.key === "Tab") {
       event.preventDefault();
-      const exactMatch = loadOptions(inputValue).then((options) =>
-        options.find(
+
+      addDebugLog(`Key pressed: ${event.key} with input: "${inputValue}"`);
+
+      loadOptions(inputValue).then((options) => {
+        // Remove the custom action option for exact match checking
+        const regularOptions = options.filter(
+          (opt) => opt.value !== "custom-action"
+        );
+
+        const exactMatch = regularOptions.find(
           (option) => option.label.toLowerCase() === inputValue.toLowerCase()
-        )
-      );
-      exactMatch.then((match) => {
-        if (!match) {
+        );
+
+        addDebugLog(`Exact match found: ${Boolean(exactMatch)}`);
+
+        if (!exactMatch && inputValue.trim() !== "") {
           setCustomTitleInput(inputValue);
           setIsModalOpen(true);
-        } else {
-          handleChange(match);
+        } else if (exactMatch) {
+          handleChange(exactMatch);
         }
       });
     }
@@ -140,7 +169,7 @@ const SearchClient: React.FC<ProductSelectProps> = ({
     <>
       <AsyncSelect
         ref={selectRef}
-        placeholder={"Custom Title"}
+        placeholder={"Title"}
         isClearable
         cacheOptions
         defaultOptions

@@ -105,11 +105,7 @@ const UserMenu: React.FC<Props> = ({
       }
     }
 
-    if (
-      (user?.hasPickedRole || user?.hasPickedRole === null) &&
-      user?.locations?.[0]?.address &&
-      user?.locations?.[0]?.hours
-    ) {
+    if (user?.locations?.[0]?.address && user?.locations?.[0]?.hours) {
       router.push("/create");
     } else {
       router.push("/new-store");

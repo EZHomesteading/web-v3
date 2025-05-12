@@ -732,7 +732,12 @@ const CreateClient: React.FC<Props> = ({
       // Cleanup if needed
     };
   }, [defaultLocation, setValue]);
-
+  useEffect(() => {
+    // Only proceed if subcategory is set (not initial empty state)
+    if (selectedLoc) {
+      handleNext();
+    }
+  }, [selectedLoc]);
   return (
     <div
       className={`mt-16 h-full min-h-[calc(100vh-4rem)] overflow-y-auto ${OutfitFont.className}`}
@@ -836,6 +841,7 @@ const CreateClient: React.FC<Props> = ({
             setsubcategory={setsubcategory}
             category={category}
             setcategory={setcategory}
+            handleNext={handleNext}
           />
         )}
         {step === 3 && (
