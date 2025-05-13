@@ -15,22 +15,25 @@ interface LocationData {
   coordinates: Coordinates;
 }
 
-interface ZippopotamResponse {
-  "post code": string;
-  places: Array<{
-    latitude: string;
-    longitude: string;
-    "place name": string;
-    state: string;
+interface GoogleGeocodingResponse {
+  results: Array<{
+    geometry: {
+      location: {
+        lat: number;
+        lng: number;
+      };
+    };
   }>;
+  status: string;
 }
 
 interface AskZipModalProps {
   isOpen: boolean;
   onClose: () => void;
+  mk: string;
 }
 
-const AskZipModal = ({ isOpen, onClose }: AskZipModalProps) => {
+const AskZipModal = ({ isOpen, onClose, mk }: AskZipModalProps) => {
   const [zipCode, setZipCode] = useState<string>("");
   const [error, setError] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
@@ -43,16 +46,32 @@ const AskZipModal = ({ isOpen, onClose }: AskZipModalProps) => {
 
   const fetchCoordinates = async (zip: string): Promise<Coordinates> => {
     try {
-      const response = await fetch(`https://api.zippopotam.us/us/${zip}`);
-      if (!response.ok) {
-        throw new Error("Invalid zip code");
+      // Get Google API key from environment variables
+
+      if (!mk) {
+        throw new Error("Google Maps API key not found");
       }
-      const data: ZippopotamResponse = await response.json();
+
+      const response = await fetch(
+        `https://maps.googleapis.com/maps/api/geocode/json?address=${zip}&region=us&key=${mk}`
+      );
+
+      if (!response.ok) {
+        throw new Error("Google Geocoding API request failed");
+      }
+
+      const data: GoogleGeocodingResponse = await response.json();
+
+      if (data.status !== "OK" || !data.results || data.results.length === 0) {
+        throw new Error("No results found for this ZIP code");
+      }
+
       return {
-        lat: parseFloat(data.places[0].latitude),
-        lng: parseFloat(data.places[0].longitude),
+        lat: data.results[0].geometry.location.lat,
+        lng: data.results[0].geometry.location.lng,
       };
     } catch (error) {
+      console.error("Google Geocoding error:", error);
       throw new Error("Unable to find location for this zip code");
     }
   };
@@ -96,7 +115,9 @@ const AskZipModal = ({ isOpen, onClose }: AskZipModalProps) => {
       router.push(`/market?${searchParams.toString()}`);
     } catch (error) {
       if (error instanceof Error) {
-        setError(error.message);
+        setError(
+          "Unable to find location for this zip code. Please try again."
+        );
       } else {
         setError("An unexpected error occurred");
       }
@@ -141,6 +162,7 @@ const AskZipModal = ({ isOpen, onClose }: AskZipModalProps) => {
               className={`border border-custom px-2 rounded-sm`}
               onClick={onClose}
               disabled={loading}
+              type="button"
             >
               Cancel
             </button>

@@ -1,6 +1,9 @@
 //map routes server side page layout
+
 import { getNavUser, getVendorLocsMap, NavUser } from "@/actions/getUser";
 import Map from "@/app/(nav)/map/map";
+import ClientOnly from "@/components/client/client-only";
+import { coordObj } from "@/types";
 import { UserRole } from "@prisma/client";
 import type { Viewport } from "next";
 //import MapPopup from "@/app/(nav)/info-modals/map-info-modal";
@@ -19,26 +22,28 @@ const MapPage = async () => {
   if (user?.role === UserRole.PRODUCER || user?.role === UserRole.COOP) {
     producers = await getVendorLocsMap({ role: UserRole.PRODUCER });
   }
+
   const defaultLocation = { lat: 39.5, lng: -98.35 };
-  const initialLocation = user?.locations
-    ? user.locations[0]
+  const initialLocation =
+    user?.locations && user.locations[0]
       ? {
           lat: user?.locations[0].coordinates[1],
           lng: user?.locations[0].coordinates[0],
         }
-      : defaultLocation
-    : defaultLocation;
+      : defaultLocation;
 
   return (
     <div className="h-sreen overflow-hidden w-full touch-none">
       <div className="h-[calc(100vh-64px)] overflow-hidden w-full touch-none">
-        <Map
-          coordinates={initialLocation}
-          coops={coops}
-          producers={producers}
-          mk={map_api_key}
-          user={user}
-        />
+        <ClientOnly>
+          <Map
+            coordinates={initialLocation}
+            coops={coops}
+            producers={producers}
+            mk={map_api_key}
+            user={user}
+          />
+        </ClientOnly>
       </div>
       {/* <MapPopup /> */}
     </div>
