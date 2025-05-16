@@ -41,7 +41,7 @@ const MarketCartToggle = ({
     isFirstItemInCart,
   } = useBasket({
     listingId: listing?.id,
-    address: listing.location.address,
+    address: listing.location.id,
     user,
     initialQuantity: listing?.minOrder || 1,
     hours: listing?.location?.hours,

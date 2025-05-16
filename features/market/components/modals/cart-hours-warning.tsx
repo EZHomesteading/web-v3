@@ -228,7 +228,7 @@ const HoursWarningModal = ({
             Cancel
           </Button>
           <Button onClick={onConfirm} className={isMobile ? "flex-1" : ""}>
-            Add to Basket Anyway
+            Add Despite Schedule Conflict
           </Button>
         </DialogFooter>
       </DialogContent>

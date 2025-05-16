@@ -63,11 +63,17 @@ export const useBasket = ({
   const [isFirstItemInCart, setIsFirstItemInCart] = useState(false);
   const [isSameSellerAsCart, setIsSameSellerAsCart] = useState(false);
 
+  // Configuration for compatibility threshold
+  const COMPATIBILITY_THRESHOLD = {
+    MIN_COMPATIBLE_DAYS: 3, // Minimum number of compatible days required
+    MIN_OVERLAP_HOURS: 3, // Minimum hours of overlap required for a day to be considered "highly compatible"
+  };
+
   let initialOrderMethod: orderMethod = orderMethod.PICKUP;
   if (!hours?.pickup?.length && hours?.delivery?.length) {
     initialOrderMethod = orderMethod.DELIVERY;
   }
-
+  console.log(isSameSellerAsCart);
   // Format time (minutes since midnight) to a user-friendly string
   const formatTimeString = (totalMinutes: number) => {
     const hours = Math.floor(totalMinutes / 60);
@@ -110,7 +116,7 @@ export const useBasket = ({
   const checkIfSameSeller = useCallback(
     async (address: any) => {
       if (!user?.id) return false;
-
+      console.log(address);
       try {
         // Get the current listing details to find the seller
 
@@ -119,9 +125,8 @@ export const useBasket = ({
 
         // Check if any item in the cart is from the same seller
         const hasSameSeller = basketData.some((basketItem: any) => {
-          const itemSellerAdd = basketItem.location.address;
-          const isSame =
-            JSON.stringify(itemSellerAdd) === JSON.stringify(address);
+          const itemSellerAdd = basketItem.location.id;
+          const isSame = itemSellerAdd === address;
           console.log(
             `Comparing basket item seller ${itemSellerAdd} with current ${address}: ${isSame}`
           );
@@ -175,6 +180,27 @@ export const useBasket = ({
         }),
       };
     });
+  };
+
+  // New function to evaluate if compatibility is high enough to skip warning
+  const hasHighCompatibility = (dateCompatibility: any[]) => {
+    if (!dateCompatibility.length) return false;
+
+    // Count days with high compatibility (compatible AND has sufficient overlap hours)
+    const highlyCompatibleDays = dateCompatibility.filter(
+      (day) =>
+        day.compatible &&
+        day.overlapHours >= COMPATIBILITY_THRESHOLD.MIN_OVERLAP_HOURS
+    );
+
+    console.log(
+      `Compatibility check: ${highlyCompatibleDays.length} highly compatible days out of ${dateCompatibility.length}`
+    );
+
+    // Return true if we have enough highly compatible days
+    return (
+      highlyCompatibleDays.length >= COMPATIBILITY_THRESHOLD.MIN_COMPATIBLE_DAYS
+    );
   };
 
   const checkHoursCompatibility = useCallback(async () => {
@@ -423,27 +449,45 @@ export const useBasket = ({
         setIsSameSellerAsCart(isSameSeller);
         console.log("First item:", isFirstItem, "Same seller:", isSameSeller);
 
+        // If it's the first item in cart, add directly without checking compatibility
+        if (isFirstItem) {
+          console.log("Adding first item to cart without compatibility check");
+          await addToBasket(status);
+          onBasketUpdate(true);
+          return;
+        }
+
         // If it's from the same seller, add directly without showing warning
-        if (isSameSeller && !isFirstItem) {
+        if (isSameSeller) {
           console.log("Adding item from same seller without warning");
           await addToBasket(status);
           onBasketUpdate(true);
           return;
         }
 
-        // Always check hours compatibility for other cases
+        // For other cases, check hours compatibility
         const compatibilityData = await checkHoursCompatibility();
         setIncompatibleDays(compatibilityData);
 
-        // Show modal for first item or compatibility check
-        setShowWarning(true);
+        // Check if we have high compatibility - if so, skip warning and add directly
+        if (hasHighCompatibility(compatibilityData)) {
+          console.log(
+            "High compatibility detected - adding to cart without warning"
+          );
+          await addToBasket(status);
+          onBasketUpdate(true);
+        } else {
+          // Otherwise show the warning modal
+          console.log("Low compatibility - showing warning modal");
+          setShowWarning(true);
+        }
       }
     },
     [
       removeFromBasket,
       checkIsFirstItem,
       checkIfSameSeller,
-      listingId,
+      address,
       checkHoursCompatibility,
       quantity,
       setQuantity,
