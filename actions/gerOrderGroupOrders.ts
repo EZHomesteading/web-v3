@@ -1,6 +1,6 @@
 // actions/getOrderGroupWithOrders.ts
 
-import { OrderMap } from "@/app/(nav)/map/checkmap/page";
+import { OrderMap } from "@/app/(nav)/checkmap/page";
 import prisma from "@/lib/prisma";
 
 export async function getOrderGroupWithOrders(ordergroupId: string) {

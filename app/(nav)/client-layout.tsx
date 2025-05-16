@@ -89,10 +89,12 @@ const LayoutClient = ({
   children,
   user,
   conversations,
+  mk,
 }: {
   children: React.ReactNode;
   user: NavUser | null;
   conversations: FullConversationType;
+  mk: string;
 }) => {
   const pathname = usePathname();
 
@@ -123,7 +125,6 @@ const LayoutClient = ({
   }
 
   const routeClassName = getRouteStyles();
-  const apiKey = process.env.MAPS_KEY!;
 
   return (
     <>
@@ -143,7 +144,7 @@ const LayoutClient = ({
               <div
                 className={`fixed h-20 lg:h-fit top-0 pt-2 lg:pt-0 lg:relative w-full bg-inherit px-2 bg-white`}
               >
-                <FindListingsComponent apiKey={apiKey} />
+                <FindListingsComponent apiKey={mk} />
               </div>
               <div
                 className={`flex items-center w-full justify-evenly lg:justify-end gap-x-3 lg:pt-2`}

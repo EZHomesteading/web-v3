@@ -66,7 +66,7 @@ export const OptionsPopover: React.FC<OptionsPopoverProps> = memo(
     }, [router, otherUser]);
 
     const handleViewMapCheckout = useCallback(() => {
-      router.push(`/map/checkmap?orderGroupId=${orderGroupId}`);
+      router.push(`/checkmap?orderGroupId=${orderGroupId}`);
     }, [router, orderGroupId]);
 
     return (

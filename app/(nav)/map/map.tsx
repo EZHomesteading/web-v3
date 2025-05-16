@@ -17,6 +17,7 @@ import { useMapLogic } from "@/features/map/hooks/use-map-logic";
 import { useDrawingLogic } from "@/features/map/hooks/use-drawing-logic";
 import { useMarkerLogic } from "@/features/map/hooks/use-marker-logic";
 import { MapUser } from "@/features/map/types/map-types";
+import { coordObj } from "@/types";
 
 interface MapProps {
   coops: MapUser[];
@@ -50,6 +51,26 @@ const VendorsMap = ({ coops, producers, coordinates, mk, user }: MapProps) => {
   }));
 
   // Use custom hooks for logic separation
+
+  const storedState = sessionStorage.getItem("searchLocationState");
+  let coordinatesSes = { lat: "", lng: "" };
+
+  if (storedState) {
+    const { addressSet, coordinates, searchQuerySet } = JSON.parse(storedState);
+    coordinatesSes = coordinates;
+  }
+  if (
+    coordinatesSes.lat !== "" &&
+    coordinatesSes.lng !== "" &&
+    coordinates.lat === 39.5
+  ) {
+    coordinates = {
+      lat: parseFloat(coordinatesSes.lat),
+      lng: parseFloat(coordinatesSes.lng),
+    };
+  }
+
+  console.log(coordinates);
   const {
     currentCenter,
     setCurrentCenter,

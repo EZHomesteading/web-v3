@@ -11,13 +11,13 @@ const HomePage = async () => {
   if (user) {
     fullUser = await getUserById(user.id);
   }
-
+  const map_api_key = process.env.MAPS_KEY as string;
   return (
     <>
       {user && user.role === UserRole.ADMIN ? (
         <AdminHome user={user} />
       ) : (
-        <Home user={fullUser} />
+        <Home user={fullUser} mk={map_api_key} />
       )}
     </>
   );

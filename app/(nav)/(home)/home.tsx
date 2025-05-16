@@ -26,8 +26,9 @@ const footerNavigation = {
 
 interface Props {
   user: any;
+  mk: string;
 }
-const Home = ({ user }: Props) => {
+const Home = ({ user, mk }: Props) => {
   const router = useRouter();
   const [isZipModalOpen, setIsZipModalOpen] = useState(false);
 
@@ -46,6 +47,7 @@ const Home = ({ user }: Props) => {
     <>
       <main className="min-h-screen w-full gradient">
         <AskZipModal
+          mk={mk}
           isOpen={isZipModalOpen}
           onClose={() => setIsZipModalOpen(false)}
         />
