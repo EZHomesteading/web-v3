@@ -1,6 +1,6 @@
 "use client";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { signOut } from "next-auth/react";
 import { UserRole } from "@prisma/client";
@@ -50,12 +50,69 @@ const UserMenu: React.FC<Props> = ({
   const selling = pathname?.startsWith("/selling");
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
   const [isSignUpSheetOpen, setIsSignUpSheetOpen] = useState(false);
+  const [basketCount, setBasketCount] = useState(0);
 
   useEffect(() => {
     if (isSignUpSheetOpen) {
       setIsPopoverOpen(false);
     }
   }, [isSignUpSheetOpen]);
+
+  // Fetch active baskets and set the basket count
+  useEffect(() => {
+    const fetchActiveBaskets = async (plus: number) => {
+      if (!user?.id) {
+        setBasketCount(0);
+        return;
+      }
+
+      try {
+        const response = await axios.get(
+          `/api/baskets/active?userId=${user.id}`
+        );
+        const basketData = response.data;
+
+        // Count total items across all baskets
+        const totalItems = basketData.reduce((total: any, basket: any) => {
+          return total + (basket.items?.length || 0);
+        }, 0);
+
+        setBasketCount(totalItems + plus);
+      } catch (error) {
+        console.error("Error fetching active baskets:", error);
+        setBasketCount(0);
+      }
+    };
+
+    // Initial fetch
+    fetchActiveBaskets(0);
+
+    // Function to handle storage changes from other tabs
+    // const handleStorageChange = (event: any) => {
+    //   if (event.key === "cartPing") {
+    //    fetchActiveBaskets(1);
+    //  }
+    //};
+
+    // Add event listener for storage changes from other tabs
+    // window.addEventListener("storage", handleStorageChange);
+
+    // Create a custom event listener for same-window changes
+    const handleCustomCartEvent = () => {
+      fetchActiveBaskets(1);
+    };
+    const handleCustomCartEventDown = () => {
+      fetchActiveBaskets(0);
+    };
+    // Add event listener for our custom event
+    window.addEventListener("cartUpdated", handleCustomCartEvent);
+    window.addEventListener("cartUpdatedDown", handleCustomCartEventDown);
+    // Cleanup
+    return () => {
+      window.removeEventListener("cartUpdatedDown", handleCustomCartEventDown);
+      window.removeEventListener("cartUpdated", handleCustomCartEvent);
+    };
+  }, [user?.id]);
 
   const MenuIcon = () => {
     return (
@@ -115,7 +172,6 @@ const UserMenu: React.FC<Props> = ({
   const hasNotifications =
     (user?.sellerOrders?.length ?? 0) > 0 ||
     (user?.buyerOrders?.length ?? 0) > 0;
-  // const isCartEmpty = (user?.cart?.length ?? 0) === 0;
 
   const renderIcons = () => {
     const icons: MenuIconItem[] = [
@@ -154,6 +210,20 @@ const UserMenu: React.FC<Props> = ({
         icon: iconMap.PiPlusThin,
         label: "Create",
         onClick: handleCreateClick,
+      },
+      {
+        key: "basket",
+        component: (
+          <BasketIconWithBadge
+            key="basket"
+            count={basketCount}
+            onClick={() => {
+              if (pathname !== "/my-basket") {
+                router.push("/my-basket");
+              }
+            }}
+          />
+        ),
       },
     ];
 
@@ -501,6 +571,31 @@ const UserMenu: React.FC<Props> = ({
         </Drawer>
       )}
     </>
+  );
+};
+
+// New component for Basket icon with notification badge
+const BasketIconWithBadge: React.FC<{
+  count: number;
+  onClick: () => void;
+}> = ({ count, onClick }) => {
+  const BasketIcon = iconMap.PiBasketThin;
+
+  return (
+    <button
+      className="flex flex-col pb-4 sm:pb-2 items-center justify-center hover:cursor-pointer relative"
+      onClick={onClick}
+    >
+      <div className="relative">
+        <BasketIcon className="h-8 w-8" />
+        {count > 0 && (
+          <div className="absolute -top-1 -right-1 rounded-full bg-red-600 text-white text-xs w-5 h-5 flex items-center justify-center">
+            {count > 99 ? "99+" : count}
+          </div>
+        )}
+      </div>
+      <div className={`text-xs ${OutfitFont.className}`}>Basket</div>
+    </button>
   );
 };
 

@@ -340,7 +340,8 @@ export const useBasket = ({
         );
         return;
       }
-
+      //sessionStorage.setItem("cartPing", Date.now().toString());
+      window.dispatchEvent(new Event("cartUpdated"));
       setIsLoading(true);
       try {
         await axios.post(`/api/basket/items`, {
@@ -371,6 +372,7 @@ export const useBasket = ({
     try {
       await axios.delete(`/api/basket/items/${listingId}`);
       Toast({ message: "Basket item removed" });
+      window.dispatchEvent(new Event("cartUpdatedDown"));
       onBasketUpdate(false);
     } catch (error: any) {
       console.error("Remove error:", error);
