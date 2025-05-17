@@ -87,16 +87,6 @@ const UserMenu: React.FC<Props> = ({
     // Initial fetch
     fetchActiveBaskets(0);
 
-    // Function to handle storage changes from other tabs
-    // const handleStorageChange = (event: any) => {
-    //   if (event.key === "cartPing") {
-    //    fetchActiveBaskets(1);
-    //  }
-    //};
-
-    // Add event listener for storage changes from other tabs
-    // window.addEventListener("storage", handleStorageChange);
-
     // Create a custom event listener for same-window changes
     const handleCustomCartEvent = () => {
       fetchActiveBaskets(1);
