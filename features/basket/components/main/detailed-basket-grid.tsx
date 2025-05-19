@@ -313,7 +313,9 @@ const DetailedBasketGridContent: React.FC<DetailedBasketGridProps> = ({
     }
   );
   return (
-    <div className={`${OutfitFont.className} w-full  pb-32`}>
+    <div
+      className={`${OutfitFont.className}  w-full min-h-screen pb-32 overflow-y-auto`}
+    >
       {isLoaded ? (
         <div>
           <LocationModal
@@ -340,7 +342,7 @@ const DetailedBasketGridContent: React.FC<DetailedBasketGridProps> = ({
               </div>
             </div>
 
-            <div className="w-full xl:w-[35%] xl:fixed xl:right-0 xl:mt-10 xl:top-6 xl:pr-4  space-y-6">
+            <div className="w-full xl:w-[35%] xl:sticky xl:top-6  xl:mr-[1%]   xl:ml-[66%]  space-y-6 max-h-screen">
               <OrderSummaryCard baskets={baskets} pickupTimes={pickupTimes} />
               <AvailabilityMap
                 startDelay={startDelay}

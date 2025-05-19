@@ -666,12 +666,12 @@ const AvailabilityMap: React.FC<AvailabilityMapProps> = ({
             sellers indicate their availability. Please choose a departure time${" "}`}
           </span>
         </div>
-        <div className="flex justify-between items-center">
+        <div className=" w-full flex flex-col items-center">
           <style>{pulseAnimation}</style>
           <Button
             ref={datePickerTriggerRef}
             onClick={() => setIsDatePickerOpen(true)}
-            className={`flex items-center justify-center rounded-full border px-3 py-2 text-sm  hover:bg-gray-500 transition-colors`}
+            className={`flex items-center justify-center w-full rounded-full border px-3 py-2 text-sm  hover:bg-gray-500 transition-colors`}
             style={
               !selectedDate || !selectedTime
                 ? { animation: "pulse 2s infinite" }
@@ -680,11 +680,14 @@ const AvailabilityMap: React.FC<AvailabilityMapProps> = ({
           >
             {getDisplayText()}
           </Button>
+        </div>
+        <div className="flex px-1 justify-between pt-2 items-center">
+          {" "}
           <Button
             variant="outline"
             size="default"
             onClick={checkLocationAvailability}
-            className="w-32"
+            className="w-48"
             disabled={!selectedDate || !selectedTime}
           >
             Check Availability
@@ -694,7 +697,7 @@ const AvailabilityMap: React.FC<AvailabilityMapProps> = ({
             onOpenChange={setIsChangeLocationOpen}
           >
             <PopoverTrigger asChild>
-              <Button variant="outline" size="default">
+              <Button variant="outline" className="w-48">
                 Change Location
               </Button>
             </PopoverTrigger>
