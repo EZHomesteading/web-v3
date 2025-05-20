@@ -48,7 +48,7 @@ export async function POST(request: Request) {
       harvestFeatures,
       stock,
       shelfLife,
-      price,
+      price: price * 100,
       userId,
       title,
       emailList,

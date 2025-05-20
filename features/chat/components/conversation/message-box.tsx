@@ -209,7 +209,7 @@ const MessageBox: React.FC<MessageBoxProps> = ({
 
         // Second API call (stripe payout)
         await axios.post("/api/stripe/transfer", {
-          total: order?.totalPrice,
+          total: order?.totalPrice ? order.totalPrice / 100 : null,
           paymentId: order?.paymentIntentId,
           orderId: order?.id,
         });

@@ -198,17 +198,6 @@ const StepThree: React.FC<StepThreeProps> = ({
             </div>
           </div>
           <div className="flex flex-col gap-2 mt-2">
-            <Input
-              {...commonInputProps}
-              id="price"
-              label={getPriceLabel()}
-              type="number"
-              step="0.01"
-              formatPrice
-              maxlength={6}
-              inputmode="decimal"
-            />
-
             <div className="relative ">
               <Input
                 {...commonInputProps}
@@ -223,6 +212,16 @@ const StepThree: React.FC<StepThreeProps> = ({
                 size={25}
               />
             </div>
+            <Input
+              {...commonInputProps}
+              id="price"
+              label={getPriceLabel()}
+              type="number"
+              step="0.01"
+              formatPrice
+              maxlength={6}
+              inputmode="decimal"
+            />
           </div>
           <div className="m-0 p-0 md:mb-3 mt-5 border-black border-[1px] w-full"></div>
 

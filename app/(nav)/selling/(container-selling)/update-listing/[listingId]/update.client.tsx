@@ -180,7 +180,7 @@ const UpdateClient = ({ listing }: UpdateListingProps) => {
       description: listing?.description,
       title: listing?.title,
       stock: listing?.stock,
-      price: listing?.price,
+      price: listing?.price / 100,
       shelfLife: listing?.shelfLife,
       images: listing?.images ?? [],
       category: listing?.category,

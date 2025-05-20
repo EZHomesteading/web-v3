@@ -1,22 +1,24 @@
 "use client";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { OutfitFont } from "@/components/fonts";
+import BarnIcon from "@/public/icons/barn"; // Import the barn icon
 
 const Logo = () => {
-  const pathname = usePathname();
-  const href = pathname?.startsWith("/selling")
-    ? "/selling"
-    : pathname?.startsWith("/account")
-    ? "/account"
-    : "/";
-
   return (
     <Link
-      href={href}
-      className={`select-none hover:cursor-pointer md:block hidden font-bold tracking-tight mb-2 ${OutfitFont.className} font-light hover:text-green-800`}
+      href={"/"}
+      className="select-none flex items-center gap-2 hover:cursor-pointer transition-colors duration-200 hover:text-green-800"
+      aria-label="Go to homepage"
     >
-      EZHomesteading
+      <div className="flex flex-col pb-4 sm:pb-2 items-center justify-center">
+        <BarnIcon className="h-8 w-8" />
+        <div className={`text-xs ${OutfitFont.className}`}>Home</div>
+      </div>
+      <span
+        className={`md:block hidden font-bold tracking-tight ${OutfitFont.className}`}
+      >
+        EZHomesteading
+      </span>
     </Link>
   );
 };

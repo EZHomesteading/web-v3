@@ -90,7 +90,7 @@ const NotificationIcon = ({ bOrders, sOrders, harvestMessages }: Props) => {
         <SheetTrigger className="pb-2 hover:cursor-pointer relative flex flex-col items-center">
           <PiBellThin className={`h-8 w-8  bell-icon`} />
           <div
-            className={`${OutfitFont.className} font-extralight  absolute top-[1px] right-[-5px] text-green bg-red-400 text-white rounded-full w-4 p-[1px] text-xs`}
+            className={`${OutfitFont.className} absolute -top-1 -right-1 rounded-full bg-red-600 text-white text-xs w-5 h-5 flex items-center justify-center`}
           >
             {notifications.length}
           </div>

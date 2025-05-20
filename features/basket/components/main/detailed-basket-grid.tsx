@@ -203,7 +203,7 @@ const DetailedBasketGridContent: React.FC<DetailedBasketGridProps> = ({
             acc.total +
             basket.items.reduce(
               (sum: number, item: any) =>
-                sum + item.listing.price * item.quantity,
+                sum + (item.listing.price / 100) * item.quantity,
               0
             ),
           itemCount:
@@ -313,7 +313,9 @@ const DetailedBasketGridContent: React.FC<DetailedBasketGridProps> = ({
     }
   );
   return (
-    <div className={`${OutfitFont.className} w-full  pb-32`}>
+    <div
+      className={`${OutfitFont.className}  w-full min-h-screen pb-32 overflow-y-auto`}
+    >
       {isLoaded ? (
         <div>
           <LocationModal
@@ -340,7 +342,7 @@ const DetailedBasketGridContent: React.FC<DetailedBasketGridProps> = ({
               </div>
             </div>
 
-            <div className="w-full xl:w-[35%] xl:fixed xl:right-0 xl:mt-10 xl:top-6 xl:pr-4  space-y-6">
+            <div className="w-full xl:w-[35%] xl:sticky xl:top-6  xl:mr-[1%]   xl:ml-[66%]  space-y-6 max-h-screen">
               <OrderSummaryCard baskets={baskets} pickupTimes={pickupTimes} />
               <AvailabilityMap
                 startDelay={startDelay}
@@ -409,7 +411,7 @@ const DetailedBasketCard: React.FC<DetailedBasketCardProps> = ({
 
   const basketTotal = useMemo(() => {
     return basket.items.reduce((sum: number, item: any) => {
-      return sum + item.listing.price * item.quantity;
+      return sum + (item.listing.price / 100) * item.quantity;
     }, 0);
   }, [basket.items]);
 
@@ -526,7 +528,7 @@ const DetailedBasketCard: React.FC<DetailedBasketCardProps> = ({
                   <p className="text-xs text-gray-600"></p>
                 </div>
                 <div className="mt-1 text-sm font-medium text-gray-900 flex flex-row">
-                  ${item.listing.price}{" "}
+                  ${item.listing.price / 100}{" "}
                   {item.listing.unit ? (
                     <span className="ml-1"> per {item.listing.unit}</span>
                   ) : (

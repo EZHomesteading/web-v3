@@ -5,7 +5,7 @@ import { basketStatus } from "@prisma/client";
 import webPush, { PushSubscription } from "web-push";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2025-02-24.basil",
+  apiVersion: "2025-04-30.basil",
 });
 
 const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET!;
@@ -73,7 +73,7 @@ async function handleBasketProcessing(
   // Use a transaction to ensure data consistency
   const order = await prisma.$transaction(async (tx) => {
     const totalPrice = basket.items.reduce(
-      (acc, item) => acc + item.quantity * item.price,
+      (acc, item) => acc + item.quantity * item.price * 100,
       0
     );
 

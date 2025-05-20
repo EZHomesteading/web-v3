@@ -22,12 +22,12 @@ import {
 } from "@/components/ui/carousel";
 import { Card, CardContent } from "@/components/ui/card";
 import { Work_Sans } from "next/font/google";
-import { FinalListing } from "@/actions/getListings";
 import { Popover, PopoverTrigger, PopoverContent } from "./ui/error-popover";
 import { BiError } from "react-icons/bi";
 import StockCounter from "./ui/stock-counter";
 import { UserInfo } from "next-auth";
 import { AlertDialogTitle } from "@radix-ui/react-alert-dialog";
+import { Listing } from "@/types";
 
 const work = Work_Sans({
   display: "block",
@@ -36,7 +36,7 @@ const work = Work_Sans({
 });
 
 interface ListingCardProps {
-  data: FinalListing;
+  data: Listing;
   onAction?: (id: string) => void;
   disabled?: boolean;
   actionLabel?: string;
@@ -114,10 +114,7 @@ const ListingCard: React.FC<ListingCardProps> = ({
         return type;
     }
   }
-  const pluralQuan = pluralizeQuantityType(
-    stock,
-    data.unit ? data.unit: ""
-  );
+  const pluralQuan = pluralizeQuantityType(stock, data.unit ? data.unit : "");
   const handleCardClick = useCallback(() => {
     if (pathname !== "/dashboard/my-store") {
       router.push(`/listings/${data.id}`);
@@ -247,10 +244,7 @@ const ListingCard: React.FC<ListingCardProps> = ({
             </div>
 
             <div className="font-light">
-              {pluralizeQuantityType(
-                orderQuantity,
-                data.unit ? data.unit: ""
-              )}
+              {pluralizeQuantityType(orderQuantity, data.unit ? data.unit : "")}
             </div>
           </div>
         </div>
@@ -268,7 +262,7 @@ const ListingCard: React.FC<ListingCardProps> = ({
             <div
               className={`flex flex-row items-center gap-1 text-sm ${work.className}`}
             >
-              <div className="font-semibold"> ${data.price}</div>
+              <div className="font-semibold"> ${data.price / 100}</div>
 
               <div className="font-light">per {data.unit}</div>
             </div>
