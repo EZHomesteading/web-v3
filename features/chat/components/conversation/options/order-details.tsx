@@ -1,6 +1,6 @@
 import React, { memo } from "react";
 import Image from "next/image";
-import { Listing } from "../new/types";
+import { Listing } from "@/types";
 
 interface OrderDetailsProps {
   listings: Listing[];
@@ -30,11 +30,11 @@ export const OrderDetails: React.FC<OrderDetailsProps> = memo(
             <div className="flex-grow">
               <p className="font-normal">{listing.title}</p>
               <p className="text-xs font-extralight text-gray-700">
-                ${listing.price} per {listing.unit}
+                ${listing.price / 100} per {listing.unit}
               </p>
               <p className="text-xs font-extralight text-gray-700">
                 {getQuantity(listing.id)} {listing.unit} for $
-                {(getQuantity(listing.id) || 0) * listing.price}
+                {((getQuantity(listing.id) || 0) * listing.price) / 100}
               </p>
             </div>
           </div>

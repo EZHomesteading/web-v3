@@ -97,7 +97,8 @@ export default function CheckoutForm({
   const calculateTotals = () => {
     return baskets.reduce((acc, basket) => {
       const basketTotal = basket.items.reduce(
-        (sum: number, item: any) => sum + item.listing.price * item.quantity,
+        (sum: number, item: any) =>
+          sum + (item.listing.price / 100) * item.quantity,
         0
       );
       return acc + basketTotal;
@@ -118,7 +119,7 @@ export default function CheckoutForm({
         for (const basket of baskets) {
           const basketTotal = basket.items.reduce(
             (sum: number, item: any) =>
-              sum + item.listing.price * item.quantity * 100,
+              sum + (item.listing.price / 100) * item.quantity * 100,
             0
           );
 
@@ -239,7 +240,7 @@ export default function CheckoutForm({
                         {basket.items
                           .reduce(
                             (sum: number, item: any) =>
-                              sum + item.listing.price * item.quantity,
+                              sum + (item.listing.price / 100) * item.quantity,
                             0
                           )
                           .toFixed(2)}
@@ -291,7 +292,11 @@ export default function CheckoutForm({
                               </p>
                             </div>
                             <p className="text-sm font-medium">
-                              ${(item.quantity * item.listing.price).toFixed(2)}
+                              $
+                              {(
+                                (item.quantity * item.listing.price) /
+                                100
+                              ).toFixed(2)}
                             </p>
                           </div>
                         </div>

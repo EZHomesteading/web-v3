@@ -89,7 +89,7 @@ export async function POST(request: Request) {
       stock,
       shelfLife,
       minOrder,
-      price,
+      price: price * 100,
       subcategory,
       rating,
       // Connect both user and location using Prisma relations

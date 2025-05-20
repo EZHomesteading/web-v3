@@ -203,7 +203,7 @@ const DetailedBasketGridContent: React.FC<DetailedBasketGridProps> = ({
             acc.total +
             basket.items.reduce(
               (sum: number, item: any) =>
-                sum + item.listing.price * item.quantity,
+                sum + (item.listing.price / 100) * item.quantity,
               0
             ),
           itemCount:
@@ -411,7 +411,7 @@ const DetailedBasketCard: React.FC<DetailedBasketCardProps> = ({
 
   const basketTotal = useMemo(() => {
     return basket.items.reduce((sum: number, item: any) => {
-      return sum + item.listing.price * item.quantity;
+      return sum + (item.listing.price / 100) * item.quantity;
     }, 0);
   }, [basket.items]);
 
@@ -528,7 +528,7 @@ const DetailedBasketCard: React.FC<DetailedBasketCardProps> = ({
                   <p className="text-xs text-gray-600"></p>
                 </div>
                 <div className="mt-1 text-sm font-medium text-gray-900 flex flex-row">
-                  ${item.listing.price}{" "}
+                  ${item.listing.price / 100}{" "}
                   {item.listing.unit ? (
                     <span className="ml-1"> per {item.listing.unit}</span>
                   ) : (

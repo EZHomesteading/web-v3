@@ -26,7 +26,7 @@ export const MessageHeader: React.FC<MessageHeaderProps> = ({
           </div>
         </div>
         <div className="h-1 w-1 bg-neutral-600 rounded-full"></div>
-        <div className="text-xs">Total: ${totalPrice}</div>
+        <div className="text-xs">Total: ${totalPrice / 100}</div>
       </div>
     </div>
   );
