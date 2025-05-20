@@ -33,8 +33,8 @@ const MapPage = async () => {
       : defaultLocation;
 
   return (
-    <div className="h-sreen overflow-hidden w-full touch-none">
-      <div className="h-[calc(100vh-64px)] overflow-hidden w-full touch-none">
+    <div className="h-sreen absolute  overscroll-y-none overflow-hidden w-full touch-none">
+      <div className="h-[calc(100vh-64px)]  overflow-hidden w-full touch-none">
         <ClientOnly>
           <Map
             coordinates={initialLocation}

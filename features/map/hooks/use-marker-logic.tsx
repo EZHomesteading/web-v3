@@ -36,9 +36,9 @@ export const useMarkerLogic = ({
         setSelectedMarker({
           name: markerData.name,
           coordinates: coordinate,
-          listings: {
-            images: markerData.listings.images,
-          },
+          zip: markerData.address.zip,
+          listings: markerData.listings,
+
           user: {
             name: markerData.user.name,
             firstName: markerData.user.firstName,
