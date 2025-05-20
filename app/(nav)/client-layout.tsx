@@ -108,10 +108,11 @@ const LayoutClient = ({
       case "checkout":
       case "info-modals":
       case "map":
+        return "h-[calc(100vh-64px)] fixed overflow-hidden w-full  md:mt-20  overscroll-y-none";
       case "my-basket":
       case "profile":
       case "store":
-        return "lg:pt-20 pt-2 mx-auto max-w-full pb-40";
+        return "md:pt-20 pt-2 mx-auto max-w-full pb-40";
 
       case "account":
       case "selling":

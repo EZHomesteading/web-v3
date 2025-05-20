@@ -1,11 +1,9 @@
-// app/(nav)/map/components/map-container.tsx
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useRef } from "react";
 import { UserRole } from "@prisma/client";
 import { Libraries } from "@googlemaps/js-api-loader";
 import { useLoadScript } from "@react-google-maps/api";
-
 import Loading from "@/components/secondary-loader";
 import { NavUser } from "@/actions/getUser";
 import MapHeader from "@/features/map/components/map-header";
@@ -17,7 +15,6 @@ import { useMapLogic } from "@/features/map/hooks/use-map-logic";
 import { useDrawingLogic } from "@/features/map/hooks/use-drawing-logic";
 import { useMarkerLogic } from "@/features/map/hooks/use-marker-logic";
 import { MapUser } from "@/features/map/types/map-types";
-import { coordObj } from "@/types";
 
 interface MapProps {
   coops: MapUser[];
@@ -51,11 +48,10 @@ const VendorsMap = ({ coops, producers, coordinates, mk, user }: MapProps) => {
   }));
 
   // Use custom hooks for logic separation
-
   const storedState = sessionStorage.getItem("searchLocationState");
   let coordinatesSes = { lat: "", lng: "" };
 
-  if (storedState) {
+  if (storedState && JSON.parse(storedState) !== "") {
     const { addressSet, coordinates, searchQuerySet } = JSON.parse(storedState);
     coordinatesSes = coordinates;
   }
@@ -70,7 +66,6 @@ const VendorsMap = ({ coops, producers, coordinates, mk, user }: MapProps) => {
     };
   }
 
-  console.log(coordinates);
   const {
     currentCenter,
     setCurrentCenter,
@@ -132,45 +127,52 @@ const VendorsMap = ({ coops, producers, coordinates, mk, user }: MapProps) => {
   }
 
   return (
-    <div
-      className={`relative touch-none ${isDrawingEnabled ? "opacity-80 " : ""}`}
-    >
-      <MapHeader
-        isDrawingEnabled={isDrawingEnabled}
-        startDrawing={startDrawing}
-        stopDrawing={stopDrawing}
-        resetMap={resetMap}
-        drawnShape={drawnShape}
-        isApplyButtonVisible={isApplyButtonVisible}
-        applyDrawnShape={applyDrawnShape}
-      />
-
-      {user && user?.role !== "CONSUMER" && (
-        <div
-          className={`${OutfitFont.className} absolute top-11 left-1 transform z-10 bg-white bg-opacity-75 rounded-lg pr-5`}
-        >
-          <DrawingControls
-            showCoops={showCoops}
-            setShowCoops={setShowCoops}
-            showProducers={showProducers}
-            setShowProducers={setShowProducers}
+    <div className="absolute h-screen w-screen flex flex-col overflow-hidden">
+      <div className="absolute inset-0 z-10 pointer-events-none">
+        <div className="pointer-events-auto">
+          <MapHeader
+            isDrawingEnabled={isDrawingEnabled}
+            startDrawing={startDrawing}
+            stopDrawing={stopDrawing}
+            resetMap={resetMap}
+            drawnShape={drawnShape}
+            isApplyButtonVisible={isApplyButtonVisible}
+            applyDrawnShape={applyDrawnShape}
           />
-        </div>
-      )}
 
-      <GoogleMapComponent
-        mapRef={mapRef}
-        mapOptions={mapOptions}
-        handleMouseDown={handleMouseDown}
-        handleMouseMove={handleMouseMove}
-        handleMouseUp={handleMouseUp}
-        handleMapClick={handleMapClick}
-        showCoops={showCoops}
-        showProducers={showProducers}
-        filteredCoops={filteredCoops}
-        filteredProducers={filteredProducers}
-        handleMarkerClick={handleMarkerClick}
-      />
+          {user && user?.role !== "CONSUMER" && (
+            <div
+              className={`${OutfitFont.className} absolute top-11 left-1 transform z-10 bg-white bg-opacity-75 rounded-lg pr-5 pointer-events-auto`}
+            >
+              <DrawingControls
+                showCoops={showCoops}
+                setShowCoops={setShowCoops}
+                showProducers={showProducers}
+                setShowProducers={setShowProducers}
+              />
+            </div>
+          )}
+        </div>
+      </div>
+
+      <div
+        className={`relative flex-grow ${isDrawingEnabled ? "opacity-80" : ""}`}
+      >
+        <GoogleMapComponent
+          mapRef={mapRef}
+          mapOptions={mapOptions}
+          handleMouseDown={handleMouseDown}
+          handleMouseMove={handleMouseMove}
+          handleMouseUp={handleMouseUp}
+          handleMapClick={handleMapClick}
+          showCoops={showCoops}
+          showProducers={showProducers}
+          filteredCoops={filteredCoops}
+          filteredProducers={filteredProducers}
+          handleMarkerClick={handleMarkerClick}
+          selectedMarker={selectedMarker}
+        />
+      </div>
 
       {selectedMarker && (
         <MarkerInfoWindow

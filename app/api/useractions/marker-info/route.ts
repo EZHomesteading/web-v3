@@ -9,6 +9,7 @@ export async function GET(request: Request) {
     const locVendor = await prisma.location.findUnique({
       where: { id: id as string },
       select: {
+        address: { select: { zip: true } },
         name: true,
         listings: {
           select: {
@@ -37,19 +38,7 @@ export async function GET(request: Request) {
         { status: 404 }
       );
     }
-
-    const allImageSrcs = locVendor.listings.flatMap(
-      (location) => location.images
-    );
-
-    const uniqueImageSrcs = [...new Set(allImageSrcs)].slice(0, 3);
-
-    const modifiedLoc = {
-      ...locVendor,
-      listings: uniqueImageSrcs.map((imageSrc) => ({ imageSrc })),
-    };
-    console.log(modifiedLoc);
-    return NextResponse.json(modifiedLoc);
+    return NextResponse.json(locVendor);
   } catch (error) {
     console.error("Error fetching marker info:", error);
     return NextResponse.json(
