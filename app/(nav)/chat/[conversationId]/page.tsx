@@ -1,4 +1,3 @@
-import Header from "@/features/chat/components/conversation/Header";
 import Body from "@/features/chat/components/conversation/Body";
 import EmptyState from "@/components/EmptyState";
 import { redirect } from "next/navigation";
@@ -51,7 +50,6 @@ const ChatId = async ({
 
   return (
     <div className="chat-layout lg:pl-80">
-      <Header name={otherUser?.name || "(Deleted User)"} />
       <Body
         initialMessages={messages}
         adminMessages={messagesWithListings}

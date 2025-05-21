@@ -169,6 +169,7 @@ const Body: React.FC<BodyProps> = ({
         onOpenConfirm={() => setConfirmOpen(true)}
       />
       <MessageHeader
+        name={otherUser?.name || "(Deleted User)"}
         outfit={outfit}
         orderItemCount={order?.items.length}
         itemText={itemText}

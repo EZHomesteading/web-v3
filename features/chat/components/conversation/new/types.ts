@@ -45,6 +45,7 @@ export interface MessageWithListing {
 }
 
 export interface MessageHeaderProps {
+  name: string;
   outfit: any;
   orderItemCount?: number;
   itemText: string;

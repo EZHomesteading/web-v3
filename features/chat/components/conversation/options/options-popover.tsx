@@ -73,7 +73,7 @@ export const OptionsPopover: React.FC<OptionsPopoverProps> = memo(
       <Popover>
         <PopoverTrigger
           asChild
-          className="fixed right-4 top-[2rem] md:top-[5rem] z-20"
+          className="fixed right-4 top-1 md:top-[5rem] z-20"
         >
           <Button>More Options</Button>
         </PopoverTrigger>
