@@ -176,7 +176,7 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
               ease: [0.32, 0.72, 0, 1],
               width: { duration: 0.2 },
             }}
-            className="bg-white rounded-3xl border shadow-xl z-[9999] fixed w-full max-w-[500px] mx-auto inset-0 max-h-[450px] overflow-hidden"
+            className="bg-white rounded-3xl border shadow-xl z-[9999] fixed w-[90%] max-w-[500px] max-h-[500px]  xl:max-h-[600px]  mx-auto lg:mt-20 inset-0  overflow-hidden"
           >
             <div className="relative h-full bg-white rounded-3xl flex flex-col px-6 pb-6 pt-6">
               <button

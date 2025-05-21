@@ -1,9 +1,8 @@
 import React from "react";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Location } from "@prisma/client";
 import RouteOptimizer from "./route-optimizer";
 import { X } from "lucide-react";
-import { DialogTitle } from "@radix-ui/react-dialog";
 
 interface RouteOptimizerModalProps {
   isOpen: boolean;
@@ -30,36 +29,32 @@ const RouteOptimizerModal: React.FC<RouteOptimizerModalProps> = ({
   setPickupTimes,
   startDelay,
 }) => {
-  // Handler to prevent closing when clicking outside
+  // Handler for dialog's built-in open change
   const handleOpenChange = (open: boolean) => {
-    // Only allow closing through the explicit close button
-    if (open === false && isOpen === true) {
-      return;
+    if (!open) {
+      onClose();
     }
-    onClose();
   };
-  console.log(initialLocation);
+
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogContent
-        className="max-w-[95vw] w-[95vw] max-h-[95vh] h-[95vh] p-0"
+        className="max-w-[95vw] w-[95vw] max-h-[95vh] h-[95vh] p-0 overflow-hidden"
         style={{ zIndex: 50 }}
-        onPointerDownOutside={(e) => {
-          e.preventDefault();
-          return false;
-        }}
-        onInteractOutside={(e) => {
-          e.preventDefault();
-          return false;
-        }}
       >
-        <DialogTitle className="hidden">Route Optimizer</DialogTitle>
+        <DialogTitle className="sr-only">Route Optimizer</DialogTitle>
+
+        {/* Custom close button with higher z-index */}
         <button
-          onClick={() => onClose()}
-          className="absolute top-1 right-1 p-2 rounded-full hover:bg-gray-100 z-[9999999]"
+          onClick={onClose}
+          className="absolute top-2 right-2 p-2 rounded-full bg-white hover:bg-gray-100 z-[999] shadow-md"
+          type="button"
+          aria-label="Close dialog"
         >
           <X size={24} />
         </button>
+
+        {/* Global styles for Google Maps elements */}
         <style jsx global>{`
           .pac-container {
             z-index: 9999999 !important;
@@ -77,6 +72,7 @@ const RouteOptimizerModal: React.FC<RouteOptimizerModalProps> = ({
             z-index: 9999998 !important;
           }
         `}</style>
+
         <div className="w-full h-full relative">
           <RouteOptimizer
             startDelay={startDelay}

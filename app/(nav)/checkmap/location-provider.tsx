@@ -22,7 +22,7 @@ export default function LocationProvider({
   const initialLocation = locationAsCoord ? locationAsCoord : startLoc;
 
   return (
-    <div className="h-[calc(100vh-64px)] overflow-hidden touch-none">
+    <div className="h-[calc(100vh-64px)] fixed overflow-hidden touch-none">
       <RouteOptimizer
         orders={orders}
         googleMapsApiKey={googleMapsApiKey}

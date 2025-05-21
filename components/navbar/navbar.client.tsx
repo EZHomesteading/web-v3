@@ -29,6 +29,7 @@ const Navbar = ({ user, harvestMessages }: NavbarProps) => {
       case "get-ezh-app":
       case "checkout":
       case "info-modals":
+      case "checkmap":
       case "map":
       case "my-basket":
       case "profile":
@@ -50,7 +51,7 @@ const Navbar = ({ user, harvestMessages }: NavbarProps) => {
     <>
       <div
         className={cn(
-          "fixed bottom-0 left-0 right-0 md:top-0 border-t py-3 z-1 w-screen h-20",
+          "fixed bottom-0 left-0 right-0 md:top-0 border-t py-3  w-screen h-20",
 
           routeClassName
         )}

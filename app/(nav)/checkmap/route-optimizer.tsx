@@ -284,7 +284,7 @@ const RouteOptimizer = ({
   if (!isLoaded) return <div>Loading...</div>;
 
   return (
-    <div className="fixed inset-0 w-full h-full">
+    <div className="fixed w-full h-full">
       <Card className="absolute top-4 left-4 z-10 w-[85vw] md:w-[350px] lg:w-96 pt-2 max-h-[calc(100vh-100px)] rounded-lg overflow-hidden">
         <CardContent className="overflow-y-auto max-h-[calc(100vh-128px-2rem)] p-2 ">
           {isCollapsed ? (
