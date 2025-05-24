@@ -123,7 +123,7 @@ const SendMessageSection = ({
       <div className="border shadow-sm mt-3 rounded-md h-fit pb-6 pt-2 px-2">
         <div className="text-xl font-semibold">Add to your Basket</div>
         <div className={`${!isInBasket && "pb-4"} flex items-center gap-x-1`}>
-          ${listing.price} per {listing.unit}{" "}
+          ${listing.price / 100} per {listing.unit}{" "}
           <div className={`h-1 w-1 rounded-full bg-black`} />
           {listing.minOrder || 1} {listing.unit || ""} Minimum Order
         </div>

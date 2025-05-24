@@ -56,6 +56,7 @@ const VendorsMap = ({ coops, producers, coordinates, mk, user }: MapProps) => {
     coordinatesSes = coordinates;
   }
   if (
+    coordinatesSes !== null &&
     coordinatesSes.lat !== "" &&
     coordinatesSes.lng !== "" &&
     coordinates.lat === 39.5
@@ -142,7 +143,7 @@ const VendorsMap = ({ coops, producers, coordinates, mk, user }: MapProps) => {
 
           {user && user?.role !== "CONSUMER" && (
             <div
-              className={`${OutfitFont.className} absolute top-11 left-1 transform z-10 bg-white bg-opacity-75 rounded-lg pr-5 pointer-events-auto`}
+              className={`${OutfitFont.className} inset-x-0 mx-auto w-[150px] 3xl:w-[200px] absolute top-12 flex items-center justify-center transform z-10 bg-white bg-opacity-75 rounded-lg pr-5 pointer-events-auto`}
             >
               <DrawingControls
                 showCoops={showCoops}

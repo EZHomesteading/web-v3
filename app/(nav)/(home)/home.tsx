@@ -9,6 +9,7 @@ import { PiArrowRightThin } from "react-icons/pi";
 import { useRouter } from "next/navigation";
 import AskZipModal from "./modals/ask-zip-modal";
 import { useState } from "react";
+
 const footerNavigation = {
   shop: [
     { name: "More Info", href: "/info" },
@@ -28,6 +29,7 @@ interface Props {
   user: any;
   mk: string;
 }
+
 const Home = ({ user, mk }: Props) => {
   const router = useRouter();
   const [isZipModalOpen, setIsZipModalOpen] = useState(false);
@@ -43,9 +45,10 @@ const Home = ({ user, mk }: Props) => {
       );
     }
   };
+
   return (
     <>
-      <main className="min-h-screen w-full gradient">
+      <main className="w-full gradient">
         <AskZipModal
           mk={mk}
           isOpen={isZipModalOpen}
@@ -97,7 +100,7 @@ const Home = ({ user, mk }: Props) => {
               </h1>
             </header>
 
-            <p className="text-md font-light  text-black mb-2 ml-1 max-w-2xl rounded">
+            <p className="text-md font-light text-black mb-2 ml-1 max-w-2xl rounded">
               Find produce in your area. Join a community of EZH buyers, co-ops,
               & growers.
             </p>
@@ -300,4 +303,5 @@ const Home = ({ user, mk }: Props) => {
     </>
   );
 };
+
 export default Home;

@@ -16,11 +16,13 @@ const config = {
       center: true,
       padding: "2rem",
       screens: {
-        "2xl": "1400px",
+        "2xl": "1440px",
       },
     },
     extend: {
       screens: {
+        "3xl": "1920px",
+        "4xl": "2560px",
         "h-[600px]": { raw: "(min-height: 600px)" },
         "h-[700px]": { raw: "(min-height: 700px)" },
         "h-[800px]": { raw: "(min-height: 800px)" },
