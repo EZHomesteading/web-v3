@@ -24,6 +24,7 @@ import {
 import { LuBeef, LuBean, LuMilk } from "react-icons/lu";
 import { CiApple, CiForkAndKnife } from "react-icons/ci";
 import { FaAppleAlt } from "react-icons/fa";
+import { ChevronLeft } from "lucide-react";
 
 import { TbCheese, TbEggs, TbMeat, TbPig } from "react-icons/tb";
 import { IoFishOutline } from "react-icons/io5";
@@ -109,6 +110,7 @@ interface CategoryBoxProps {
   url: string;
   selected?: boolean;
   onClick: () => void;
+  isCompact?: boolean;
 }
 
 const CategoryBox: React.FC<CategoryBoxProps> = ({
@@ -116,17 +118,22 @@ const CategoryBox: React.FC<CategoryBoxProps> = ({
   label,
   selected,
   onClick,
+  isCompact = false,
 }) => {
   return (
     <div
       onClick={onClick}
-      className={`flex flex-col items-center justify-center gap-2 px-3 pt-2 hover:text-neutral-800 transition cursor-pointer flex-shrink-0 ${
+      className={`flex flex-col items-center  justify-center gap-2 ${
+        isCompact ? "px-2 pt-1" : "px-3 pt-2"
+      } hover:text-neutral-800 transition cursor-pointer flex-shrink-0 ${
         selected ? "border-b-neutral-800" : "border-transparent"
       } ${selected ? "text-neutral-800" : "text-neutral-500"}`}
     >
-      <Icon size={25} />
+      <Icon size={isCompact ? 20 : 25} />
       <div
-        className={`${OutfitFont.className} font-light text-xs whitespace-nowrap text-center`}
+        className={`${OutfitFont.className} font-light ${
+          isCompact ? "text-xs" : "text-xs"
+        } whitespace-nowrap text-center`}
       >
         {label}
       </div>
@@ -188,43 +195,212 @@ const Categories = ({ role }: Props) => {
     [router, category, searchParams]
   );
 
-  const renderCategories = () => {
-    const mainCategories = (
-      <motion.div
-        key="main"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        className="flex flex-row items-center justify-evenly w-full overflow-x-auto"
-      >
-        {categories.map((item) => (
-          <CategoryBox
-            key={item.label}
-            label={item.label}
-            icon={item.icon}
-            url={item.url}
-            onClick={() => handleCategoryClick(item.url)}
-            selected={item.url === category}
-          />
-        ))}
-      </motion.div>
-    );
+  const handleBackToCategories = () => {
+    const currentParams = searchParams ? qs.parse(searchParams.toString()) : {};
+    delete currentParams.category;
+    delete currentParams.subcategory;
 
-    let subcategoryElements = null;
-    if (category && showSubcategories) {
-      const currentSubcategories =
-        subcategories[
-          categories.find((cat) => cat.url === category)?.label as CategoryKey
-        ];
-      subcategoryElements = (
+    setCategory(null);
+    setSubcategory(null);
+    setShowSubcategories(false);
+    router.push(`/market?${qs.stringify(currentParams)}`, {
+      scroll: false,
+    });
+  };
+
+  const renderTitleSection = () => {
+    // Show title when no category is selected
+    if (!category) {
+      return (
         <motion.div
-          key="sub"
+          key="title"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="flex flex-row items-center justify-evenly w-full"
+          className="flex items-center gap-4"
         >
-          {currentSubcategories?.map((item) => (
+          <div className="text-center">
+            <h2
+              className={`${OutfitFont.className} text-lg font-medium text-neutral-800 mb-1`}
+            >
+              Browse by Category
+            </h2>
+            <p className={`${OutfitFont.className} text-sm text-neutral-600`}>
+              Filter products by selecting a category below
+            </p>
+          </div>
+        </motion.div>
+      );
+    }
+
+    // Show selected category when browsing subcategories
+    if (category && showSubcategories) {
+      const selectedCategory = categories.find((cat) => cat.url === category);
+      return (
+        <motion.div
+          key="category-selected"
+          initial={{ x: -20, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="flex items-center gap-4"
+        >
+          <button
+            onClick={handleBackToCategories}
+            className="flex items-center gap-2 text-neutral-600 hover:text-neutral-800 transition-colors"
+          >
+            <ChevronLeft size={16} />
+            <span className={`${OutfitFont.className} text-sm`}>Back</span>
+          </button>
+
+          <div className="flex items-center bg-neutral-50 px-3 py-2 rounded-lg border">
+            {selectedCategory && (
+              <div>
+                <CategoryBox
+                  key={selectedCategory.label}
+                  label={selectedCategory.label}
+                  icon={selectedCategory.icon}
+                  url={selectedCategory.url}
+                  onClick={() => {}}
+                  selected={true}
+                  isCompact={true}
+                />
+              </div>
+            )}
+          </div>
+        </motion.div>
+      );
+    }
+
+    // Show breadcrumb when subcategory is selected
+    if (category && subcategory) {
+      const selectedCategory = categories.find((cat) => cat.url === category);
+      const currentSubcategories =
+        subcategories[selectedCategory?.label as CategoryKey];
+      const selectedSubcategory = currentSubcategories?.find(
+        (subcat) => subcat.url === subcategory
+      );
+
+      return (
+        <motion.div
+          key="breadcrumb"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="flex items-center gap-3"
+        >
+          <button
+            onClick={handleBackToCategories}
+            className="flex items-center gap-2 text-neutral-600 hover:text-neutral-800 transition-colors"
+          >
+            <ChevronLeft size={16} />
+            <span className={`${OutfitFont.className} text-sm`}>
+              All Categories
+            </span>
+          </button>
+
+          {/* Selected Category */}
+          <motion.div
+            initial={{ x: -20, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            className="flex items-center bg-neutral-50 px-3 py-2 rounded-lg border"
+          >
+            {selectedCategory && (
+              <CategoryBox
+                key={selectedCategory.label}
+                label={selectedCategory.label}
+                icon={selectedCategory.icon}
+                url={selectedCategory.url}
+                onClick={() => {
+                  // Go back to subcategory view
+                  const currentParams = searchParams
+                    ? qs.parse(searchParams.toString())
+                    : {};
+                  const updatedParams = {
+                    ...currentParams,
+                    category: category,
+                    subcategory: undefined,
+                  };
+                  setSubcategory(null);
+                  setShowSubcategories(true);
+                  router.push(`/market?${qs.stringify(updatedParams)}`, {
+                    scroll: false,
+                  });
+                }}
+                selected={false}
+                isCompact={true}
+              />
+            )}
+          </motion.div>
+
+          {/* Arrow Indicator */}
+          <div className="text-neutral-400">
+            <ChevronLeft size={16} className="rotate-180" />
+          </div>
+
+          {/* Selected Subcategory */}
+          <motion.div
+            initial={{ x: -20, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            transition={{ delay: 0.1 }}
+            className="flex items-center bg-blue-50 px-3 py-2 rounded-lg border border-blue-200"
+          >
+            {selectedSubcategory && (
+              <CategoryBox
+                key={selectedSubcategory.label}
+                label={selectedSubcategory.label}
+                icon={selectedSubcategory.icon}
+                url={selectedSubcategory.url}
+                onClick={() => {}}
+                selected={true}
+                isCompact={true}
+              />
+            )}
+          </motion.div>
+        </motion.div>
+      );
+    }
+  };
+
+  const renderSelectableCategories = () => {
+    // Show main categories when no category is selected
+    if (!category) {
+      return (
+        <motion.div
+          key="main-categories"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="flex flex-row items-center  justify-evenly w-full overflow-x-auto"
+        >
+          {categories.map((item) => (
+            <CategoryBox
+              key={item.label}
+              label={item.label}
+              icon={item.icon}
+              url={item.url}
+              onClick={() => handleCategoryClick(item.url)}
+              selected={item.url === category}
+            />
+          ))}
+        </motion.div>
+      );
+    }
+
+    // Show subcategories when category is selected
+    if (category) {
+      const selectedCategory = categories.find((cat) => cat.url === category);
+      const currentSubcategories =
+        subcategories[selectedCategory?.label as CategoryKey];
+
+      return (
+        <motion.div
+          key="subcategories"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="flex flex-row items-center justify-evenly w-full overflow-x-auto"
+        >
+          {currentSubcategories?.map((item, index) => (
             <CategoryBox
               key={item.label}
               label={item.label}
@@ -237,22 +413,26 @@ const Categories = ({ role }: Props) => {
         </motion.div>
       );
     }
-
-    return { mainCategories, subcategoryElements };
   };
 
   return (
     <Container>
-      <div
-        className={`${OutfitFont.className} flex items-center justify-center `}
-      >
-        <Filters role={role} />
-        <div className="w-full overflow-x-auto">
-          <AnimatePresence mode="wait">
-            {showSubcategories
-              ? renderCategories().subcategoryElements
-              : renderCategories().mainCategories}
-          </AnimatePresence>
+      <div className={`${OutfitFont.className} flex flex-col`}>
+        <div className="flex items-center justify-between  min-h-[80px]">
+          <div className="flex-shrink-0 mr-16 ">
+            <Filters role={role} />
+          </div>
+          <div className="flex-shrink-0">
+            <AnimatePresence mode="wait">
+              {renderTitleSection()}
+            </AnimatePresence>
+          </div>
+
+          <div className="w-full overflow-x-auto  ">
+            <AnimatePresence mode="wait">
+              {renderSelectableCategories()}
+            </AnimatePresence>
+          </div>
         </div>
       </div>
     </Container>

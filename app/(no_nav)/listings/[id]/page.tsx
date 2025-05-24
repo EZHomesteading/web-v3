@@ -149,7 +149,7 @@ export default async function ListingPage({
                   </div>
                   <div className={`bg-black h-1 w-1 rounded-full`} />
                   <div>
-                    ${listing.price} per {listing.unit}
+                    ${listing.price / 100} per {listing.unit}
                   </div>
                 </div>
                 <Link

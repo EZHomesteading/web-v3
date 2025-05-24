@@ -89,7 +89,7 @@ const SendMessageComponent = ({
           <div className="fixed bottom-0 w-screen h-20 bg-white border-t">
             <div className="flex justify-between pr-4 items-center w-full h-full">
               <div className="pl-4">
-                ${listing.price} per {listing.unit}
+                ${listing.price / 100} per {listing.unit}
               </div>
               <div className="flex gap-2">
                 <button

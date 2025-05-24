@@ -209,7 +209,7 @@ const UserMenu: React.FC<Props> = ({
             count={basketCount}
             onClick={() => {
               if (pathname !== "/my-basket") {
-                router.push("/my-basket");
+                window.location.assign("/my-basket");
               }
             }}
           />

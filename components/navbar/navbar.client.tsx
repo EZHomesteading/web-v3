@@ -35,7 +35,6 @@ const Navbar = ({ user, harvestMessages }: NavbarProps) => {
       case "profile":
       case "store":
         return "bg-white !fixed z-1000";
-
       case "account":
       case "selling":
         return "sheet zmax md:h-20 h-24 border-t-none";

@@ -169,11 +169,11 @@ const SearchLocation: React.FC<SearchLocationProps> = ({ apiKey }) => {
   };
 
   // Save current search state to session storage
-  const saveToSessionStorage = () => {
+  const saveToSessionStorage = (listingName: string | null) => {
     const state = {
       address,
       coordinates,
-      searchQuery,
+      searchQuery: listingName ? listingName : searchQuery,
     };
     if (state.address === "") {
       state.coordinates = null;
@@ -414,17 +414,17 @@ const SearchLocation: React.FC<SearchLocationProps> = ({ apiKey }) => {
   const handleListingSelect = (listing: Listing) => {
     setSearchQuery(listing.title);
     setShowListingSuggestions(false);
-    handleSearch();
+    handleSearch(listing.title);
     queryInputRef.current?.blur();
   };
 
   // Handle search form submission
-  const handleSearch = () => {
+  const handleSearch = (listingName: string | null) => {
     // Save state before navigation
-    saveToSessionStorage();
+    saveToSessionStorage(listingName);
 
     const query: Record<string, string | null> = {
-      ...(searchQuery ? { q: searchQuery } : {}),
+      ...(searchQuery ? { q: listingName ? listingName : searchQuery } : {}),
       ...(!coordinates || !address
         ? {}
         : {
@@ -456,7 +456,7 @@ const SearchLocation: React.FC<SearchLocationProps> = ({ apiKey }) => {
       if (inputType === "location" && suggestions.length > 0) {
         handleLocationSelect(suggestions[0]);
       } else if (inputType === "query") {
-        handleSearch();
+        handleSearch(null);
       }
     }
   };
@@ -619,7 +619,7 @@ const SearchLocation: React.FC<SearchLocationProps> = ({ apiKey }) => {
       </div>
 
       <button
-        onClick={handleSearch}
+        onClick={() => handleSearch(null)}
         className="absolute right-3 text-black top-1/2 transform -translate-y-1/2 z-10"
       >
         <IoIosSearch className="text-2xl text-white bg-black rounded-full p-1" />

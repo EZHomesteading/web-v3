@@ -37,7 +37,7 @@ export const useMapLogic = ({
     mapTypeControl: false,
     fullscreenControl: false,
     keyboardShortcuts: false,
-    clickableIcons: true,
+    clickableIcons: false,
     disableDefaultUI: true,
     maxZoom: 12,
     scrollwheel: true,

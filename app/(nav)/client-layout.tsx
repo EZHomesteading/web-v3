@@ -104,6 +104,7 @@ const LayoutClient = ({
   function getRouteStyles(): string {
     switch (baseRoute) {
       case "":
+        return "w-full md:pt-20 pt-2";
       case "get-ezh-app":
       case "checkout":
       case "info-modals":
@@ -145,7 +146,7 @@ const LayoutClient = ({
                 <Logo />
               </div>
               <div
-                className={`fixed h-20 lg:h-fit top-0 pt-2 lg:pt-0 lg:relative w-full bg-inherit px-2 bg-white`}
+                className={`fixed h-20 lg:h-fit  top-1 pt-2 lg:pt-0 w-full lg:w-[40%] bg-inherit px-2 bg-white mx-auto lg:absolute`}
               >
                 <FindListingsComponent apiKey={mk} />
               </div>

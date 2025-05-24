@@ -16,7 +16,7 @@ const CheckoutPage = async () => {
   const { baskets: basicBaskets } = await getActiveBaskets();
 
   if (!basicBaskets || basicBaskets.length === 0) {
-    redirect("/my-baskets");
+    redirect("/my-basket");
   }
 
   const detailedBasketsPromises = basicBaskets.map(async (basket) => {

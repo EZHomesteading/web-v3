@@ -17,16 +17,17 @@ import { formatPrice } from "@/utils/listing";
 
 const MarketGrid = ({ children }: { children: any }) => {
   return (
-    <div className="w-full px-4 mx-auto max-w-[1920px] z-content mb-20 ">
+    <div className="w-full px-2 mx-auto max-w-[2560px] z-content mb-20 ">
       <div
         className="
         pt-[6.5rem]
-        grid gap-6
+        grid gap-3
         grid-cols-1
         sm:grid-cols-2 
         md:grid-cols-3 
         lg:grid-cols-4 
-        xl:grid-cols-5"
+        xl:grid-cols-5
+        3xl:grid-cols-6"
       >
         {children}
       </div>
@@ -82,17 +83,17 @@ const MarketCard = ({
 
   const scores = calculateAvailabilityScores(locHours);
   return (
-    <div className={`relative`}>
+    <div className={`relative border-2 rounded-xl`}>
       <Link
         href={`/listings/${listing.id}${params && `?${params}`}`}
         prefetch={true}
         className="block w-full cursor-pointer group mx-auto !z-0"
       >
-        <div className="flex flex-col relative w-full z-0">
+        <div className="flex flex-col relative w-full p-1 z-0">
           <div className="relative overflow-hidden rounded-xl w-full z-0 aspect-square">
             <Carousel className="h-full w-full relative rounded-lg z-0">
               <CarouselContent className="h-full z-0">
-                {listing?.images?.map((src:string, index:number) => (
+                {listing?.images?.map((src: string, index: number) => (
                   <CarouselItem
                     key={index}
                     className="flex items-center justify-center relative aspect-square h-full"
@@ -112,7 +113,7 @@ const MarketCard = ({
               </CarouselContent>
               {listing?.images?.length > 1 && (
                 <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex space-x-2">
-                  {listing.images.map((_:string, index:number) => (
+                  {listing.images.map((_: string, index: number) => (
                     <div
                       key={index}
                       className="w-2 h-2 rounded-full bg-white opacity-90 hover:opacity-100 transition-opacity duration-200 cursor-pointer"
@@ -124,19 +125,18 @@ const MarketCard = ({
           </div>
           <div className={`mt-1 w-full ${OutfitFont.className}`}>
             <h3 className={`font-semibold`}>{listing.title}</h3>
-            <h2 className={`text-xs font-normal`}>
-              {listing.location.name}
-            </h2>
+            <h2 className={`text-xs font-normal`}>{listing.location.name}</h2>
             <p className={` text-xs font-light text-neutral-500`}>
-              {listing.location.address.state},{" "}
-              {listing.location.address.city}
+              {listing.location.address.state}, {listing.location.address.city}
             </p>
 
             <div className="flex items-center justify-between mt-2 w-full">
               <div className={`text-sm flex items-center gap-1`}>
-                <span className="font-semibold">{formatPrice(listing.price)}</span>
+                <span className="font-semibold">
+                  {formatPrice(listing.price)}
+                </span>
                 <span className="font-light">
-                  per {listing.unit ? listing.unit: "item"}
+                  per {listing.unit ? listing.unit : "item"}
                 </span>
               </div>
 
@@ -158,7 +158,7 @@ const MarketCard = ({
               ) : (
                 <AvailabilityScore scores={scores} type="pickup" />
               )}
-              {listing.location?.hours?.delivery?.length  === 0 ? (
+              {listing.location?.hours?.delivery?.length === 0 ? (
                 <div className="text-red-500 font-medium flex items-center text-xs">
                   <Clock size={14} className="mr-1" />{" "}
                   <span className="font-medium capitalize">

@@ -74,11 +74,14 @@ const Filters = ({ role }: Props) => {
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
               transition={{ duration: 0.3 }}
-              className={`fixed max-h-[450px] overflow-y-auto inset-y-28 inset-x-2 sm:inset-x-10 xl:inset-x-20  bg-white rounded-lg shadow-lg flex flex-col w-calc(100vw-2rem) sm:max-w-xl p-3  z-50 ${OutfitFont.className}`}
+              className={`fixed max-h-[400px] min-h-[200px] 4xl:min-h-[500px] 4xl:max-h-[500px] overflow-y-auto inset-y-28 inset-x-2 sm:inset-x-10 xl:inset-x-20  bg-white rounded-lg shadow-lg flex flex-col w-calc(100vw-2rem) sm:max-w-xl p-3  z-50 ${OutfitFont.className}`}
             >
               <div className="flex items-center justify-between">
-                <h2 className="text-3xl font-semibold">Filters</h2>
-                <XIcon onClick={() => setIsOpen(false)} />
+                <h2 className="text-3xl font-semibold ">Filters</h2>
+                <XIcon
+                  className="cursor-pointer"
+                  onClick={() => setIsOpen(false)}
+                />
               </div>
 
               {!role || role !== UserRole.CONSUMER ? (

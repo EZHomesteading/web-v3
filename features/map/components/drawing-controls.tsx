@@ -15,12 +15,12 @@ const DrawingControls = ({
   setShowProducers,
 }: DrawingControlsProps) => {
   return (
-    <div className="flex flex-col items-start justify-start">
+    <div className="flex flex-col items-center justify-between">
       <div className="flex items-center gap-x-2 text-md font-medium mb-2 whitespace-nowrap">
         <Switch
           checked={showCoops}
           onCheckedChange={setShowCoops}
-          className="w-8 h-4 ml-1"
+          className="w-8 h-4 mr-2"
         />
         <span>Co-ops</span>
       </div>
@@ -28,7 +28,7 @@ const DrawingControls = ({
         <Switch
           checked={showProducers}
           onCheckedChange={setShowProducers}
-          className="w-8 h-4 ml-1"
+          className="w-8 h-4 mr-2"
         />
         <span>Growers</span>
       </div>
