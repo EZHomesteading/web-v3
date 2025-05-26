@@ -68,7 +68,7 @@ const ShopPage = async ({
 
   basketItemIds = basketItems.items;
   listings = marketData.listings;
-
+  console.log(marketData);
   return (
     <MarketComponent
       listings={listings}

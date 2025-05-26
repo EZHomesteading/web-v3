@@ -1,10 +1,11 @@
-import { getUserStore } from "@/actions/getUser";
+import { getCurrentUser, getUserStore } from "@/actions/getUser";
 import { UserInfo } from "next-auth";
 import { auth } from "@/auth";
 import Avatar from "@/components/Avatar";
 import { OutfitFont } from "@/components/fonts";
 import { Bio } from "./bio";
 import Link from "next/link";
+
 import {
   Drawer,
   DrawerContent,
@@ -24,7 +25,7 @@ const StorePage = async ({ params }: StorePageProps) => {
   const { url } = params;
   const store = await getUserStore({ url: url });
   const session = await auth();
-
+  let user = await getCurrentUser();
   if (!store?.user?.locations) {
     return (
       <>
@@ -158,7 +159,9 @@ const StorePage = async ({ params }: StorePageProps) => {
               listing={listing}
               imageCount={index}
               key={index}
+              user={user as unknown as UserInfo}
               basketItemIds={basketItemIds}
+              params={""}
             />
           ))}
         </div>

@@ -39,7 +39,13 @@ const MarkerInfoWindow = ({
     >
       {/* Carousel Section */}
       <div className="w-80">
-        <Carousel className="w-full">
+        <Carousel
+          className="w-full"
+          opts={{
+            loop: true,
+            align: "start",
+          }}
+        >
           <CarouselContent className="rounded-t-md">
             {images.length > 0 ? (
               images.map((image, index) => (

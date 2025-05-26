@@ -30,6 +30,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { DeliveryPickupToggleMode } from "../../utils/helper-components-calendar";
 
 interface LocationStatus {
   isOpen: boolean;
@@ -53,6 +54,7 @@ interface RandomizedPositions {
   [key: string]: RandomizedPosition;
 }
 interface DateTimePickerProps {
+  locations: any[];
   selectedDate: string;
   selectedTime: string;
   onSelect: (date: string, time: string) => void;
@@ -72,6 +74,7 @@ interface AvailabilityMapProps {
 }
 
 const DateTimePicker: React.FC<DateTimePickerProps> = ({
+  locations,
   selectedDate,
   selectedTime,
   onSelect,
@@ -143,7 +146,41 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
       setStep("date");
     }
   };
+  // Add this utility function to collect closed dates from locations
+  const getClosedDates = (locations: any[]): Date[] => {
+    console.log(locations);
+    const closedDates = new Set<string>();
 
+    // Get the current date range we're interested in (e.g., next 60 days)
+    const today = new Date();
+    const maxDate = new Date();
+    maxDate.setDate(today.getDate() + 365); // Look ahead 60 days
+
+    // Generate all dates in our range
+    const allDates = new Set<string>();
+    for (let d = new Date(today); d <= maxDate; d.setDate(d.getDate() + 1)) {
+      allDates.add(d.toDateString());
+    }
+
+    locations.forEach((location) => {
+      const hours = location.hours?.pickup || [];
+
+      // Get all dates this location has hours for
+      const availableDates = new Set(
+        hours.map((day: any) => new Date(day.date).toDateString())
+      );
+
+      // Find dates in our range that this location doesn't have hours for
+      allDates.forEach((dateStr) => {
+        if (!availableDates.has(dateStr)) {
+          closedDates.add(dateStr);
+        }
+      });
+    });
+
+    // Convert back to Date objects
+    return Array.from(closedDates).map((dateStr) => new Date(dateStr));
+  };
   return (
     <AnimatePresence>
       {isOpen && (
@@ -212,7 +249,19 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
                       className="rounded-md border shadow"
                       disabled={(date) => {
                         const today = new Date();
-                        return date < new Date(today.setHours(0, 0, 0, 0));
+                        today.setHours(0, 0, 0, 0);
+
+                        // Block past dates
+                        if (date < today) {
+                          return true;
+                        }
+
+                        // Block dates when any store is closed
+                        const closedDates = getClosedDates(locations);
+                        return closedDates.some(
+                          (closedDate) =>
+                            closedDate.toDateString() === date.toDateString()
+                        );
                       }}
                     />
                   </div>
@@ -725,6 +774,7 @@ const AvailabilityMap: React.FC<AvailabilityMapProps> = ({
       </Card>
 
       <DateTimePicker
+        locations={locations}
         selectedDate={selectedDate}
         selectedTime={selectedTime}
         onSelect={handleDateTimeSelect}

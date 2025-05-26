@@ -91,7 +91,13 @@ const MarketCard = ({
       >
         <div className="flex flex-col relative w-full p-1 z-0">
           <div className="relative overflow-hidden rounded-xl w-full z-0 aspect-square">
-            <Carousel className="h-full w-full relative rounded-lg z-0">
+            <Carousel
+              className="h-full w-full relative rounded-lg z-0"
+              opts={{
+                loop: true,
+                align: "start",
+              }}
+            >
               <CarouselContent className="h-full z-0">
                 {listing?.images?.map((src: string, index: number) => (
                   <CarouselItem

@@ -40,6 +40,7 @@ const MarketCartToggle = ({
     addToBasket,
     isFirstItemInCart,
   } = useBasket({
+    stock: listing.stock,
     listingId: listing?.id,
     address: listing.location.id,
     user,
@@ -65,7 +66,7 @@ const MarketCartToggle = ({
     }
 
     try {
-      console.log("Toggling basket, current state:", { isInBasket });
+      // console.log("Toggling basket, current state:", { isInBasket });
       await toggleBasket(e, isInBasket, "ACTIVE");
     } catch (error) {
       Toast({ message: "Failed to update basket" });

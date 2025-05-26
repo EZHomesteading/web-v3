@@ -21,6 +21,7 @@ interface LocationHours {
 }
 
 interface BasketProps {
+  stock: any;
   listingId: string;
   address?: any;
   user?: any | null;
@@ -38,6 +39,7 @@ const getHoursForMethod = (
 };
 
 export const useBasket = ({
+  stock,
   listingId,
   address,
   user,
@@ -49,6 +51,7 @@ export const useBasket = ({
   const [isLoading, setIsLoading] = useState(false);
   const [quantity, setQuantity] = useState(initialQuantity);
   const [showWarning, setShowWarning] = useState(false);
+  console.log(stock);
   const [incompatibleDays, setIncompatibleDays] = useState<
     Array<{
       date: string;
@@ -73,7 +76,7 @@ export const useBasket = ({
   if (!hours?.pickup?.length && hours?.delivery?.length) {
     initialOrderMethod = orderMethod.DELIVERY;
   }
-  console.log(isSameSellerAsCart);
+  //log(isSameSellerAsCart);
   // Format time (minutes since midnight) to a user-friendly string
   const formatTimeString = (totalMinutes: number) => {
     const hours = Math.floor(totalMinutes / 60);
@@ -94,9 +97,9 @@ export const useBasket = ({
     if (!user?.id) return { basketHours: [], basketData: [] };
 
     try {
-      console.log("Fetching active baskets for user:", user.id);
+      //console.log("Fetching active baskets for user:", user.id);
       const response = await axios.get(`/api/baskets/active?userId=${user.id}`);
-      console.log("Active baskets:", response.data);
+      //console.log("Active baskets:", response.data);
 
       const basketHours = response.data
         .map((basket: any) => basket.location?.hours)
@@ -116,7 +119,7 @@ export const useBasket = ({
   const checkIfSameSeller = useCallback(
     async (address: any) => {
       if (!user?.id) return false;
-      console.log(address);
+
       try {
         // Get the current listing details to find the seller
 
@@ -127,13 +130,13 @@ export const useBasket = ({
         const hasSameSeller = basketData.some((basketItem: any) => {
           const itemSellerAdd = basketItem.location.id;
           const isSame = itemSellerAdd === address;
-          console.log(
-            `Comparing basket item seller ${itemSellerAdd} with current ${address}: ${isSame}`
-          );
+          // console.log(
+          //   `Comparing basket item seller ${itemSellerAdd} with current ${address}: ${isSame}`
+          // );
           return isSame;
         });
 
-        console.log("Has same seller in cart:", hasSameSeller);
+        // console.log("Has same seller in cart:", hasSameSeller);
         return hasSameSeller;
       } catch (error) {
         console.error("Error checking if same seller:", error);
@@ -193,9 +196,9 @@ export const useBasket = ({
         day.overlapHours >= COMPATIBILITY_THRESHOLD.MIN_OVERLAP_HOURS
     );
 
-    console.log(
-      `Compatibility check: ${highlyCompatibleDays.length} highly compatible days out of ${dateCompatibility.length}`
-    );
+    // console.log(
+    //   `Compatibility check: ${highlyCompatibleDays.length} highly compatible days out of ${dateCompatibility.length}`
+    // );
 
     // Return true if we have enough highly compatible days
     return (
@@ -409,15 +412,15 @@ export const useBasket = ({
     if (!user?.id) return true; // If no user, consider it first item
 
     try {
-      console.log("Checking if first item for user:", user.id);
+      // console.log("Checking if first item for user:", user.id);
       const { basketData } = await fetchActiveBaskets();
       const result = basketData.length === 0;
-      console.log(
-        "First item check result:",
-        result,
-        "Basket count:",
-        basketData.length
-      );
+      // console.log(
+      //   "First item check result:",
+      //   result,
+      //   "Basket count:",
+      //   basketData.length
+      // );
       return result;
     } catch (error) {
       console.error("Error checking if first item:", error);
@@ -449,38 +452,44 @@ export const useBasket = ({
         // Update states immediately
         setIsFirstItemInCart(isFirstItem);
         setIsSameSellerAsCart(isSameSeller);
-        console.log("First item:", isFirstItem, "Same seller:", isSameSeller);
-
-        // If it's the first item in cart, add directly without checking compatibility
+        //console.log("First item:", isFirstItem, "Same seller:", isSameSeller);
+        const compatibilityData = await checkHoursCompatibility();
+        //console.log("BEAN", compatibilityData);
+        setIncompatibleDays(compatibilityData);
+        if (newQuantity ? stock < newQuantity : stock < quantity) {
+          console.log("quantity too high for stock");
+          Toast({
+            message: `Not Enough Items In Stock`,
+          });
+          return;
+        }
         if (isFirstItem) {
-          console.log("Adding first item to cart without compatibility check");
-          await addToBasket(status);
-          onBasketUpdate(true);
+          // If it's the first item in cart, add directly without checking compatibility
+          // console.log("Showing user Hours for first item");
+          setShowWarning(true);
           return;
         }
 
         // If it's from the same seller, add directly without showing warning
         if (isSameSeller) {
-          console.log("Adding item from same seller without warning");
+          // console.log("Adding item from same seller without warning");
           await addToBasket(status);
           onBasketUpdate(true);
           return;
         }
 
         // For other cases, check hours compatibility
-        const compatibilityData = await checkHoursCompatibility();
-        setIncompatibleDays(compatibilityData);
 
         // Check if we have high compatibility - if so, skip warning and add directly
         if (hasHighCompatibility(compatibilityData)) {
-          console.log(
-            "High compatibility detected - adding to cart without warning"
-          );
+          //console.log(
+          //  "High compatibility detected - adding to cart without warning"
+          //);
           await addToBasket(status);
           onBasketUpdate(true);
         } else {
           // Otherwise show the warning modal
-          console.log("Low compatibility - showing warning modal");
+          // console.log("Low compatibility - showing warning modal");
           setShowWarning(true);
         }
       }

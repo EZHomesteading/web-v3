@@ -158,7 +158,11 @@ export default function PaymentComponent({
   );
 
   return (
-    <form id="payment-form" onSubmit={handleSubmit}>
+    <form
+      id="payment-form"
+      className="lg:fixed lg:w-[450px] xl:w-[550px] 3xl:w-[650px]"
+      onSubmit={handleSubmit}
+    >
       <div className="mb-4">
         <h3 className="text-lg font-medium mb-2">Complete Payment</h3>
         <p className="text-sm text-gray-600">

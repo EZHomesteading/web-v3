@@ -148,7 +148,7 @@ const GoogleMapComponent = ({
             }
             clusterer={clusterer}
             icon={{
-              url: "https://utfs.io/f/f3a25818-2570-45d5-bc4c-cabe3ce88fe9-ie3okn.png",
+              url: "https://ruhn2hhuu8.ufs.sh/f/UE11RVNWlVtTK2DsWbl2sdIpeJnkgZ3A4rjlRzymTaCWL87f",
               scaledSize: new window.google.maps.Size(40, 40),
               size: {
                 height: 40,
@@ -178,7 +178,7 @@ const GoogleMapComponent = ({
               )
             }
             icon={{
-              url: "https://utfs.io/f/ec4f6766-4c18-4752-a3b2-6030aed3cb33-os33pn.png",
+              url: "https://ruhn2hhuu8.ufs.sh/f/UE11RVNWlVtTjGRS8QPNciZUjS7xI6uGEtJ5W9fRX8mH2Qe4",
               scaledSize: new window.google.maps.Size(40, 40),
               anchor: new window.google.maps.Point(14, 14), // Centered anchor
             }}
