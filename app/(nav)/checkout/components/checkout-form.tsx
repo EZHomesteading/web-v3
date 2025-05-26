@@ -222,20 +222,24 @@ export default function CheckoutForm({
           <div className="mx-auto max-w-lg lg:max-w-none">
             <h2
               id="summary-heading"
-              className="text-lg font-medium text-gray-900"
+              className="text-lg font-medium text-gray-900 mb-6"
             >
               Order summary
             </h2>
 
-            <div className="space-y-8">
-              {baskets.map((basket) => (
-                <div key={basket.id} className="space-y-4">
-                  <div className="flex flex-col gap-2">
-                    <div className="flex items-baseline gap-4">
-                      <h3 className="text-base font-semibold">
+            <div className="space-y-6">
+              {baskets.map((basket, index) => (
+                <div
+                  key={basket.id}
+                  className="bg-white rounded-lg shadow-sm border border-gray-200 p-4"
+                >
+                  {/* Basket Header */}
+                  <div className="flex flex-col gap-2 mb-4 pb-3 border-b border-gray-100">
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-base font-semibold text-gray-900">
                         {basket.location.name || basket.location.user.name}
                       </h3>
-                      <span className="text-sm text-gray-600">
+                      <span className="text-sm font-medium text-gray-900 bg-gray-100 px-2 py-1 rounded">
                         $
                         {basket.items
                           .reduce(
@@ -249,49 +253,53 @@ export default function CheckoutForm({
 
                     <div className="text-sm text-gray-600">
                       {basket.orderMethod === "PICKUP" && basket.pickupDate ? (
-                        <div className="text-xs sm:text-sm">
-                          Pickup set for{" "}
-                          {formatDate(new Date(basket.pickupDate))}
+                        <div className="flex items-center gap-1 text-green-700 bg-green-50 px-2 py-1 rounded-md">
+                          Pickup: {formatDate(new Date(basket.pickupDate))}
                         </div>
                       ) : basket.orderMethod === "DELIVERY" &&
                         basket.deliveryDate ? (
-                        <div className="text-xs sm:text-sm">
-                          Delivery scheduled for{" "}
-                          {formatDate(new Date(basket.deliveryDate))}
+                        <div className="flex items-center gap-1 text-blue-700 bg-blue-50 px-2 py-1 rounded-md ">
+                          <span className="text-xs">🚚</span>
+                          Delivery: {formatDate(new Date(basket.deliveryDate))}
                         </div>
                       ) : (
-                        <div className="text-xs sm:text-sm text-yellow-600">
+                        <div className="flex items-center gap-1 text-yellow-700 bg-yellow-50 px-2 py-1 rounded-md ">
+                          <span className="text-xs">⏰</span>
                           No pickup/delivery time set
                         </div>
                       )}
                     </div>
                   </div>
 
-                  <ul className="divide-y divide-gray-100">
+                  {/* Basket Items */}
+                  <ul className="divide-y divide-gray-100 space-y-0">
                     {basket.items.map((item: any) => (
-                      <li key={item.listing.id} className="flex py-4 gap-4">
-                        <div className="h-20 w-20 flex-none relative">
+                      <li
+                        key={item.listing.id}
+                        className="flex py-3 gap-3 first:pt-0 last:pb-0"
+                      >
+                        <div className="h-16 w-16 flex-none relative">
                           <Image
                             src={item.listing.images[0]}
                             alt={item.listing.title}
                             fill
                             className="rounded-md object-cover"
-                            sizes="80px"
+                            sizes="64px"
                             priority={true}
                           />
                         </div>
-                        <div className="flex flex-1 flex-col">
-                          <div className="flex justify-between gap-4">
-                            <div>
-                              <h4 className="font-medium">
+                        <div className="flex flex-1 flex-col justify-center">
+                          <div className="flex justify-between items-start gap-4">
+                            <div className="min-w-0 flex-1">
+                              <h4 className="font-medium text-gray-900 text-sm leading-tight">
                                 {item.listing.title}
                               </h4>
-                              <p className="mt-1 text-sm text-gray-500">
+                              <p className="mt-1 text-xs text-gray-500">
                                 {item.quantity}{" "}
                                 {item.listing.unit || item.listing.subcateory}
                               </p>
                             </div>
-                            <p className="text-sm font-medium">
+                            <p className="text-sm font-medium text-gray-900 flex-shrink-0">
                               $
                               {(
                                 (item.quantity * item.listing.price) /
@@ -307,9 +315,14 @@ export default function CheckoutForm({
               ))}
             </div>
 
-            <div className="flex items-center justify-between border-t border-gray-200 pt-6">
-              <dt className="text-base">Total</dt>
-              <dd className="text-base">${formattedTotal}</dd>
+            {/* Total Section */}
+            <div className="mt-6 bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+              <div className="flex items-center justify-between">
+                <dt className="text-lg font-semibold text-gray-900">Total</dt>
+                <dd className="text-lg font-bold text-gray-900">
+                  ${formattedTotal}
+                </dd>
+              </div>
             </div>
           </div>
         </section>
@@ -329,16 +342,23 @@ export default function CheckoutForm({
                 />
               </Elements>
             ) : (
-              <div className={`${OutfitFont.className} text-center`}>
-                <p className="text-xl">
-                  Payment processing is being set up. Please wait...
-                </p>
+              <div
+                className={`${OutfitFont.className} text-center bg-white rounded-lg shadow-sm border border-gray-200 p-8`}
+              >
+                <div className="animate-pulse">
+                  <div className="w-8 h-8 bg-gray-200 rounded-full mx-auto mb-4"></div>
+                  <p className="text-lg text-gray-600">
+                    Setting up payment processing...
+                  </p>
+                  <p className="text-sm text-gray-500 mt-2">
+                    This will only take a moment
+                  </p>
+                </div>
               </div>
             )}
           </div>
         </div>
       </div>
-
       <MobilePriceSummary formattedTotal={formattedTotal} />
     </div>
   );

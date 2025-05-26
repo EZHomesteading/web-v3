@@ -15,6 +15,7 @@ import { useMapLogic } from "@/features/map/hooks/use-map-logic";
 import { useDrawingLogic } from "@/features/map/hooks/use-drawing-logic";
 import { useMarkerLogic } from "@/features/map/hooks/use-marker-logic";
 import { MapUser } from "@/features/map/types/map-types";
+import SVGComponent from "@/public/icons/barn";
 
 interface MapProps {
   coops: MapUser[];

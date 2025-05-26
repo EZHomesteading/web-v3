@@ -78,7 +78,7 @@ const HoursWarningModal = ({
   type: "pickup" | "delivery";
   isFirstItem: boolean;
 }) => {
-  console.log("Modal rendering with isFirstItem:", isFirstItem);
+  //console.log("Modal rendering with isFirstItem:", isFirstItem);
   const [isMobile, setIsMobile] = useState(false);
 
   // Detect mobile viewport on client-side
@@ -98,6 +98,7 @@ const HoursWarningModal = ({
   }, []);
 
   // Process the incompatible days to add time ranges if not already present
+  //console.log(incompatibleDays);
   const processedDays = calculateTimeRangeFromBasketData(incompatibleDays);
 
   // Responsive dialog content class
@@ -112,6 +113,7 @@ const HoursWarningModal = ({
 
   // First Item View - Show location hours
   if (isFirstItem) {
+    //console.log(processedDays);
     return (
       <Dialog open={isOpen} onOpenChange={onClose}>
         <DialogContent className={dialogContentClass}>

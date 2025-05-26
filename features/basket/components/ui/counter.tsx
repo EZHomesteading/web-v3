@@ -40,7 +40,9 @@ const SpCounter = ({ item, basketId }: QuantityProps) => {
 
   return (
     <div>
-      <div>Total Price: ${localQuantity * item.price}</div>
+      <div className="text-sm">
+        Total Price: ${(localQuantity * item.price) / 100}
+      </div>
       <div className="flex flex-row gap-x-2 min-w-fit border-[1px] items-center border-gray-500 shadow-md rounded-lg w-fit px-1 sm:mt-2">
         <button
           type="button"

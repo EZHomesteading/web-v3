@@ -107,6 +107,7 @@ const LayoutClient = ({
         return "w-full md:pt-20 pt-2";
       case "get-ezh-app":
       case "checkout":
+        return "w-full md:pt-20 pt-2";
       case "info-modals":
       case "checkmap":
         return "h-[calc(100vh-64px)] fixed overflow-hidden w-full  md:mt-20  overscroll-y-none";

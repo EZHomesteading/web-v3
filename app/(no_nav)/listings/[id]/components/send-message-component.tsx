@@ -39,6 +39,7 @@ const SendMessageComponent = ({
     addToBasket,
     isFirstItemInCart,
   } = useBasket({
+    stock: listing.stock,
     listingId: listing.id,
     address: listing.location.id,
     user,

@@ -31,12 +31,14 @@ const CheckoutPage = async () => {
   const userLoc = await getUserLocations({ userId: session.user.id });
 
   return (
-    <CheckoutForm
-      baskets={detailedBaskets}
-      userId={session.user.id}
-      userLoc={userLoc || null}
-      userEmail={session.user.email}
-    />
+    <div className="w-full gradient">
+      <CheckoutForm
+        baskets={detailedBaskets}
+        userId={session.user.id}
+        userLoc={userLoc || null}
+        userEmail={session.user.email}
+      />
+    </div>
   );
 };
 

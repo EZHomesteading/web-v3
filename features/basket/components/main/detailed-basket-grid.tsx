@@ -370,6 +370,7 @@ const DetailedBasketCard: React.FC<DetailedBasketCardProps> = ({
   pickupTimes,
 }) => {
   const over_768px = useMediaQuery("(min-width: 768px)");
+  const { basketTotals } = useBasket();
   const [errorType, setErrorType] = useState<
     "undecided" | "location" | "deliveryDate" | "pickupDate" | null
   >(null);
@@ -413,7 +414,7 @@ const DetailedBasketCard: React.FC<DetailedBasketCardProps> = ({
     return basket.items.reduce((sum: number, item: any) => {
       return sum + (item.listing.price / 100) * item.quantity;
     }, 0);
-  }, [basket.items]);
+  }, [basket.items, basketTotals]);
 
   const handleDeliveryPickupModeChange = (
     newMode: DeliveryPickupToggleMode
