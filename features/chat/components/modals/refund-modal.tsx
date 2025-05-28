@@ -105,8 +105,9 @@ const RefundModal: React.FC<ConfirmModalProps> = ({
           </Dialog.Title>
           <div className="mt-2">
             <p className="text-sm text-gray-500">
-              This will Refund the amount of ${orderAmount} to the buyer. Are
-              you sure you want to do this?
+              This will Refund the amount of $
+              {orderAmount ? orderAmount / 100 : "ERROR"} to the buyer. Are you
+              sure you want to do this?
             </p>
           </div>
         </div>

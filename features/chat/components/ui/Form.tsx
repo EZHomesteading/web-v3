@@ -51,6 +51,7 @@ const Form: React.FC<MessageFormProps> = ({ otherUsersId }) => {
         gap-2 
         lg:gap-4 
         w-full
+      
       "
     >
       <form

@@ -177,9 +177,7 @@ const Body: React.FC<BodyProps> = ({
         formattedPickupDate={formattedPickupDate}
         totalPrice={order?.totalPrice}
       />
-
-      <div className={`pb-12 sm:pb-0`}></div>
-
+      <div className={` pb-12 sm:pb-0`}></div>
       <MessageList
         messages={messages}
         adminMessages={adminMessages}
@@ -190,8 +188,8 @@ const Body: React.FC<BodyProps> = ({
         otherUser={otherUser}
         order={order}
       />
-
-      <div className="pt-24" ref={bottomRef} />
+      <div className="pt-48 md:pt-24" />
+      <div ref={bottomRef} />{" "}
     </div>
   );
 };

@@ -421,7 +421,7 @@ const MessageBox: React.FC<MessageBoxProps> = ({
       />
       {/* messages body starts here */}
       <div className={container}>
-        <div className="pt-2">
+        <div className="pt-2 ">
           <Avatar image={data.sender.image} />
         </div>
 
@@ -520,24 +520,27 @@ const MessageBox: React.FC<MessageBoxProps> = ({
       {/* MESSAGE OPTIONS START HERE */}
 
       {/* COOP receives order responce options */}
+      <div className="flex flex-col flex-grow items-start justify-end w-full">
+        <div className="fixed md:mb-0 mb-20 bottom-0 pb-[85px]  3xl:pb-[100px] 4xl:pb-[120px] bg-[#F1EFE7] w-full  4xl:max-w-[calc(100%-447px)] 3xl:max-w-[calc(100%-383px)] lg:max-w-[calc(100%-320px)]"></div>
+      </div>
       {isLast &&
       (data.messageOrder === "DISPUTED" ||
         data.messageOrder === "COMPLETED") ? (
         data.messageOrder === "COMPLETED" ? (
           <Button
-            variant={"secondary"}
-            className={`fixed bottom-5 right-5 flex items-center gap-2 transition-all duration-300
-    
-      hover:scale-105
-      focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75`}
+            variant={"tertiary"}
+            className={`fixed bottom-24 md:bottom-5 left-5 flex items-center gap-2 transition-all duration-300
+            4xl:ml-[447px] 3xl:ml-[383px] lg:ml-[320px]
+     
+      bg-white`}
           >
             <>
               <span className="text-lg">Order Complete</span>
             </>
           </Button>
         ) : (
-          <div className="flex flex-col flex-grow items-end justify-end w-full">
-            <div className="fixed md:mb-0 mb-20 bottom-0 pb-[20px] bg-[#F1EFE7] w-full lg:max-w-[calc(100%-320px)]">
+          <div className="flex flex-col flex-grow items-start justify-end w-full">
+            <div className="fixed md:mb-0 mb-20 bottom-0 pb-[20px] bg-[#F1EFE7] w-full  4xl:max-w-[calc(100%-447px)] 3xl:max-w-[calc(100%-383px)] lg:max-w-[calc(100%-320px)]">
               <Form otherUsersId={otherUsersId} />
             </div>
           </div>
@@ -560,8 +563,8 @@ const MessageBox: React.FC<MessageBoxProps> = ({
                     ? "default"
                     : "secondary"
                 }
-                className={`fixed mb-20 md:mb-0 bottom-5 right-5 flex items-center gap-2 transition-all duration-300
-           
+                className={`fixed mb-20 md:mb-0 bottom-5 left-5 flex items-center gap-2 transition-all duration-300
+                4xl:ml-[447px] 3xl:ml-[383px] lg:ml-[320px]
             hover:scale-105
             focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75`}
                 style={
@@ -595,7 +598,7 @@ const MessageBox: React.FC<MessageBoxProps> = ({
               </Button>
             </PopoverTrigger>
             <PopoverContent
-              className={`${OutfitFont.className} rounded-t-md w-[300px] p-0`}
+              className={`${OutfitFont.className} rounded-t-md translate-x-8 lg:translate-x-14 3xl:translate-x-16 w-[300px] 3xl:w-[400px] 4xl:w-[450px]  p-0`}
             >
               <div>
                 <h3
