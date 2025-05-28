@@ -119,7 +119,7 @@ export default function CheckoutForm({
         for (const basket of baskets) {
           const basketTotal = basket.items.reduce(
             (sum: number, item: any) =>
-              sum + (item.listing.price / 100) * item.quantity * 100,
+              sum + item.listing.price * item.quantity,
             0
           );
 
@@ -135,7 +135,7 @@ export default function CheckoutForm({
 
           const seller = await sellerResponse.json();
           const sellerStripeID = seller?.data.stripeAccountId;
-          console.log("POR QUES", basket.id);
+          console.log("POR QUES", basketTotal);
           const response = await axios.post(
             "/api/stripe/create-payment-intent",
             {

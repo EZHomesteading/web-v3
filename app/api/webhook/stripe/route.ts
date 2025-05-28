@@ -73,7 +73,7 @@ async function handleBasketProcessing(
   // Use a transaction to ensure data consistency
   const order = await prisma.$transaction(async (tx) => {
     const totalPrice = basket.items.reduce(
-      (acc, item) => acc + item.quantity * item.price * 100,
+      (acc, item) => acc + item.quantity * item.price,
       0
     );
 

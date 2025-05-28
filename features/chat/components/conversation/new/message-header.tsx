@@ -14,7 +14,7 @@ export const MessageHeader: React.FC<MessageHeaderProps> = ({
   totalPrice = 0,
 }) => {
   return (
-    <div className="fixed w-full sm:mt-[-64px] md:mt-[-50px] xl:mt-[-3rem]  lg:max-w-[calc(100%-320px)]">
+    <div className="fixed w-full z-10 sm:mt-[-64px] md:mt-[-50px] xl:mt-[-3rem]  lg:max-w-[calc(100%-320px)]">
       <div
         className={`${outfit.className} h-12  z-[10] bg-[#F1EFE7]  
         flex 

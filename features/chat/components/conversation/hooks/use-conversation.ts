@@ -39,6 +39,9 @@ export const useConversation = (
 
         handleNewMessage(message);
         bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+        setTimeout(() => {
+          window.scrollBy({ top: 100, behavior: "smooth" });
+        }, 800);
       } catch (error) {
         console.error("Error handling new message:", error);
       }
