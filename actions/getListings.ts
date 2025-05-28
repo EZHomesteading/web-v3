@@ -167,7 +167,13 @@ export async function getUnique(params: { id?: string }) {
           },
         },
         location: {
-          select: { id: true, hours: true, address: true, coordinates: true },
+          select: {
+            id: true,
+            hours: true,
+            address: true,
+            coordinates: true,
+            userId: true,
+          },
         },
       },
     });

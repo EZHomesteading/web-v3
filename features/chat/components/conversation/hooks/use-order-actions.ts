@@ -90,7 +90,11 @@ export const useOrderActions = (
   useEffect(() => {
     if (!lastMessage) return;
 
-    if (lastMessage.messageOrder === "COMPLETED") {
+    if (
+      lastMessage.messageOrder === "COMPLETED" ||
+      lastMessage.messageOrder === "REFUNDED" ||
+      lastMessage.messageOrder === "CANCELLED"
+    ) {
       setReview(true);
       setConfirm(true);
       setRefund(false);

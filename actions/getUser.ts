@@ -439,6 +439,7 @@ const getUserStore = async (params: IStoreParams): Promise<any | null> => {
             unit: true,
             location: {
               select: {
+                userId: true,
                 address: true,
                 hours: true,
               },

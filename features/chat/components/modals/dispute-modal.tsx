@@ -38,6 +38,7 @@ import axios from "axios";
 
 import { BsBucket } from "react-icons/bs";
 import { ChatUser } from "chat-types";
+import { toast } from "sonner";
 
 interface p {
   user?: ChatUser;
@@ -62,6 +63,10 @@ const DisputeModal = ({
   const [phone, setPhone] = useState(user?.phone || "");
   const [email, setEmail] = useState(user?.email || "");
   const handleSubmit = async () => {
+    // if (!image) {
+    //   toast("Please upload an image to dispute this order.");
+    //   return;
+    // }
     const data = {
       userId: user?.id,
       orderId: orderId,
@@ -78,12 +83,14 @@ const DisputeModal = ({
         orderId: orderId,
         status: "DISPUTED",
       });
-      await axios.post("/api/chat/messages", {
-        message: `${data.images[0]}`,
-        messageOrder: "IMG",
-        conversationId: conversationId,
-        otherUserId: otherUserId,
-      });
+      if (image) {
+        await axios.post("/api/chat/messages", {
+          message: `${data.images[0]}`,
+          messageOrder: "IMG",
+          conversationId: conversationId,
+          otherUserId: otherUserId,
+        });
+      }
       await axios.post("/api/chat/messages", {
         message: `I am disputing this order because: ${data.explanation}`,
         messageOrder: "DISPUTED",

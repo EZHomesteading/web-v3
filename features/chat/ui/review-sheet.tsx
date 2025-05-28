@@ -40,7 +40,6 @@ const SheetOverlayC = React.forwardRef<
     ref={ref}
   />
 ));
-SheetOverlayC.name = SheetPrimitive.Overlay.name;
 
 const sheetVariants = cva(
   "fixed z-50 gap-4 bg-background py-6 shadow-lg transition ease-in-out data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:duration-300 data-[state=open]:duration-500",
@@ -110,11 +109,7 @@ const SheetContentF = React.forwardRef<
         reviewerId: reviewerId,
         buyer: buyer,
       });
-      axios.post("/api/useractions/update/update-order", {
-        orderId: orderId,
-        status: 19,
-        completedAt: new Date(),
-      });
+
       closeSheet();
     };
 
@@ -135,12 +130,15 @@ const SheetContentF = React.forwardRef<
           className={cn(sheetVariants({ side }), className)}
           {...props}
         >
-          <div className="rounded-lg p-2 mx-2 cursor-pointer w-5/6 sm:w-2/3 lg:w-1/3 2xl:w-1/6 h-fit flex flex-col items-center opacity-100 bg-slate-300">
-            <div className={`${outfit.className} text-2xl`}>Leave a Review</div>
+          <div className="rounded-lg p-2 mx-2 cursor-pointer w-5/6 sm:w-2/3 lg:w-1/3  h-fit flex flex-col items-center opacity-100 bg-slate-300">
+            <div className={`${outfit.className} text-2xl `}>
+              Leave a Review
+            </div>
+
             <div>
               <ReactStars
                 count={5}
-                size={24}
+                size={60}
                 color2={"#ffd700"}
                 value={rating}
                 onChange={handleRatingChange}
@@ -148,6 +146,7 @@ const SheetContentF = React.forwardRef<
                 edit={true}
               />
             </div>
+
             <Textarea
               className={`${zilla.className} w-full h-[300px] m-2 resize-none p-2 text-[1rem]`}
               value={text}
@@ -171,7 +170,6 @@ const SheetContentF = React.forwardRef<
     );
   }
 );
-SheetContentF.name = SheetPrimitive.Content.name;
 
 export {
   SheetCartC,
