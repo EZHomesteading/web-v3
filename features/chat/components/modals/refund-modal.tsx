@@ -51,7 +51,9 @@ const RefundModal: React.FC<ConfirmModalProps> = ({
     });
     axios
       .post("/api/chat/messages", {
-        message: `I have Refunded you the full amount of $${orderAmount}, this order is marked as cancelled. Feel free to Delete this chat.`,
+        message: `I have Refunded you the full amount of $${
+          orderAmount ? orderAmount / 100 : "ERROR"
+        }, this order is marked as cancelled. Feel free to Delete this chat.`,
         messageOrder: "REFUNDED",
         conversationId: conversationId,
         otherUserId: otherUserId,

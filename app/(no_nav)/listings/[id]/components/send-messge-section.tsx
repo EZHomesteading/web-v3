@@ -47,6 +47,7 @@ const SendMessageSection = ({
     updateQuantity,
     isFirstItemInCart,
   } = useBasket({
+    sellerId: listing.location.userId,
     stock: listing.stock,
     listingId: listing.id,
     address: listing.location.id,

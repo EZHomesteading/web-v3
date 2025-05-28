@@ -40,6 +40,7 @@ const MarketCartToggle = ({
     addToBasket,
     isFirstItemInCart,
   } = useBasket({
+    sellerId: listing.location.userId,
     stock: listing.stock,
     listingId: listing?.id,
     address: listing.location.id,
@@ -48,6 +49,7 @@ const MarketCartToggle = ({
     hours: listing?.location?.hours,
     onBasketUpdate: onBasketUpdate,
   });
+  console.log(listing.location.userId, listing.location.userId, user?.id);
   const handleConfirmAddToBasket = async () => {
     await addToBasket("ACTIVE"); // or pass correct status if needed
     setShowWarning(false);

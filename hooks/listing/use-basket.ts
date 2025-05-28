@@ -22,6 +22,7 @@ interface LocationHours {
 }
 
 interface BasketProps {
+  sellerId: string;
   stock: any;
   listingId: string;
   address?: any;
@@ -42,6 +43,7 @@ const getHoursForMethod = (
 export const useBasket = ({
   stock,
   listingId,
+  sellerId,
   address,
   user,
   initialQuantity = 1,
@@ -407,32 +409,7 @@ export const useBasket = ({
       setIsLoading(false);
     }
   };
-  const checkIfOwnListing = useCallback(async () => {
-    if (!user?.id) return false;
 
-    try {
-      // Get the current listing details to find the seller
-
-      // Get items already in cart
-      const { basketData } = await fetchActiveBaskets();
-
-      // Check if any item in the cart is from the same seller
-      const hasSameSeller = basketData.some((basketItem: any) => {
-        const itemSellerAdd = basketItem.user.id;
-        const isSame = itemSellerAdd === user?.id;
-        // console.log(
-        //   `Comparing basket item seller ${itemSellerAdd} with current ${address}: ${isSame}`
-        // );
-        return isSame;
-      });
-
-      // console.log("Has same seller in cart:", hasSameSeller);
-      return hasSameSeller;
-    } catch (error) {
-      console.error("Error checking if same seller:", error);
-      return false;
-    }
-  }, [user?.id, fetchActiveBaskets]);
   // Check if this would be the first item during hours check
   const checkIsFirstItem = useCallback(async () => {
     if (!user?.id) return true; // If no user, consider it first item
@@ -474,7 +451,9 @@ export const useBasket = ({
         // IMPORTANT: Check if first item or from same seller
         const isFirstItem = await checkIsFirstItem();
         const isSameSeller = await checkIfSameSeller(address);
-        const isOwn = await checkIfOwnListing();
+        const isOwn = sellerId === user?.id;
+        console.log(sellerId, user?.id);
+        console.log(isOwn);
         // Update states immediately
         setIsFirstItemInCart(isFirstItem);
         setIsSameSellerAsCart(isSameSeller);

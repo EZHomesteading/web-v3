@@ -53,6 +53,7 @@ export async function GET(req: NextRequest) {
             image: true,
             user: {
               select: {
+                id: true,
                 name: true,
                 image: true,
               },
