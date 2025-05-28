@@ -58,7 +58,7 @@ export async function POST(request: Request) {
         basketId: basketGroup.id,
         userId: user?.id,
         listingId,
-        quantity,
+        quantity: parseInt(quantity),
         price: listing.price,
       },
       select: {

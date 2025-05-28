@@ -88,10 +88,10 @@ export default function PaymentComponent({
 
       // If there's only one payment, wait 10 seconds then redirect
       if (paymentIntents.length === 1) {
-        setMessage("Payment successful! Redirecting you in 10 seconds...");
+        setMessage("Payment successful! Redirecting you in 5 seconds...");
         setTimeout(() => {
           window.location.href = `${window.location.origin}/`;
-        }, 10000);
+        }, 5000);
         return;
       }
 
@@ -177,6 +177,10 @@ export default function PaymentComponent({
       >
         {isLoading ? "Processing..." : "Pay Now"}
       </Button>
+      <div className="text-center mt-2 bg-green-200 rounded-sm ">
+        Purchasing these items will automaticall send messages to the sellers
+        informing them of the items you have purchased.
+      </div>
       {message && (
         <div
           id="payment-message"

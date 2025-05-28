@@ -2,7 +2,7 @@
 import { useBasket } from "@/hooks/listing/use-basket";
 import Toast from "../../../components/ui/toast";
 import Link from "next/link";
-import { PiBasketThin } from "react-icons/pi";
+import { PiBasketThin, PiPlus } from "react-icons/pi";
 import HoursWarningModal from "../components/modals/cart-hours-warning";
 
 interface User {
@@ -48,15 +48,22 @@ const MarketCartToggle = ({
     hours: listing?.location?.hours,
     onBasketUpdate: onBasketUpdate,
   });
-
+  const handleConfirmAddToBasket = async () => {
+    await addToBasket("ACTIVE"); // or pass correct status if needed
+    setShowWarning(false);
+    onBasketUpdate(true);
+  };
   const handleToggleBasket = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+
     if (!user) {
       Toast({
         message: "Please sign in to add items to your basket",
         details: (
           <Link
-            href={`/auth/login?callbackUrl=/listings/${listing?.id}`} // Fixed potential typo: listing?.Id -> listing?.id
-            className={`text-sky-400 underline font-light`}
+            href={`/auth/login?callbackUrl=/listings/${listing?.id}`}
+            className="text-sky-400 underline font-light"
           >
             Sign in here
           </Link>
@@ -66,7 +73,6 @@ const MarketCartToggle = ({
     }
 
     try {
-      // console.log("Toggling basket, current state:", { isInBasket });
       await toggleBasket(e, isInBasket, "ACTIVE");
     } catch (error) {
       Toast({ message: "Failed to update basket" });
@@ -75,34 +81,38 @@ const MarketCartToggle = ({
 
   return (
     <>
-      <div className={`absolute top-3 right-3`}>
-        <button
-          disabled={isLoading}
-          onClick={handleToggleBasket}
-          className={`w-8 rounded-full aspect-square h-8 border flex items-center justify-center shadow-xl ${
-            isInBasket ? "bg-red-400 hover:bg-red-500" : "bg-black/30"
-          }`}
-        >
-          <PiBasketThin
-            className="text-white"
-            size={20}
-            style={{
-              filter: "drop-shadow(10px 10px 5px black)",
-              strokeWidth: 1.5,
-            }}
-          />
-        </button>
-      </div>
+      <button
+        disabled={isLoading}
+        onClick={handleToggleBasket}
+        className={`w-14 h-8 aspect-square rounded-full border flex items-center justify-center
+    ${isInBasket ? "bg-red-400 hover:bg-red-500" : "bg-black/30"}
+    relative pointer-events-auto`}
+      >
+        {" "}
+        <PiPlus
+          className="text-white"
+          size={20}
+          style={{
+            filter: "drop-shadow(10px 10px 5px black)",
+            strokeWidth: 1.5,
+          }}
+        />
+        <PiBasketThin
+          className="text-white"
+          size={20}
+          style={{
+            filter: "drop-shadow(10px 10px 5px black)",
+            strokeWidth: 1.5,
+          }}
+        />
+      </button>
 
       {/* Only render modal when showWarning is true for better state management */}
       {showWarning && (
         <HoursWarningModal
           isOpen={showWarning}
           onClose={() => setShowWarning(false)}
-          onConfirm={() => {
-            setShowWarning(false);
-            addToBasket("ACTIVE");
-          }}
+          onConfirm={handleConfirmAddToBasket}
           incompatibleDays={incompatibleDays}
           type={
             listing?.location?.hours?.pickup?.length > 0 ? "pickup" : "delivery"

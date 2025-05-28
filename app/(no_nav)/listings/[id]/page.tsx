@@ -51,10 +51,10 @@ export default async function ListingPage({
 
   // Use the function in your code
   // const marketCallback = searchParams && createSearchParamsString(searchParams)
-
+  const paramss = await params;
   const session = await auth();
   try {
-    const listing = await getUnique({ id: params.id });
+    const listing = await getUnique({ id: paramss.id });
     const ratingMeanings: { [key: number]: string } = {
       1: "Not Genetically Modified",
       2: "No Inorganic Fertilizers",
@@ -86,7 +86,7 @@ export default async function ListingPage({
     if (session?.user?.id) {
       try {
         const response = await fetch(
-          `${process.env.API_URL}/get-many?collection=BasketItem&key=userId&value=${session.user.id}&fields=listingId,id`
+          `${process.env.API_URL}/get-many?collection=BasketItem&key=userId&value=${session.user.id}&fields=listingId,id,quantity`
         );
 
         const data = await response.json();
@@ -95,7 +95,6 @@ export default async function ListingPage({
         console.error("Error fetching basket items:", error);
       }
     }
-    console.log(listing);
 
     return (
       <>
@@ -157,7 +156,11 @@ export default async function ListingPage({
                   href={`/store/${listing.user.url}`}
                 >
                   <Avatar
-                    image={listing.location?.image || listing.user.image}
+                    image={
+                      listing.location?.image ||
+                      listing.user.image ||
+                      "/images/website-images/placeholder.jpg"
+                    }
                     h="12"
                     h2="16"
                   />
@@ -213,6 +216,14 @@ export default async function ListingPage({
             </div>
             <div className={`col-span-1 lg:col-span-2 relative`}>
               <SendMessageComponent
+                basketQuantity={
+                  basketItemIds &&
+                  basketItemIds.map((basketItem: any) => {
+                    if (basketItem.listingId === listing?.id) {
+                      return basketItem.quantity;
+                    }
+                  })
+                }
                 listing={listing}
                 user={session?.user}
                 isInitiallyInBasket={

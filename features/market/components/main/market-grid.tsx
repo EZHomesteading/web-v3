@@ -20,7 +20,7 @@ const MarketGrid = ({ children }: { children: any }) => {
     <div className="w-full px-2 mx-auto max-w-[2560px] z-content mb-20 ">
       <div
         className="
-        pt-[6.5rem]
+        pt-[4.5rem] lg:pt-[5.5rem]
         grid gap-3
         grid-cols-1
         sm:grid-cols-2 
@@ -84,12 +84,12 @@ const MarketCard = ({
   const scores = calculateAvailabilityScores(locHours);
   return (
     <div className={`relative border-2 rounded-xl`}>
-      <Link
-        href={`/listings/${listing.id}${params && `?${params}`}`}
-        prefetch={true}
-        className="block w-full cursor-pointer group mx-auto !z-0"
-      >
-        <div className="flex flex-col relative w-full p-1 z-0">
+      <div className="flex flex-col relative w-full p-1 z-0">
+        <Link
+          href={`/listings/${listing.id}${params && `?${params}`}`}
+          prefetch={true}
+          className="block w-full cursor-pointer group mx-auto !z-0"
+        >
           <div className="relative overflow-hidden rounded-xl w-full z-0 aspect-square">
             <Carousel
               className="h-full w-full relative rounded-lg z-0"
@@ -128,9 +128,34 @@ const MarketCard = ({
                 </div>
               )}
             </Carousel>
+          </div>{" "}
+        </Link>
+        <div className={`mt-1 w-full ${OutfitFont.className}`}>
+          <div className="flex flew-row justify-between">
+            {" "}
+            <Link
+              href={`/listings/${listing.id}${params && `?${params}`}`}
+              prefetch={true}
+              className="block w-full cursor-pointer group mx-auto !z-0"
+            >
+              <h3 className={`font-semibold`}>{listing.title}</h3>{" "}
+            </Link>
+            <div className="pointer-events-none">
+              <ClientBasketButton
+                listing={listing}
+                user={user}
+                isInitiallyInBasket={
+                  basketItemIds &&
+                  basketItemIds.some((item) => item?.listingId === listing.id)
+                }
+              />
+            </div>
           </div>
-          <div className={`mt-1 w-full ${OutfitFont.className}`}>
-            <h3 className={`font-semibold`}>{listing.title}</h3>
+          <Link
+            href={`/listings/${listing.id}${params && `?${params}`}`}
+            prefetch={true}
+            className="block w-full cursor-pointer group mx-auto !z-0"
+          >
             <h2 className={`text-xs font-normal`}>{listing.location.name}</h2>
             <p className={` text-xs font-light text-neutral-500`}>
               {listing.location.address.state}, {listing.location.address.city}
@@ -175,17 +200,9 @@ const MarketCard = ({
                 <AvailabilityScore scores={scores} type="delivery" />
               )}
             </div>
-          </div>
+          </Link>
         </div>
-      </Link>
-      <ClientBasketButton
-        listing={listing}
-        user={user}
-        isInitiallyInBasket={
-          basketItemIds &&
-          basketItemIds.some((item) => item?.listingId === listing.id)
-        }
-      />
+      </div>
     </div>
   );
 };

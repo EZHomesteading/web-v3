@@ -6,6 +6,8 @@ import { RiUserFollowLine } from "react-icons/ri";
 import { RiUserUnfollowLine } from "react-icons/ri";
 import { toast } from "sonner";
 import { OutfitFont } from "@/components/fonts";
+import Toast from "@/components/ui/toast";
+import Link from "next/link";
 
 interface FollowButtonProps {
   followUserId: string;
@@ -38,9 +40,19 @@ const FollowButton = ({ followUserId, following }: FollowButtonProps) => {
     checkStringMatch(followUserId, following.follows) === false
   ) {
     const handleFollow = async () => {
-      if (following?.userId === null) {
-        const callbackUrl = encodeURIComponent(window.location.href);
-        router.push(`/auth/login?callbackUrl=${callbackUrl}`);
+      console.log(following);
+      if (following?.userId === null || following === undefined) {
+        Toast({
+          message: "Please sign in to add items to your basket",
+          details: (
+            <Link
+              href={`/auth/login?callbackUrl=${window.location}`} // Fixed potential typo: listing?.Id -> listing?.id
+              className={`text-sky-400 underline font-light`}
+            >
+              Sign in here
+            </Link>
+          ),
+        });
         return;
       } else if (following?.userId === followUserId) {
         toast.error("Can't follow yourself.");
