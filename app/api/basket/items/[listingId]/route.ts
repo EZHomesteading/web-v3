@@ -23,40 +23,36 @@ export async function DELETE(
       return new NextResponse("Item ID is required", { status: 400 });
     }
 
-    const basketItem = await prisma.basketItem.findFirst({
+    const basket = await prisma.basket.findFirst({
       where: {
-        listingId: listingId,
-        basket: {
-          userId: user.id,
-        },
+        userId: user.id,
       },
       select: {
         id: true,
-        basketId: true,
       },
     });
 
-    if (!basketItem) {
-      return new NextResponse("Item not found", { status: 404 });
+    if (!basket) {
+      return new NextResponse("Basket not found", { status: 404 });
     }
 
     await prisma.$transaction(async (tx) => {
+      // Delete the basket item
       await tx.basketItem.deleteMany({
         where: {
           listingId,
-          basket: {
-            userId: user.id,
-          },
+          basketId: basket.id,
         },
       });
 
+      // Check remaining items
       const remainingCount = await tx.basketItem.count({
-        where: { basketId: basketItem.basketId },
+        where: { basketId: basket.id },
       });
 
       if (remainingCount === 0) {
         await tx.basket.delete({
-          where: { id: basketItem.basketId },
+          where: { id: basket.id },
         });
       }
     });

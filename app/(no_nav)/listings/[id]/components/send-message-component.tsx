@@ -19,17 +19,18 @@ interface SendMessageComponentProps {
   listing: any;
   user?: UserInfo;
   isInitiallyInBasket: boolean;
+  basketQuantity: number;
 }
 
 const SendMessageComponent = ({
   user,
   listing,
   isInitiallyInBasket,
+  basketQuantity,
 }: SendMessageComponentProps) => {
   const over_640px = useMediaQuery("(min-width: 640px)");
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isInBasket, setIsInBasket] = useState(isInitiallyInBasket);
-
   const {
     isLoading,
     toggleBasket,
@@ -78,6 +79,7 @@ const SendMessageComponent = ({
     <>
       {over_640px ? (
         <SendMessageSection
+          basketQuantity={basketQuantity}
           listing={listing}
           user={user}
           onBasketUpdate={(newIsInBasket: boolean) =>
@@ -118,6 +120,7 @@ const SendMessageComponent = ({
             className={`rounded-t-xl px-2 h-[90vh] ${OutfitFont.className}`}
           >
             <SendMessageSection
+              basketQuantity={basketQuantity}
               listing={listing}
               user={user}
               onBasketUpdate={(newIsInBasket: boolean) =>

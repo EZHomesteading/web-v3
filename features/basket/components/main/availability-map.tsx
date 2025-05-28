@@ -151,10 +151,9 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
     console.log(locations);
     const closedDates = new Set<string>();
 
-    // Get the current date range we're interested in (e.g., next 60 days)
     const today = new Date();
     const maxDate = new Date();
-    maxDate.setDate(today.getDate() + 365); // Look ahead 60 days
+    maxDate.setDate(today.getDate() + 365); // Look ahead 365 days
 
     // Generate all dates in our range
     const allDates = new Set<string>();

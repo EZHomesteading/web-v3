@@ -156,6 +156,7 @@ const HoursWarningModal = ({
               ))}
             </ul>
           </div>
+
           <DialogFooter
             className={`${
               isMobile ? "mt-auto pt-4 border-t" : ""
@@ -163,12 +164,24 @@ const HoursWarningModal = ({
           >
             <Button
               variant="outline"
-              onClick={onClose}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                onClose();
+              }}
               className={isMobile ? "flex-1" : ""}
             >
               Cancel
             </Button>
-            <Button onClick={onConfirm} className={isMobile ? "flex-1" : ""}>
+            <Button
+              type="button"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                onConfirm();
+              }}
+              className={isMobile ? "flex-1" : ""}
+            >
               <ShoppingCart className="mr-2 h-4 w-4" />
               Add to Basket
             </Button>

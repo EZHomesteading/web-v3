@@ -16,7 +16,9 @@ const Shop = ({ params, listings, user, basketItemIds }: ShopProps) => {
   let imageCount = 0;
   return (
     <>
-      <div className={`sticky top-20 w-full border-b pb-2 bg-white z-content`}>
+      <div
+        className={`sticky top-16 lg:top-20 w-full border-b pb-2 bg-white z-content`}
+      >
         <Categories />
       </div>
       {!listings ? (

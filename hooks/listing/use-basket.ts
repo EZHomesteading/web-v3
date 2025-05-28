@@ -3,6 +3,7 @@ import { useCallback, useState, useEffect } from "react";
 import axios from "axios";
 import { orderMethod } from "@prisma/client";
 import Toast from "@/components/ui/toast";
+import { toast } from "sonner";
 
 interface TimeSlot {
   open: number;
@@ -406,7 +407,32 @@ export const useBasket = ({
       setIsLoading(false);
     }
   };
+  const checkIfOwnListing = useCallback(async () => {
+    if (!user?.id) return false;
 
+    try {
+      // Get the current listing details to find the seller
+
+      // Get items already in cart
+      const { basketData } = await fetchActiveBaskets();
+
+      // Check if any item in the cart is from the same seller
+      const hasSameSeller = basketData.some((basketItem: any) => {
+        const itemSellerAdd = basketItem.user.id;
+        const isSame = itemSellerAdd === user?.id;
+        // console.log(
+        //   `Comparing basket item seller ${itemSellerAdd} with current ${address}: ${isSame}`
+        // );
+        return isSame;
+      });
+
+      // console.log("Has same seller in cart:", hasSameSeller);
+      return hasSameSeller;
+    } catch (error) {
+      console.error("Error checking if same seller:", error);
+      return false;
+    }
+  }, [user?.id, fetchActiveBaskets]);
   // Check if this would be the first item during hours check
   const checkIsFirstItem = useCallback(async () => {
     if (!user?.id) return true; // If no user, consider it first item
@@ -448,7 +474,7 @@ export const useBasket = ({
         // IMPORTANT: Check if first item or from same seller
         const isFirstItem = await checkIsFirstItem();
         const isSameSeller = await checkIfSameSeller(address);
-
+        const isOwn = await checkIfOwnListing();
         // Update states immediately
         setIsFirstItemInCart(isFirstItem);
         setIsSameSellerAsCart(isSameSeller);
@@ -461,6 +487,11 @@ export const useBasket = ({
           Toast({
             message: `Not Enough Items In Stock`,
           });
+          return;
+        }
+        if (isOwn) {
+          // console.log("Adding item from same seller without warning");
+          toast("Can't add own listing to cart");
           return;
         }
         if (isFirstItem) {

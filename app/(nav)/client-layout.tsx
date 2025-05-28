@@ -138,7 +138,7 @@ const LayoutClient = ({
         <>
           {" "}
           <div
-            className={`fixed bottom-0 left-0 right-0 lg:top-0 border-t lg:border-t-none border-custom p-2 z-1 w-screen h-20 bg-white z-navigation ${OutfitFont.className}`}
+            className={`fixed bottom-0 left-0 right-0 lg:top-0 border-t lg:border-t-none border-custom  z-1 w-screen h-20 bg-white z-navigation ${OutfitFont.className}`}
           >
             <div
               className={`flex items-center justify-evenly lg:justify-between w-full px-4 h-fit`}
@@ -147,7 +147,7 @@ const LayoutClient = ({
                 <Logo />
               </div>
               <div
-                className={`fixed h-20 lg:h-fit  top-1 pt-2 lg:pt-0 w-full lg:w-[40%] bg-inherit px-2 bg-white mx-auto lg:absolute`}
+                className={`fixed h-20 lg:h-fit  pt-2 top-0  w-full lg:ml-60 xl:inset-x-0 xl:mx-auto lg:w-[40%] bg-inherit px-2 bg-white mx-auto lg:absolute`}
               >
                 <FindListingsComponent apiKey={mk} />
               </div>

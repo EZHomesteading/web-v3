@@ -35,9 +35,9 @@ const GoogleMapComponent = ({
   const coopClusterOptions = useMemo(
     () => ({
       imagePath: "https://i.ibb.co/r42S9tm/circle-2-2.png",
-      gridSize: 60, // Reduced from 100 for tighter clustering
-      maxZoom: 12,
-      minimumClusterSize: 3, // Reduced from 5 to create clusters with fewer markers
+      gridSize: 150,
+      maxZoom: 15,
+      minimumClusterSize: 3,
     }),
     []
   );
@@ -45,8 +45,8 @@ const GoogleMapComponent = ({
   const producerClusterOptions = useMemo(
     () => ({
       imagePath: "https://i.ibb.co/TMnKw45/circle-2.png",
-      gridSize: 60,
-      maxZoom: 12,
+      gridSize: 150,
+      maxZoom: 15,
       minimumClusterSize: 3,
     }),
     []

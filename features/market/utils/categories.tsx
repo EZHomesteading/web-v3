@@ -33,6 +33,7 @@ import { UserRole } from "@prisma/client";
 import Container from "../../../components/Container";
 import Filters from "../components/modals/filter.client";
 import { OutfitFont } from "../../../components/fonts";
+import { Button } from "@/components/ui/button";
 
 export const categories = [
   {
@@ -244,15 +245,15 @@ const Categories = ({ role }: Props) => {
           exit={{ opacity: 0 }}
           className="flex items-center gap-4"
         >
-          <button
+          <Button
             onClick={handleBackToCategories}
-            className="flex items-center gap-2 text-neutral-600 hover:text-neutral-800 transition-colors"
+            className="flex items-center gap-2 text-white hover:text-neutral-800 transition-colors"
           >
             <ChevronLeft size={16} />
             <span className={`${OutfitFont.className} text-sm`}>Back</span>
-          </button>
+          </Button>
 
-          <div className="flex items-center bg-neutral-50 px-3 py-2 rounded-lg border">
+          <div className="flex items-center bg-neutral-50 px-3  rounded-lg border">
             {selectedCategory && (
               <div>
                 <CategoryBox
@@ -288,21 +289,21 @@ const Categories = ({ role }: Props) => {
           exit={{ opacity: 0 }}
           className="flex items-center gap-3"
         >
-          <button
+          <Button
             onClick={handleBackToCategories}
-            className="flex items-center gap-2 text-neutral-600 hover:text-neutral-800 transition-colors"
+            className=" gap-2 text-white hover:text-neutral-800 transition-colors"
           >
             <ChevronLeft size={16} />
             <span className={`${OutfitFont.className} text-sm`}>
               All Categories
             </span>
-          </button>
+          </Button>
 
           {/* Selected Category */}
           <motion.div
             initial={{ x: -20, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
-            className="flex items-center bg-neutral-50 px-3 py-2 rounded-lg border"
+            className=" bg-neutral-50 px-3  rounded-lg border"
           >
             {selectedCategory && (
               <CategoryBox
@@ -342,7 +343,7 @@ const Categories = ({ role }: Props) => {
             initial={{ x: -20, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
             transition={{ delay: 0.1 }}
-            className="flex items-center bg-blue-50 px-3 py-2 rounded-lg border border-blue-200"
+            className=" bg-blue-50 px-3 rounded-lg border border-blue-200"
           >
             {selectedSubcategory && (
               <CategoryBox
@@ -418,8 +419,8 @@ const Categories = ({ role }: Props) => {
   return (
     <Container>
       <div className={`${OutfitFont.className} flex flex-col`}>
-        <div className="flex items-center justify-between  min-h-[80px]">
-          <div className="flex-shrink-0 mr-16 ">
+        <div className="flex items-center justify-center lg:justify-between min-h-[70px]">
+          <div className="flex-shrink-0 mr-16">
             <Filters role={role} />
           </div>
           <div className="flex-shrink-0">
@@ -427,12 +428,18 @@ const Categories = ({ role }: Props) => {
               {renderTitleSection()}
             </AnimatePresence>
           </div>
-
-          <div className="w-full overflow-x-auto  ">
+          {/* Categories section - only visible on md screens and up, positioned inside the flex container */}
+          <div className="hidden lg:block sticky w-full overflow-x-auto">
             <AnimatePresence mode="wait">
               {renderSelectableCategories()}
             </AnimatePresence>
           </div>
+        </div>
+        {/* Categories section - only visible on screens smaller than md, positioned outside the flex container */}
+        <div className="block lg:hidden sticky w-full overflow-x-auto">
+          <AnimatePresence mode="wait">
+            {renderSelectableCategories()}
+          </AnimatePresence>
         </div>
       </div>
     </Container>

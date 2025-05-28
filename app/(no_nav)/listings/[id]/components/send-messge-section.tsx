@@ -1,7 +1,7 @@
 "use client";
 
 import { UserInfo } from "next-auth";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Toast from "@/components/ui/toast";
 import Link from "next/link";
 import { useBasket } from "@/hooks/listing/use-basket";
@@ -13,6 +13,7 @@ interface p {
   user?: UserInfo;
   onBasketUpdate: (newState: boolean) => void;
   isInBasket: boolean;
+  basketQuantity: number;
 }
 
 const SendMessageSection = ({
@@ -20,15 +21,22 @@ const SendMessageSection = ({
   listing,
   user,
   onBasketUpdate,
+  basketQuantity,
 }: p) => {
-  const [quantity, setQuantity] = useState(listing.minOrder || 1);
+  const [quantity, setQuantity] = useState(
+    basketQuantity || listing.minOrder || 1
+  );
   const [isFocused, setIsFocused] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const handleFocusClick = () => {
     inputRef.current?.focus();
   };
-
+  // useEffect(() => {
+  //   if (isInBasket) {
+  //     setQuantity(basketQuantity);
+  //   }
+  // }, [isInBasket, basketQuantity]);
   const {
     isLoading,
     toggleBasket,
@@ -47,7 +55,6 @@ const SendMessageSection = ({
     hours: listing?.location?.hours,
     onBasketUpdate: onBasketUpdate,
   });
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
     if (newValue === "" || /^\d*$/.test(newValue)) {
@@ -61,7 +68,7 @@ const SendMessageSection = ({
   const handleBlur = () => {
     setIsFocused(false);
     if (quantity === "") {
-      setQuantity("0");
+      setQuantity(1);
     }
   };
 
@@ -83,7 +90,9 @@ const SendMessageSection = ({
       });
       return;
     }
-
+    // useEffect(() => {
+    //   updateQuantity(quantity);
+    // }, [isInBasket, quantity]);
     if (!quantity || typeof quantity === "string") {
       Toast({ message: "Quantity must be greater than 0" });
       return;
@@ -102,12 +111,6 @@ const SendMessageSection = ({
       Toast({ message: "Failed to update basket" });
     }
   };
-
-  // useEffect(() => {
-  //   if (isInBasket) {
-  //     updateQuantity(quantity);
-  //   }
-  // }, [isInBasket, quantity]);
 
   const handleIncrement = () => {
     const newQuantity = Math.min(quantity + 1, listing.stock);
@@ -176,7 +179,7 @@ const SendMessageSection = ({
           }`}
         >
           {isInBasket
-            ? `Remove ${quantity ? quantity : 0} ${listing?.unit} from Basket`
+            ? `Remove ${quantity} ${listing?.unit} from Basket`
             : `Add ${quantity ? quantity : 0} ${listing?.unit} to Basket`}
         </button>
 

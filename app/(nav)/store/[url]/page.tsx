@@ -13,6 +13,8 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer";
 import { MarketCard } from "@/features/market/components/main/market-grid";
+import { getFollows } from "@/actions/getFollow";
+import FollowButton from "../../selling/(container-selling)/followers/follow-button";
 
 interface StorePageProps {
   params: {
@@ -20,9 +22,9 @@ interface StorePageProps {
   };
 }
 
-// const following = await getFollows();
 const StorePage = async ({ params }: StorePageProps) => {
-  const { url } = params;
+  const following = await getFollows();
+  const { url } = await params;
   const store = await getUserStore({ url: url });
   const session = await auth();
   let user = await getCurrentUser();
@@ -112,11 +114,15 @@ const StorePage = async ({ params }: StorePageProps) => {
               </div>
             </div>
           </div>
-          <button
+          <FollowButton
+            followUserId={store.user.id}
+            following={following}
+          ></FollowButton>
+          {/* <button
             className={`p-2 text-bold gap-x-1 shadow-sm flex items-center justify-center rounded-md border border-grey w-32 absolute bottom-2 left-2`}
           >
             <p className={`text-bold ${OutfitFont.className}`}>Follow</p>
-          </button>
+          </button> */}
         </div>
         {store?.user?.locations?.length > 1 && (
           <Drawer>
