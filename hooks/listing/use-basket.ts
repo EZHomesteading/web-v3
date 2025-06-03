@@ -25,6 +25,7 @@ interface BasketProps {
   sellerId: string;
   stock: any;
   listingId: string;
+  locationId: string;
   address?: any;
   user?: any | null;
   initialQuantity?: number;
@@ -42,6 +43,7 @@ const getHoursForMethod = (
 
 export const useBasket = ({
   stock,
+  locationId,
   listingId,
   sellerId,
   address,
@@ -376,7 +378,10 @@ export const useBasket = ({
 
     setIsLoading(true);
     try {
-      await axios.delete(`/api/basket/items/${listingId}`);
+      await axios.post(`/api/basket/items/delete`, {
+        listingId: listingId,
+        locationId: locationId,
+      });
       Toast({ message: "Basket item removed" });
       window.dispatchEvent(new Event("cartUpdatedDown"));
       onBasketUpdate(false);
@@ -393,21 +398,7 @@ export const useBasket = ({
   const updateQuantity = async (newQuantity: number) => {
     if (!user) return;
 
-    setIsLoading(true);
-    try {
-      await axios.post(`/api/basket/items`, {
-        listingId: listingId,
-        quantity: newQuantity,
-      });
-      setQuantity(newQuantity);
-    } catch (error: any) {
-      Toast({
-        message: error.response?.data?.message || "Failed to update quantity",
-      });
-      setQuantity(quantity);
-    } finally {
-      setIsLoading(false);
-    }
+    setQuantity(newQuantity);
   };
 
   // Check if this would be the first item during hours check
