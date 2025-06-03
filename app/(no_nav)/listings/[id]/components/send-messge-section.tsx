@@ -24,19 +24,16 @@ const SendMessageSection = ({
   basketQuantity,
 }: p) => {
   const [quantity, setQuantity] = useState(
-    basketQuantity || listing.minOrder || 1
+    isInBasket ? basketQuantity : listing.minOrder || 1
   );
+  console.log(basketQuantity);
   const [isFocused, setIsFocused] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const handleFocusClick = () => {
     inputRef.current?.focus();
   };
-  // useEffect(() => {
-  //   if (isInBasket) {
-  //     setQuantity(basketQuantity);
-  //   }
-  // }, [isInBasket, basketQuantity]);
+
   const {
     isLoading,
     toggleBasket,
@@ -47,6 +44,7 @@ const SendMessageSection = ({
     updateQuantity,
     isFirstItemInCart,
   } = useBasket({
+    locationId: listing.location.id,
     sellerId: listing.location.userId,
     stock: listing.stock,
     listingId: listing.id,
@@ -59,10 +57,12 @@ const SendMessageSection = ({
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
     if (newValue === "" || /^\d*$/.test(newValue)) {
-      setQuantity(newValue);
+      setQuantity(parseInt(newValue));
+      updateQuantity(parseInt(newValue));
 
       if (newValue !== "" && parseInt(newValue) > listing.stock) {
-        setQuantity(listing.stock.toString());
+        setQuantity(listing.stock);
+        updateQuantity(listing.stock);
       }
     }
   };
@@ -70,13 +70,11 @@ const SendMessageSection = ({
     setIsFocused(false);
     if (quantity === "") {
       setQuantity(1);
+      updateQuantity(1);
     }
   };
 
   const handleToggleBasket = async (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
-
     if (!user) {
       Toast({
         message: "Please sign in to add items to your basket",
@@ -116,11 +114,13 @@ const SendMessageSection = ({
   const handleIncrement = () => {
     const newQuantity = Math.min(quantity + 1, listing.stock);
     setQuantity(newQuantity);
+    updateQuantity(newQuantity);
   };
 
   const handleDecrement = () => {
     const newQuantity = Math.max(quantity - 1, 0);
     setQuantity(newQuantity);
+    updateQuantity(newQuantity);
   };
 
   return (

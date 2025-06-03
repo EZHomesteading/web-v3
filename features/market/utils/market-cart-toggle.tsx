@@ -40,6 +40,7 @@ const MarketCartToggle = ({
     addToBasket,
     isFirstItemInCart,
   } = useBasket({
+    locationId: listing.location.id,
     sellerId: listing.location.userId,
     stock: listing.stock,
     listingId: listing?.id,

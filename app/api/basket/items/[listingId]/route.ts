@@ -3,21 +3,14 @@ import { NextResponse } from "next/server";
 import { currentUser } from "@/lib/auth";
 import prisma from "@/lib/prismadb";
 
-interface IParams {
-  listingId: string;
-}
-
-export async function DELETE(
-  request: Request,
-  { params }: { params: IParams }
-) {
+export async function POST(request: Request) {
   try {
+    const body = await request.json();
+    const { locationId, listingId } = body;
     const user = await currentUser();
     if (!user) {
       return new NextResponse("Unauthorized", { status: 401 });
     }
-
-    const { listingId } = params;
 
     if (!listingId) {
       return new NextResponse("Item ID is required", { status: 400 });
@@ -26,6 +19,7 @@ export async function DELETE(
     const basket = await prisma.basket.findFirst({
       where: {
         userId: user.id,
+        locationId,
       },
       select: {
         id: true,

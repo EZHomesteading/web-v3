@@ -12,10 +12,13 @@ const BackButton = ({ className }: prop) => {
 
   return (
     <button
-      onClick={() => router.back()}
-      className={`rounded-full border text-black p-3 ${className || ""}`}
+      onClick={() => router.push("/market")}
+      className={`flex flex-row items-center  justify-center rounded-full border text-black p-3 ${
+        className || ""
+      }`}
     >
-      <PiArrowLeftThin />
+      <PiArrowLeftThin className="mr-2" />
+      Continue Shopping
     </button>
   );
 };

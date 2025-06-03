@@ -168,6 +168,7 @@ export async function getUnique(params: { id?: string }) {
         },
         location: {
           select: {
+            name: true,
             id: true,
             hours: true,
             address: true,

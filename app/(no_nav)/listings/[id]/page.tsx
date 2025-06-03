@@ -11,6 +11,9 @@ import { Viewport } from "next";
 import Page404 from "@/app/[...not_found]/page";
 
 import BackButton from "./components/back-button";
+import { FcCheckmark } from "react-icons/fc";
+import { HiMiniXMark } from "react-icons/hi2";
+import HoursDisplay from "./components/hours-display";
 
 export const viewport: Viewport = {
   themeColor: "#fff",
@@ -95,7 +98,7 @@ export default async function ListingPage({
         console.error("Error fetching basket items:", error);
       }
     }
-
+    console.log(listing);
     return (
       <>
         <div
@@ -164,11 +167,13 @@ export default async function ListingPage({
                     h="12"
                     h2="16"
                   />
-                  <div className={`flex flex-col items-center `}>
+                  <div className={`flex flex-col items-start`}>
                     <div className={`text-xl`}>
-                      {listing.location?.name || listing.user.name}
+                      Sold By: {listing.user.name}
                     </div>
-                    <div>{listing.user?.fullName?.first}</div>
+                    <div className={`text-xl`}>
+                      From: {listing.location.name}
+                    </div>
                   </div>
                 </Link>
                 <ul className="list-none list-inside my-3 space-y-4 border-b pb-3">
@@ -178,15 +183,7 @@ export default async function ListingPage({
                       className="text-lg  flex items-center gap-x-1"
                     >
                       <div className={`p-2`}>
-                        <svg
-                          viewBox="0 0 24 24"
-                          fill={"black"}
-                          stroke={"black"}
-                          strokeWidth="2"
-                          style={{ width: 20, height: 20 }}
-                        >
-                          <path d="M12 2L8.5 8.5L2 9.3L7 14.1L5.5 20.5L12 17.5L18.5 20.5L17 14.1L22 9.3L15.5 8.5L12 2Z" />
-                        </svg>
+                        <FcCheckmark />
                       </div>
                       {ratingMeanings[ratingIndex]}
                     </li>
@@ -197,32 +194,25 @@ export default async function ListingPage({
                       className="text-lg flex items-center gap-x-1"
                     >
                       <div className={`p-2`}>
-                        <svg
-                          viewBox="0 0 24 24"
-                          fill={"none"}
-                          stroke={"black"}
-                          strokeWidth="2"
-                          style={{ width: 20, height: 20 }}
-                        >
-                          <path d="M12 2L8.5 8.5L2 9.3L7 14.1L5.5 20.5L12 17.5L18.5 20.5L17 14.1L22 9.3L15.5 8.5L12 2Z" />
-                        </svg>
+                        <HiMiniXMark />
                       </div>
                       {inverseRatingMeanings[ratingIndex]}
                     </li>
                   ))}
                 </ul>
-                <div className={`h-[50vh]`}>{listing.description}</div>
-              </div>
+                <div className={`h-[50vh]`}>
+                  {listing.description}{" "}
+                  <HoursDisplay location={listing.location} className="mt-4" />
+                </div>
+              </div>{" "}
             </div>
+
             <div className={`col-span-1 lg:col-span-2 relative`}>
               <SendMessageComponent
                 basketQuantity={
-                  basketItemIds &&
-                  basketItemIds.map((basketItem: any) => {
-                    if (basketItem.listingId === listing?.id) {
-                      return basketItem.quantity;
-                    }
-                  })
+                  basketItemIds?.find(
+                    (basketItem: any) => basketItem.listingId === listing?.id
+                  )?.quantity || 0
                 }
                 listing={listing}
                 user={session?.user}
