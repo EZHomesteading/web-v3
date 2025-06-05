@@ -86,7 +86,7 @@ export default function PaymentComponent({
         throw firstPaymentResult.error;
       }
 
-      // If there's only one payment, wait 10 seconds then redirect
+      // If there's only one payment, wait 5 seconds then redirect
       if (paymentIntents.length === 1) {
         setMessage("Payment successful! Redirecting you in 5 seconds...");
         setTimeout(() => {
@@ -130,10 +130,10 @@ export default function PaymentComponent({
       }
 
       // All payments successful, show message and wait 10 seconds before redirecting
-      setMessage("Payment successful! Redirecting you in 10 seconds...");
+      setMessage("Payment successful! Redirecting you in 5 seconds...");
       setTimeout(() => {
         window.location.href = `${window.location.origin}/chat`;
-      }, 10000);
+      }, 5000);
     } catch (error: any) {
       setMessage(`Payment failed: ${error.message}`);
       setIsLoading(false);
