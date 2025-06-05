@@ -7,14 +7,14 @@ export async function POST(req: NextRequest) {
     const { updates } = await req.json();
     console.log(
       "Received batch update request with data:",
-      JSON.stringify(updates, null, 2)
+      JSON.stringify(updates, null, 2),
     );
 
     if (!Array.isArray(updates) || updates.length === 0) {
       console.log("Invalid updates array:", updates);
       return NextResponse.json(
         { error: "Updates array is required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -25,7 +25,8 @@ export async function POST(req: NextRequest) {
         const {
           id,
           proposedLoc,
-          fufillmentDate,
+          fulfillmentDate,
+          fulfillmentType,
           timeType,
           orderMethod,
           items,
@@ -48,7 +49,7 @@ export async function POST(req: NextRequest) {
           where: { id },
           data: {
             proposedLoc: proposedLoc,
-            fufillmentDate: fufillmentDate,
+            fulfillmentDate: fulfillmentDate,
             orderMethod: orderMethod,
             items: items
               ? {
@@ -61,12 +62,12 @@ export async function POST(req: NextRequest) {
             timeType: timeType,
           },
         });
-      })
+      }),
     );
 
     console.log(
       "Successfully updated baskets:",
-      JSON.stringify(results, null, 2)
+      JSON.stringify(results, null, 2),
     );
     return NextResponse.json(results);
   } catch (error) {
@@ -76,7 +77,7 @@ export async function POST(req: NextRequest) {
         error: "Failed to update baskets",
         details: error instanceof Error ? error.message : "Unknown error",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

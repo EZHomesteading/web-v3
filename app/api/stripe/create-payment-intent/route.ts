@@ -31,6 +31,7 @@ interface OrderPayload {
   totalAmount: number;
   currency: string;
   stripeAccountId: string;
+  sellerId: string;
   notes?: string;
   description?: string;
 }
@@ -140,6 +141,7 @@ async function createPaymentIntentWithMetadata(
     order_meta: {
       store_id: order.orderPayload.storeId,
       store_name: order.orderPayload.storeName,
+      seller_id: order.orderPayload.sellerId,
       order_id: "TEMP_ORDER_ID",
       item_count: order.items.length,
       total_amt: order.orderPayload.totalAmount,
@@ -209,7 +211,7 @@ export async function POST(request: NextRequest) {
         fulfillmentDate: requestData.basketPayload.fulfillmentDate
           ? new Date(requestData.basketPayload.fulfillmentDate)
           : undefined,
-        orderMethod: requestData.basketPayload.orderMethod,
+        orderMethod: requestData.basketPayload?.orderMethod || "PICKUP",
         status: requestData.basketPayload.status,
         timeType: requestData.basketPayload.timeType,
         orderGroupId: requestData.basketPayload.orderGroupId,
@@ -217,6 +219,7 @@ export async function POST(request: NextRequest) {
       orderPayload: {
         totalAmount: requestData.orderPayload.totalAmount,
         currency: requestData.orderPayload.currency || "usd",
+        sellerId: requestData.orderPayload.sellerId,
         storeId: requestData.orderPayload.storeId,
         storeName: requestData.orderPayload.storeName,
         description: requestData.orderPayload.description,

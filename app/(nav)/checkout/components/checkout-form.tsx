@@ -12,6 +12,7 @@ import PaymentComponent from "./payment-component";
 import axios from "axios";
 import { formatDate } from "@/utils/time-managers";
 import { useSearchParams } from "next/navigation";
+import { fulfillmentType } from "@prisma/client";
 
 const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || "",

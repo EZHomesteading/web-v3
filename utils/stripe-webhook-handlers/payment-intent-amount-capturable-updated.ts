@@ -29,124 +29,6 @@ import webPush, { PushSubscription } from "web-push";
 // };
 //
 
-export async function handlePaymentIntentAmountCapturable(
-  paymentIntent: Stripe.PaymentIntent,
-): Promise<NextResponse | void> {
-  const orderData = extractOrderDataFromMetadata(paymentIntent.metadata);
-
-  if (!orderData) {
-    return;
-  }
-
-  const createdOrder = await createOrderFromMetadata(orderData, paymentIntent);
-
-  if (!createdOrder) {
-    return;
-  }
-
-  await createConversationAndNotify(createdOrder);
-
-  if (orderData.basket.order_group_id) {
-    await addOrderToGroup(createdOrder.id, orderData.basket.order_group_id);
-  }
-}
-
-function extractOrderDataFromMetadata(metadata: Record<string, string>) {
-  try {
-    const orderMeta = JSON.parse(metadata.order_meta);
-    const userMeta = JSON.parse(metadata.user_meta);
-    const basketMeta = JSON.parse(metadata.basket_meta);
-
-    if (!orderMeta || !userMeta || !basketMeta) {
-      throw new Error("Missing required metadata sections");
-    }
-
-    const items: any[] = [];
-    Object.keys(metadata).forEach((key) => {
-      if (key.startsWith("id_")) {
-        const itemData = JSON.parse(metadata[key]);
-        items.push({
-          id: key.replace("id_", ""),
-          title: itemData.t,
-          unit: itemData.u,
-          price: itemData.p,
-          quantity: itemData.q,
-          image: itemData.i,
-        });
-      }
-    });
-
-    return {
-      order: orderMeta,
-      user: userMeta,
-      basket: basketMeta,
-      items,
-      notes: metadata.notes || "",
-    };
-  } catch (error) {
-    console.error("Error parsing metadata:", error);
-    return null;
-  }
-}
-
-async function createOrderFromMetadata(
-  orderData: any,
-  paymentIntent: Stripe.PaymentIntent,
-) {
-  return prisma.$transaction(async (tx) => {
-    const seller = await tx.user.findUnique({
-      where: { id: orderData.order.store_id },
-      select: { id: true, name: true, role: true },
-    });
-
-    const buyer = await tx.user.findUnique({
-      where: { id: orderData.user.id },
-      select: { id: true, name: true, role: true },
-    });
-
-    if (!seller || !buyer) {
-      throw new Error("Seller or buyer not found");
-    }
-
-    const totalPrice = orderData.order.total_amt;
-
-    const newOrder = await tx.order.create({
-      data: {
-        userId: orderData.user.id,
-        locationId: orderData.order.store_id,
-        proposedLoc: orderData.basket.proposed_loc,
-        paymentIntentId: paymentIntent.id,
-        sellerId: seller.id,
-        fulfillmentDate: orderData.basket.fulfillment_date,
-        items: orderData.items.map((item: any) => ({
-          listingId: item.id,
-          quantity: item.quantity,
-          price: item.price,
-          title: item.title,
-          unit: item.unit,
-        })),
-        totalPrice,
-        status: "BUYER_PROPOSED_TIME",
-        fulfillmentType: orderData.basket.fulfillment_type,
-        fee: { site: totalPrice * 0.06 },
-        notes: orderData.notes,
-      },
-      include: {
-        buyer: true,
-        seller: true,
-      },
-    });
-
-    await updateInventoryLevels(tx, orderData.items);
-
-    await tx.basket.delete({
-      where: { id: orderData.basket.id },
-    });
-
-    return newOrder;
-  });
-}
-
 async function updateInventoryLevels(tx: any, items: any[]) {
   await Promise.all(
     items.map((item: any) =>
@@ -161,6 +43,212 @@ async function updateInventoryLevels(tx: any, items: any[]) {
     ),
   );
 }
+export async function handlePaymentIntentAmountCapturable(
+  paymentIntent: Stripe.PaymentIntent,
+): Promise<NextResponse | void> {
+  console.log("🎯 Step 1: Extracting order data from metadata");
+
+  try {
+    const orderData = extractOrderDataFromMetadata(paymentIntent.metadata);
+    console.log("📦 Order data extracted:", !!orderData);
+
+    if (!orderData) {
+      console.log("❌ No order data found, exiting");
+      return;
+    }
+
+    console.log("🔍 Order data structure:", {
+      hasOrder: !!orderData.order,
+      hasUser: !!orderData.user,
+      hasBasket: !!orderData.basket,
+      itemCount: orderData.items?.length || 0,
+      hasNotes: !!orderData.notes,
+    });
+
+    console.log("🎯 Step 2: Creating order from metadata");
+    const createdOrder = await createOrderFromMetadata(
+      orderData,
+      paymentIntent,
+    );
+
+    if (!createdOrder) {
+      return;
+    }
+
+    await createConversationAndNotify(createdOrder);
+
+    if (orderData.basket.order_group_id) {
+      console.log(
+        "🎯 Step 4: Adding order to group:",
+        orderData.basket.order_group_id,
+      );
+      await addOrderToGroup(createdOrder.id, orderData.basket.order_group_id);
+      console.log("✅ Order added to group");
+    } else {
+      console.log("⏭️ No order group ID, skipping group assignment");
+    }
+
+    console.log("🎉 Payment intent handler completed successfully");
+  } catch (error) {
+    console.error("❌ Error in handlePaymentIntentAmountCapturable:", error);
+    console.error("📍 Stack trace:", error);
+    throw error;
+  }
+}
+
+function extractOrderDataFromMetadata(metadata: Record<string, string>) {
+  console.log("🔍 Extracting metadata with keys:", Object.keys(metadata));
+
+  try {
+    console.log("📊 Parsing order_meta...");
+    const orderMeta = JSON.parse(metadata.order_meta);
+    console.log("✅ Order meta parsed:", orderMeta);
+
+    console.log("📊 Parsing user_meta...");
+    const userMeta = JSON.parse(metadata.user_meta);
+    console.log("✅ User meta parsed:", userMeta);
+
+    console.log("📊 Parsing basket_meta...");
+    const basketMeta = JSON.parse(metadata.basket_meta);
+    console.log("✅ Basket meta parsed:", basketMeta);
+
+    if (!orderMeta || !userMeta || !basketMeta) {
+      console.error("❌ Missing required metadata sections:", {
+        orderMeta: !!orderMeta,
+        userMeta: !!userMeta,
+        basketMeta: !!basketMeta,
+      });
+      throw new Error("Missing required metadata sections");
+    }
+
+    console.log("📦 Processing item metadata...");
+    const items: any[] = [];
+    Object.keys(metadata).forEach((key) => {
+      if (key.startsWith("id_")) {
+        try {
+          const itemData = JSON.parse(metadata[key]);
+          console.log(`✅ Parsed item ${key}:`, itemData);
+          items.push({
+            id: key.replace("id_", ""),
+            title: itemData.t,
+            unit: itemData.u,
+            price: itemData.p,
+            quantity: itemData.q,
+            image: itemData.i,
+          });
+        } catch (itemError) {
+          console.error(`❌ Error parsing item ${key}:`, itemError);
+          console.error(`❌ Item data: ${metadata[key]}`);
+          throw itemError;
+        }
+      }
+    });
+
+    console.log(`✅ Processed ${items.length} items successfully`);
+
+    const result = {
+      order: orderMeta,
+      user: userMeta,
+      basket: basketMeta,
+      items,
+      notes: metadata.notes || "",
+    };
+
+    console.log("✅ Metadata extraction completed successfully");
+    return result;
+  } catch (error) {
+    console.error("❌ Error parsing metadata:", error);
+    console.error("📋 Raw metadata:", metadata);
+    return null;
+  }
+}
+
+async function createOrderFromMetadata(
+  orderData: any,
+  paymentIntent: Stripe.PaymentIntent,
+) {
+  console.log("🏗️ Starting database transaction");
+
+  try {
+    return await prisma.$transaction(async (tx) => {
+      console.log("🔍 Looking up store with ID:", orderData.order.store_id);
+      const store = await tx.location.findUnique({
+        where: { id: orderData.order.store_id },
+        select: {
+          id: true,
+          name: true,
+          role: true,
+          user: { select: { id: true } },
+        },
+      });
+      console.log("👨‍💼 Seller found:", !!store, store?.name);
+
+      console.log("🔍 Looking up buyer with ID:", orderData.user.id);
+      const buyer = await tx.user.findUnique({
+        where: { id: orderData.user.id },
+        select: {
+          id: true,
+          name: true,
+          role: true,
+        },
+      });
+      console.log("👤 Buyer found:", !!buyer, buyer?.name);
+
+      if (!store || !buyer) {
+        const error = new Error(
+          `Seller or buyer not found - Seller: ${!!store}, Buyer: ${!!buyer}`,
+        );
+        console.error("❌", error.message);
+        throw error;
+      }
+
+      const totalPrice = orderData.order.total_amt;
+      console.log("💰 Total price:", totalPrice);
+
+      console.log("📝 Creating order record...");
+      const newOrder = await tx.order.create({
+        data: {
+          userId: orderData.user.id,
+          locationId: orderData.order.store_id,
+          proposedLoc: orderData.basket.proposed_loc,
+          paymentIntentId: paymentIntent.id,
+          sellerId: store.user.id,
+          fulfillmentDate: orderData.basket.fulfillment_date,
+          items: orderData.items.map((item: any) => ({
+            listingId: item.id,
+            quantity: item.quantity,
+            price: item.price,
+            title: item.title,
+            unit: item.unit,
+          })),
+          totalPrice,
+          status: "BUYER_PROPOSED_TIME",
+          fulfillmentType: orderData.basket.order_method || "PICKUP",
+          fee: { site: totalPrice * 0.06 },
+          notes: orderData.notes,
+        },
+      });
+      console.log("✅ Order created with ID:", newOrder.id);
+
+      console.log("📦 Updating inventory levels...");
+      await updateInventoryLevels(tx, orderData.items);
+      console.log("✅ Inventory updated");
+
+      console.log("🗑️ Deleting basket:", orderData.basket.id);
+      await tx.basket.delete({
+        where: { id: orderData.basket.id },
+      });
+      console.log("✅ Basket deleted");
+
+      console.log("✅ Transaction completed successfully");
+      return newOrder;
+    });
+  } catch (error) {
+    console.error("❌ Transaction failed:", error);
+    console.error("📍 Transaction error stack:", error);
+    throw error;
+  }
+}
 
 async function addOrderToGroup(orderId: string, orderGroupId: string) {
   const cleanOrderGroupId = orderGroupId.replace(/['"]+/g, "");
@@ -173,8 +261,6 @@ async function addOrderToGroup(orderId: string, orderGroupId: string) {
       },
     },
   });
-
-  console.log(`Added order ${orderId} to order group ${cleanOrderGroupId}`);
 }
 
 async function createConversationAndNotify(order: any) {
@@ -195,7 +281,7 @@ async function createConversationAndNotify(order: any) {
 async function createOrderConversation(order: any) {
   return prisma.conversation.create({
     data: {
-      participantIds: [order.buyer.id, order.seller.id],
+      participantIds: [order.userId, order.sellerId],
     },
   });
 }
@@ -228,9 +314,9 @@ async function handlePickupOrder(
   const pickupDate =
     order.pickupDate?.toLocaleDateString() || "a convenient date";
 
-  const message = `Hi ${order.seller.name}! I just ordered ${orderSummary} from you and would like to pick them up at ${pickupTime} on ${pickupDate}. Please let me know when my order is ready or if that time doesn't work.`;
+  const message = `Hi! I just ordered ${orderSummary} from you and would like to pick them up at ${pickupTime} on ${pickupDate}. Please let me know when my order can be ready by that time or if that doesn't work.`;
 
-  await createOrderMessage(conversation.id, order.buyer.id, message);
+  await createOrderMessage(conversation.id, order.userId, message);
   await sendPushNotification(
     order.seller,
     "You have a new order!",
@@ -247,7 +333,7 @@ async function handleDeliveryOrder(
   await updateOrderDeliveryLocation(order);
 
   const deliveryAddress = getDeliveryAddress(order.buyer);
-  const message = `Hi ${order.seller.name}! I just ordered ${orderSummary} from you, please drop them off at ${deliveryAddress} during my open hours. My hours can be viewed in More Options.`;
+  const message = `Hi! I just ordered ${orderSummary} from you, please drop them off at ${deliveryAddress} during my open hours. My hours can be viewed in More Options.`;
 
   await createOrderMessage(conversation.id, order.buyer.id, message);
   await sendPushNotification(

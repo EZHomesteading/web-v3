@@ -56,17 +56,10 @@ export default function PaymentComponent({
         {
           email: userEmail,
           existingCustomerId: customerId,
-        }
+        },
       );
 
       let paymentMethodId: string | undefined;
-
-      // Process first payment without redirect
-      await axios.post("/api/stripe/update-payment-intent", {
-        paymentIntentId: paymentIntents[0].clientSecret.split("_secret")[0],
-        customerId: customerData.customerId,
-        basketId: paymentIntents[0].basketId,
-      });
 
       const firstPaymentResult = await stripe.confirmPayment({
         elements,
@@ -100,7 +93,7 @@ export default function PaymentComponent({
         "/api/stripe/get-payment-intent",
         {
           paymentIntentId: paymentIntents[0].clientSecret.split("_secret")[0],
-        }
+        },
       );
 
       paymentMethodId = paymentData.paymentMethodId;
@@ -121,7 +114,7 @@ export default function PaymentComponent({
           paymentIntents[i].clientSecret,
           {
             payment_method: paymentMethodId,
-          }
+          },
         );
 
         if (error) {
@@ -154,7 +147,7 @@ export default function PaymentComponent({
 
   const totalAmount = paymentIntents.reduce(
     (sum, intent) => sum + intent.totalAmount,
-    0
+    0,
   );
 
   return (

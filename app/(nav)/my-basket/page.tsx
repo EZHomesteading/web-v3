@@ -17,7 +17,6 @@ const BasketPage = async () => {
   const userLocs = await getUserLocationsBasket();
   const mk = process.env.MAPS_KEY;
 
-  // Get detailed info for each basket
   const detailedBasketsPromises = basicBaskets.map(async (basket) => {
     const { basket: detailedBasket } = await getUnique({ id: basket.id });
     return detailedBasket;
@@ -26,11 +25,8 @@ const BasketPage = async () => {
   const detailedBaskets = (await Promise.all(detailedBasketsPromises)).filter(
     Boolean,
   );
+
   const userLoc = await getUserLocations({ userId: session.user.id });
-  console.log(
-    detailedBaskets,
-    "detailedBaskets in /ezhomesteading-web/app/(nav)/my-basket/page.tsx",
-  );
 
   return (
     <DetailedBasketGrid

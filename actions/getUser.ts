@@ -79,9 +79,8 @@ const getUserWithBuyOrders = async (params: Params) => {
           select: {
             id: true,
             userId: true,
-            // listingIds: true,
             sellerId: true,
-            pickupDate: true,
+            fulfillmentDate: true,
             items: true,
             totalPrice: true,
             status: true,
@@ -116,7 +115,7 @@ const getUserWithSellOrders = async (params: Params) => {
             id: true,
             userId: true,
             sellerId: true,
-            pickupDate: true,
+            fulfillmentDate: true,
             items: true,
             totalPrice: true,
             status: true,
@@ -152,7 +151,7 @@ const getUserWithOrders = async ({ userId }: { userId?: string }) => {
             // listingIds: true,
             sellerId: true,
             items: true,
-            pickupDate: true,
+            fulfillmentDate: true,
             totalPrice: true,
             status: true,
             createdAt: true,
@@ -167,7 +166,7 @@ const getUserWithOrders = async ({ userId }: { userId?: string }) => {
             userId: true,
             // listingIds: true,
             sellerId: true,
-            pickupDate: true,
+            fulfillmentDate: true,
             items: true,
             totalPrice: true,
             status: true,
@@ -210,7 +209,7 @@ export type ReviewWithReviewer = Review & {
 };
 
 const getUserWithBuyReviews = async (
-  params: Params
+  params: Params,
 ): Promise<{
   user: User;
   reviews: any;
@@ -256,7 +255,7 @@ const getUserWithBuyReviews = async (
           },
         });
         return { ...review, reviewer };
-      })
+      }),
     );
 
     if (!user) {
@@ -331,12 +330,12 @@ const getFavCardUser = async (params: Params): Promise<FavCardUser | null> => {
 
     return {
       ...user,
-      location: user.locations[0] || null,
+      location: null,
     };
   } catch (error) {
     console.error("Error fetching favorite card user:", error);
     throw new Error(
-      error instanceof Error ? error.message : "Unknown error occurred"
+      error instanceof Error ? error.message : "Unknown error occurred",
     );
   }
 };
@@ -374,7 +373,7 @@ const getUserLocationsBasket = async (): Promise<BasketLocation[] | null> => {
   } catch (error) {
     console.error("Error fetching user location:", error);
     throw new Error(
-      error instanceof Error ? error.message : "Unknown error occurred"
+      error instanceof Error ? error.message : "Unknown error occurred",
     );
   }
 };
@@ -402,7 +401,7 @@ const getUserLocations = async (): Promise<BasketLocation[] | null> => {
   } catch (error) {
     console.error("Error fetching user location:", error);
     throw new Error(
-      error instanceof Error ? error.message : "Unknown error occurred"
+      error instanceof Error ? error.message : "Unknown error occurred",
     );
   }
 };
@@ -482,7 +481,7 @@ const getUserStore = async (params: IStoreParams): Promise<any | null> => {
           },
         });
         return { ...review, reviewer };
-      })
+      }),
     );
 
     return {
@@ -651,7 +650,7 @@ const getNavUser = async (): Promise<NavUser | null> => {
   } catch (error) {
     console.error("Error in getNavUser:", error);
     throw new Error(
-      error instanceof Error ? error.message : "Unknown error occurred"
+      error instanceof Error ? error.message : "Unknown error occurred",
     );
   }
 };
