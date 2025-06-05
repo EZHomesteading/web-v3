@@ -11,24 +11,12 @@ export async function handlePaymentIntentAmountCapturable(
   const orderGroupId = paymentIntent.metadata?.orderGroupId;
 
   if (!buyerId) {
-    console.error(
-      "Missing buyerId in payment intent metadata:",
-      paymentIntent.id,
-    );
     return;
   }
-
-  console.log(
-    `Processing payment intent ${paymentIntent.id} for buyer ${buyerId}`,
-  );
 
   const createdOrder = await handleBasketProcessing(buyerId, paymentIntent);
 
   if (!createdOrder) {
-    console.error(
-      "Failed to create order for payment intent:",
-      paymentIntent.id,
-    );
     return;
   }
 
@@ -38,9 +26,6 @@ export async function handlePaymentIntentAmountCapturable(
     await addOrderToGroup(createdOrder.id, orderGroupId);
   }
 
-  console.log(
-    `Successfully processed payment intent ${paymentIntent.id}, created order ${createdOrder.id}`,
-  );
 }
 
 async function handleBasketProcessing(

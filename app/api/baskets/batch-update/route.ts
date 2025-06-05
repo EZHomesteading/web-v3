@@ -20,24 +20,21 @@ export async function POST(req: NextRequest) {
 
     console.log(`Processing ${updates.length} basket updates...`);
 
-    // Use prisma transaction to ensure all updates succeed or none do
     const results = await prisma.$transaction(
       updates.map((update) => {
         const {
           id,
           proposedLoc,
-          deliveryDate,
-          pickupDate,
-          time_type,
+          fufillmentDate,
+          timeType,
           orderMethod,
           items,
         } = update;
 
         console.log(`Processing basket ${id}:`, {
           proposedLoc,
-          deliveryDate,
-          pickupDate,
-          time_type,
+
+          timeType,
           orderMethod,
           itemCount: items?.length,
         });
@@ -51,8 +48,7 @@ export async function POST(req: NextRequest) {
           where: { id },
           data: {
             proposedLoc: proposedLoc,
-            deliveryDate: deliveryDate ? new Date(deliveryDate) : null,
-            pickupDate: pickupDate ? new Date(pickupDate) : null,
+            fufillmentDate: new Date(fufillmentDate),
             orderMethod: orderMethod,
             items: items
               ? {
@@ -62,7 +58,7 @@ export async function POST(req: NextRequest) {
                   })),
                 }
               : undefined,
-            time_type: time_type,
+            timeType: timeType,
           },
         });
       })

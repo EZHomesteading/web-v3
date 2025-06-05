@@ -1,4 +1,3 @@
-// app/checkout/page.tsx
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import getActiveBaskets from "@/actions/basket/get/active";
@@ -34,9 +33,7 @@ const CheckoutPage = async () => {
     <div className="w-full gradient">
       <CheckoutForm
         baskets={detailedBaskets}
-        userId={session.user.id}
-        userLoc={userLoc || null}
-        userEmail={session.user.email}
+        user={{...session.user, loc:userLoc}}
       />
     </div>
   );

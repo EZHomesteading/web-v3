@@ -6,7 +6,7 @@ import { getUserById } from "@/utils/user";
 import { fullName, Notification, UserRole } from "@prisma/client";
 import { JWT } from "next-auth/jwt";
 import { Session } from "next-auth";
-import { sign } from "jsonwebtoken"; //missing?
+import { sign } from "jsonwebtoken"; 
 
 export const { auth, handlers, signIn, signOut } = NextAuth({
   adapter: PrismaAdapter(prisma),
@@ -31,6 +31,7 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
         session.user.stripeAccountId = token.stripeAccountId as
           | string
           | undefined;
+        session.user.stripeCustomerId = token.stripeCustomerId as string |undefined,
         session.user.url = token.url as string;
         session.user.role = token.role as UserRole;
 
@@ -79,6 +80,7 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
         role: existingUser.role,
         password: existingUser.password,
         stripeAccountId: existingUser.stripeAccountId ?? undefined,
+        stripeCustomerId: existingUser.stripeCustomerId ?? undefined,
         createdAt: existingUser.createdAt,
         updatedAt: existingUser.updatedAt,
         subscriptions: existingUser.subscriptions ?? undefined,

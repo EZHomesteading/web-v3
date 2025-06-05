@@ -18,9 +18,13 @@ const stripePromise = loadStripe(
 
 interface CheckoutFormProps {
   baskets: any[];
-  userId: string;
-  userLoc: any;
-  userEmail: string;
+  user: {
+    id: string;
+    name:string;
+    email: string;
+    stripeCustomerId?: string
+    loc?: any;
+  }
 }
 
 interface PaymentIntentData {
@@ -85,11 +89,9 @@ const MobilePriceSummary = ({ formattedTotal }: { formattedTotal: number }) => {
 
 export default function CheckoutForm({
   baskets,
-  userId,
-  userLoc,
-  userEmail,
+  user,
 }: CheckoutFormProps) {
-  console.log(baskets);
+  console.log(baskets, "checkout form");
   const [paymentIntents, setPaymentIntents] = useState<PaymentIntentData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -113,8 +115,10 @@ export default function CheckoutForm({
       setIsLoading(true);
       setError(null);
 
+
       try {
         const intents: PaymentIntentData[] = [];
+        const orderGroupId = new URLSearchParams(window.location.search).get("orderGroupId");
 
         for (const basket of baskets) {
           const basketTotal = basket.items.reduce(
@@ -124,7 +128,6 @@ export default function CheckoutForm({
           );
 
           const sellerId = basket.location.user.id;
-          const basketTotals = { [sellerId]: basketTotal };
           const sellerResponse = await fetch(`/api/users/${sellerId}`);
 
           if (!sellerResponse.ok) {
@@ -135,22 +138,41 @@ export default function CheckoutForm({
 
           const seller = await sellerResponse.json();
           const sellerStripeID = seller?.data.stripeAccountId;
-          console.log("POR QUES", basketTotal);
+
+          const items = basket.items.map((item: any) => ({
+            id: item.listing.id,
+            quantity: item.quantity,
+            price: item.listing.price,      
+            title: item.listing.title,
+            unit: item.listing.unit,
+            image: item.listing.images?.[0] || "",
+          }));
+
+          const requestPayload = {
+            items,
+            basketPayload: {
+              id: basket.id,
+            },
+            orderPayload: {
+              storeId: basket.location.id,
+              storeName: basket.location.name || basket.location.user.name,
+              totalAmount: basketTotal,
+              orderGroupId: orderGroupId || undefined,
+              currency: "usd",
+              stripeAcctId: sellerStripeID,                
+              description: `Order from ${basket.location.name || basket.location.user.name}`,
+            },
+            customerPayload: {
+              name: user.name,
+              email: user.email,
+              id: user.id,
+              stripeCustomerId: user?.stripeCustomerId,
+            }
+          };
+
           const response = await axios.post(
             "/api/stripe/create-payment-intent",
-            {
-              totalSum: basketTotal,
-              basketTotals,
-              userId,
-              basketIds: [basket.id],
-              userLoc,
-              sellerStripeID,
-              orderGroupId: new URLSearchParams(window.location.search).get(
-                "orderGroupId"
-              ),
-
-              basketId: basket.id,
-            }
+            requestPayload
           );
 
           intents.push({
@@ -174,7 +196,7 @@ export default function CheckoutForm({
     if (baskets.length > 0) {
       fetchPaymentIntents();
     }
-  }, [baskets, userId, userLoc]);
+  }, [baskets,user]);
 
   function Round(value: number, precision: number) {
     var multiplier = Math.pow(10, precision || 0);
@@ -252,20 +274,20 @@ export default function CheckoutForm({
                     </div>
 
                     <div className="text-sm text-gray-600">
-                      {basket.orderMethod === "PICKUP" && basket.pickupDate ? (
+                      {basket.orderMethod === "PICKUP" && basket.fulfillmentDate ? (
                         <div className="flex items-center gap-1 text-green-700 bg-green-50 px-2 py-1 rounded-md">
-                          Pickup: {formatDate(new Date(basket.pickupDate))}
+                          Pickup: {formatDate(new Date(basket.fulfillmentDate))}
                         </div>
                       ) : basket.orderMethod === "DELIVERY" &&
-                        basket.deliveryDate ? (
+                        basket.fulfillmentDate ? (
                         <div className="flex items-center gap-1 text-blue-700 bg-blue-50 px-2 py-1 rounded-md ">
                           <span className="text-xs">🚚</span>
-                          Delivery: {formatDate(new Date(basket.deliveryDate))}
+                          Delivery: {formatDate(new Date(basket.fulfillmentDate))}
                         </div>
                       ) : (
                         <div className="flex items-center gap-1 text-yellow-700 bg-yellow-50 px-2 py-1 rounded-md ">
                           <span className="text-xs">⏰</span>
-                          No pickup/delivery time set
+                          No fulfillment time set
                         </div>
                       )}
                     </div>
