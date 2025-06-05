@@ -25,6 +25,7 @@ interface BasketProps {
   sellerId: string;
   stock: any;
   listingId: string;
+  type: string;
   locationId: string;
   address?: any;
   user?: any | null;
@@ -46,6 +47,7 @@ export const useBasket = ({
   locationId,
   listingId,
   sellerId,
+  type,
   address,
   user,
   initialQuantity = 1,
@@ -359,7 +361,7 @@ export const useBasket = ({
           initialOrderMethod: initialOrderMethod,
         });
         Toast({
-          message: `Added to basket`,
+          message: `Added ${quantity} ${type} to basket`,
         });
         onBasketUpdate(true);
       } catch (error: any) {

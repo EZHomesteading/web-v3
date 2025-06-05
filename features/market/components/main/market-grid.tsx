@@ -14,6 +14,8 @@ import ClientBasketButton from "../../utils/market-toggle.client";
 import { calculateAvailabilityScores } from "@/utils/avail-score-handlers";
 import { ListingWithLocAndUser } from "@/types";
 import { formatPrice } from "@/utils/listing";
+import { FcCheckmark } from "react-icons/fc";
+import { HiMiniXMark } from "react-icons/hi2";
 
 const MarketGrid = ({ children }: { children: any }) => {
   return (
@@ -156,11 +158,26 @@ const MarketCard = ({
             prefetch={true}
             className="block w-full cursor-pointer group mx-auto !z-0"
           >
-            <h2 className={`text-xs font-normal`}>{listing.location.name}</h2>
-            <p className={` text-xs font-light text-neutral-500`}>
-              {listing.location.address.state}, {listing.location.address.city}
-            </p>
-
+            {" "}
+            <div className="flex items-center justify-between  w-full">
+              <div className={`text-sm flex flex-col items-start `}>
+                <h2 className={`text-xs font-normal`}>
+                  {listing.location.name}
+                </h2>
+                <p className={` text-xs font-light text-neutral-500`}>
+                  {listing.location.address.state},{" "}
+                  {listing.location.address.city}
+                </p>
+              </div>
+              <div className={`text-sm flex flex-col items-end `}>
+                <h2 className={`text-xs font-normal`}>
+                  {listing.stock} {listing.unit} in stock
+                </h2>{" "}
+                <h2 className={`text-xs font-normal`}>
+                  minimum order: {listing.minOrder} {listing.unit}
+                </h2>
+              </div>
+            </div>
             <div className="flex items-center justify-between mt-2 w-full">
               <div className={`text-sm flex items-center gap-1`}>
                 <span className="font-semibold">
@@ -177,7 +194,6 @@ const MarketCard = ({
                 color="#000"
               />
             </div>
-
             <div className="flex flex-col gap-1 mt-2">
               {listing.location?.hours?.pickup?.length === 0 ? (
                 <div className="text-red-500 font-medium flex items-center text-xs">
@@ -231,26 +247,14 @@ const StarRating = ({
             style={{ width: size, height: size }}
           >
             {halfFilled ? (
-              <svg
-                viewBox="0 0 24 24"
-                fill={color}
-                style={{ width: size, height: size }}
-              >
-                <path
-                  d="M12 2L8.5 8.5L2 9.3L7 14.1L5.5 20.5L12 17.5L18.5 20.5L17 14.1L22 9.3L15.5 8.5L12 2Z"
-                  clipPath="inset(0 50% 0 0)"
-                />
-              </svg>
+              // Half-filled shows a check with reduced opacity
+              <FcCheckmark size={size} color={color} style={{ opacity: 0.5 }} />
+            ) : filled ? (
+              // Filled shows a check
+              <FcCheckmark size={size} color={color} />
             ) : (
-              <svg
-                viewBox="0 0 24 24"
-                fill={filled ? color : "none"}
-                stroke={color}
-                strokeWidth="2"
-                style={{ width: size, height: size }}
-              >
-                <path d="M12 2L8.5 8.5L2 9.3L7 14.1L5.5 20.5L12 17.5L18.5 20.5L17 14.1L22 9.3L15.5 8.5L12 2Z" />
-              </svg>
+              // Empty shows an X
+              <HiMiniXMark size={size} color={color} style={{ opacity: 0.3 }} />
             )}
           </span>
         );

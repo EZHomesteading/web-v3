@@ -45,6 +45,7 @@ const SendMessageComponent = ({
   } = useBasket({
     locationId: listing.location.id,
     sellerId: listing.location.userId,
+    type: listing.unit,
     stock: listing.stock,
     listingId: listing.id,
     address: listing.location.id,

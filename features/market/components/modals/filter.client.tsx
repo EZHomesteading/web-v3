@@ -39,10 +39,25 @@ const Filters = ({ role }: Props) => {
 
   const [radius, setRadius] = useState(r);
   const [isOpen, setIsOpen] = useState(false);
+  const storedState = sessionStorage.getItem("searchLocationState");
+  let state = {
+    address: "",
+    coordinates: "",
+    searchQuery: "",
+    radius: "",
+  };
+  if (storedState) {
+    const { address, coordinates, searchQuery } = JSON.parse(storedState);
+    state.address = address;
+    state.coordinates = coordinates;
+    state.searchQuery = searchQuery;
+  }
 
   const handleSeeListings = () => {
     const params = new URLSearchParams(searchParams?.toString());
     const radiusInMeters = radius?.toFixed(1) || "10";
+    state.radius = radiusInMeters;
+    sessionStorage.setItem("searchLocationState", JSON.stringify(state));
     params.set("radius", radiusInMeters);
     router.push(`/market?${params.toString()}`);
     setIsOpen(false);
