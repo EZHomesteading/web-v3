@@ -4,7 +4,9 @@ export enum LocRole {
   COOP = "COOP",
   PRODUCER = "PRODUCER",
 }
+
 export type coordObj = { lat: number; lng: number };
+
 export type Location = {
   id: string;
   userId: string;

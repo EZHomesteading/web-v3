@@ -24,17 +24,18 @@ const CheckoutPage = async () => {
   });
 
   const detailedBaskets = (await Promise.all(detailedBasketsPromises)).filter(
-    Boolean
+    Boolean,
   );
 
   const userLoc = await getUserLocations({ userId: session.user.id });
+  console.log(
+    detailedBaskets,
+    "detailedBaskets in /ezhomesteading-web/app/(nav)/checkout/page.tsx",
+  );
 
   return (
     <div className="w-full gradient">
-      <CheckoutForm
-        baskets={detailedBaskets}
-        user={{...session.user, loc:userLoc}}
-      />
+      <CheckoutForm baskets={detailedBaskets} user={session?.user} />
     </div>
   );
 };

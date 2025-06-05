@@ -48,7 +48,7 @@ export async function POST(req: NextRequest) {
           where: { id },
           data: {
             proposedLoc: proposedLoc,
-            fufillmentDate: new Date(fufillmentDate),
+            fufillmentDate: fufillmentDate,
             orderMethod: orderMethod,
             items: items
               ? {

@@ -13,7 +13,6 @@ const BasketPage = async () => {
     redirect("/auth/login");
   }
   const map_api_key = process.env.MAPS_KEY as string;
-  // Get the basic basket info first
   const { baskets: basicBaskets } = await getActiveBaskets();
   const userLocs = await getUserLocationsBasket();
   const mk = process.env.MAPS_KEY;
@@ -25,9 +24,13 @@ const BasketPage = async () => {
   });
 
   const detailedBaskets = (await Promise.all(detailedBasketsPromises)).filter(
-    Boolean
+    Boolean,
   );
   const userLoc = await getUserLocations({ userId: session.user.id });
+  console.log(
+    detailedBaskets,
+    "detailedBaskets in /ezhomesteading-web/app/(nav)/my-basket/page.tsx",
+  );
 
   return (
     <DetailedBasketGrid

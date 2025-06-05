@@ -1,3 +1,4 @@
+import { proposedLoc } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 
@@ -14,15 +15,14 @@ interface StripePaymentIntentListing {
   unit?: string;
 }
 
-
-// proposedLoc: proposedLoc;
-// fulfillmentDate?: Date;
-// orderMethod?: string;
-// status?: string;
-// timeType?: string;
-
 interface BasketPayload {
   id: string;
+  proposedLoc: proposedLoc;
+  fulfillmentDate?: Date;
+  orderMethod?: string;
+  status?: string;
+  timeType?: string;
+  orderGroupId?: string;
 }
 
 interface OrderPayload {
@@ -31,8 +31,8 @@ interface OrderPayload {
   totalAmount: number;
   currency: string;
   stripeAccountId: string;
+  notes?: string;
   description?: string;
-  orderGroupId?: string;
 }
 
 interface CustomerPayload {
@@ -49,14 +49,19 @@ interface PaymentRequest {
   customerPayload: CustomerPayload;
 }
 
-async function saveOrderMetadataToDB(order: PaymentRequest, piId: string): Promise<string> {
+async function saveOrderMetadataToDB(
+  order: PaymentRequest,
+  piId: string,
+): Promise<string> {
   return "order_meta_abc123";
 }
 
 async function resolveStripeCustomerId(req: PaymentRequest): Promise<string> {
   if (req.customerPayload?.stripeCustomerId) {
     try {
-      const existingCustomer = await stripe.customers.retrieve(req.customerPayload.stripeCustomerId);
+      const existingCustomer = await stripe.customers.retrieve(
+        req.customerPayload.stripeCustomerId,
+      );
       return existingCustomer.id;
     } catch (error) {
       console.error("Error retrieving existing customer:", error);
@@ -77,7 +82,7 @@ async function resolveStripeCustomerId(req: PaymentRequest): Promise<string> {
   try {
     const newCustomer = await stripe.customers.create(customerParams);
 
-    // TODO: update user with stripeCustomerId
+    // TODO: update user in db
 
     return newCustomer.id;
   } catch (error) {
@@ -86,7 +91,10 @@ async function resolveStripeCustomerId(req: PaymentRequest): Promise<string> {
   }
 }
 
-async function createPaymentIntentWithMetadata(order: PaymentRequest, customerId: string): Promise<Stripe.PaymentIntent> {
+async function createPaymentIntentWithMetadata(
+  order: PaymentRequest,
+  customerId: string,
+): Promise<Stripe.PaymentIntent> {
   if (order.items.length === 0) {
     throw new Error("Order must have at least one item");
   }
@@ -96,14 +104,16 @@ async function createPaymentIntentWithMetadata(order: PaymentRequest, customerId
   }
 
   const params: Stripe.PaymentIntentCreateParams = {
-    amount: order.orderPayload.totalAmount,
+    amount: Math.round(order.orderPayload.totalAmount),
     currency: order.orderPayload.currency,
     payment_method_types: ["card"],
     capture_method: "manual",
     customer: customerId,
     description: order.orderPayload.description,
     statement_descriptor_suffix: "EZHomesteading",
-    metadata: {},
+    metadata: {
+      notes: order.orderPayload.notes || "",
+    },
   };
 
   if (order.orderPayload.stripeAccountId) {
@@ -131,17 +141,28 @@ async function createPaymentIntentWithMetadata(order: PaymentRequest, customerId
       store_id: order.orderPayload.storeId,
       store_name: order.orderPayload.storeName,
       order_id: "TEMP_ORDER_ID",
-      cust_id: customerId,
-      user_id: order.customerPayload.id,
-      user_name: order.customerPayload.name,
       item_count: order.items.length,
       total_amt: order.orderPayload.totalAmount,
     },
+    user_meta: {
+      st_id: customerId,
+      id: order.customerPayload.id,
+      name: order.customerPayload.name,
+    },
     basket_meta: {
       id: order.basketPayload.id,
+      proposed_loc: order.basketPayload.proposedLoc,
+      fulfillment_date: order.basketPayload.fulfillmentDate,
+      order_method: order.basketPayload.orderMethod,
+      status: order.basketPayload.status,
+      time_type: order.basketPayload.timeType,
       order_group_id: order.basketPayload.orderGroupId,
     },
   };
+
+  if (order.orderPayload.notes) {
+    meta.notes = order.orderPayload.notes;
+  }
 
   order.items.forEach((item) => {
     const metaKey = `id_${item.id}`;
@@ -154,7 +175,9 @@ async function createPaymentIntentWithMetadata(order: PaymentRequest, customerId
     };
   });
 
-  params.metadata!.order_data = JSON.stringify(meta);
+  Object.keys(meta).forEach((key) => {
+    params.metadata![key] = JSON.stringify(meta[key]);
+  });
 
   return await stripe.paymentIntents.create(params);
 }
@@ -163,10 +186,18 @@ export async function POST(request: NextRequest) {
   try {
     const requestData = await request.json();
 
-    if (!requestData.items || !requestData.basketPayload || !requestData.orderPayload || !requestData.customerPayload) {
+    if (
+      !requestData.items ||
+      !requestData.basketPayload ||
+      !requestData.orderPayload ||
+      !requestData.customerPayload
+    ) {
       return NextResponse.json(
-        { error: "Missing required fields: items, basketPayload, orderPayload, or customerPayload" },
-        { status: 400 }
+        {
+          error:
+            "Missing required fields: items, basketPayload, orderPayload, or customerPayload",
+        },
+        { status: 400 },
       );
     }
 
@@ -174,6 +205,13 @@ export async function POST(request: NextRequest) {
       items: requestData.items,
       basketPayload: {
         id: requestData.basketPayload.id,
+        proposedLoc: requestData.basketPayload.proposedLoc,
+        fulfillmentDate: requestData.basketPayload.fulfillmentDate
+          ? new Date(requestData.basketPayload.fulfillmentDate)
+          : undefined,
+        orderMethod: requestData.basketPayload.orderMethod,
+        status: requestData.basketPayload.status,
+        timeType: requestData.basketPayload.timeType,
         orderGroupId: requestData.basketPayload.orderGroupId,
       },
       orderPayload: {
@@ -182,7 +220,8 @@ export async function POST(request: NextRequest) {
         storeId: requestData.orderPayload.storeId,
         storeName: requestData.orderPayload.storeName,
         description: requestData.orderPayload.description,
-        stripeAccountId: requestData.orderPayload.stripeAcctId,
+        stripeAccountId: requestData.orderPayload.stripeAccountId,
+        notes: requestData.orderPayload.notes || "",
       },
       customerPayload: {
         id: requestData.customerPayload.id,
@@ -194,27 +233,26 @@ export async function POST(request: NextRequest) {
 
     const customerId = await resolveStripeCustomerId(req);
 
-    const paymentIntent = await createPaymentIntentWithMetadata(req, customerId);
+    const paymentIntent = await createPaymentIntentWithMetadata(
+      req,
+      customerId,
+    );
 
     return NextResponse.json({
       clientSecret: paymentIntent.client_secret,
       paymentIntentId: paymentIntent.id,
       stripeCustomerId: customerId,
     });
-
   } catch (error) {
     console.error("Error creating PaymentIntent:", error);
 
     if (error instanceof Error) {
-      return NextResponse.json(
-        { error: error.message },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: error.message }, { status: 400 });
     }
 
     return NextResponse.json(
       { error: "Internal Server Error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

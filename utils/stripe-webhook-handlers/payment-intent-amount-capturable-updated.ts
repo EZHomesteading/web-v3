@@ -1,20 +1,44 @@
 import prisma from "@/lib/prismadb";
-import { basketStatus } from "@prisma/client";
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
 import webPush, { PushSubscription } from "web-push";
 
+//
+// const meta: Record<string, any> = {
+//   order_meta: {
+//     store_id: order.orderPayload.storeId,
+//     store_name: order.orderPayload.storeName,
+//     order_id: "TEMP_ORDER_ID",
+//     item_count: order.items.length,
+//     total_amt: order.orderPayload.totalAmount,
+//   },
+//   user_meta: {
+//     st_id: customerId,
+//     id: order.customerPayload.id,
+//     name: order.customerPayload.name,
+//   },
+//   basket_meta: {
+//     id: order.basketPayload.id,
+//     proposed_loc: order.basketPayload.proposedLoc,
+//     fulfillment_date: order.basketPayload.fulfillmentDate,
+//     order_method: order.basketPayload.orderMethod,
+//     status: order.basketPayload.status,
+//     time_type: order.basketPayload.timeType,
+//     order_group_id: order.basketPayload.orderGroupId,
+//   },
+// };
+//
+
 export async function handlePaymentIntentAmountCapturable(
   paymentIntent: Stripe.PaymentIntent,
 ): Promise<NextResponse | void> {
-  const buyerId = paymentIntent.metadata?.userId;
-  const orderGroupId = paymentIntent.metadata?.orderGroupId;
+  const orderData = extractOrderDataFromMetadata(paymentIntent.metadata);
 
-  if (!buyerId) {
+  if (!orderData) {
     return;
   }
 
-  const createdOrder = await handleBasketProcessing(buyerId, paymentIntent);
+  const createdOrder = await createOrderFromMetadata(orderData, paymentIntent);
 
   if (!createdOrder) {
     return;
@@ -22,102 +46,90 @@ export async function handlePaymentIntentAmountCapturable(
 
   await createConversationAndNotify(createdOrder);
 
-  if (orderGroupId) {
-    await addOrderToGroup(createdOrder.id, orderGroupId);
+  if (orderData.basket.order_group_id) {
+    await addOrderToGroup(createdOrder.id, orderData.basket.order_group_id);
   }
-
 }
 
-async function handleBasketProcessing(
-  buyerId: string,
-  paymentIntent: Stripe.PaymentIntent,
-) {
-  const basketId = paymentIntent.metadata.basketId;
+function extractOrderDataFromMetadata(metadata: Record<string, string>) {
+  try {
+    const orderMeta = JSON.parse(metadata.order_meta);
+    const userMeta = JSON.parse(metadata.user_meta);
+    const basketMeta = JSON.parse(metadata.basket_meta);
 
-  if (!basketId) {
-    throw new Error("No basketId found in payment intent metadata");
+    if (!orderMeta || !userMeta || !basketMeta) {
+      throw new Error("Missing required metadata sections");
+    }
+
+    const items: any[] = [];
+    Object.keys(metadata).forEach((key) => {
+      if (key.startsWith("id_")) {
+        const itemData = JSON.parse(metadata[key]);
+        items.push({
+          id: key.replace("id_", ""),
+          title: itemData.t,
+          unit: itemData.u,
+          price: itemData.p,
+          quantity: itemData.q,
+          image: itemData.i,
+        });
+      }
+    });
+
+    return {
+      order: orderMeta,
+      user: userMeta,
+      basket: basketMeta,
+      items,
+      notes: metadata.notes || "",
+    };
+  } catch (error) {
+    console.error("Error parsing metadata:", error);
+    return null;
   }
-
-  const basket = await findActiveBasket(basketId, buyerId);
-
-  if (!basket) {
-    throw new Error(`Basket ${basketId} not found`);
-  }
-
-  return await createOrderFromBasket(basket, buyerId, paymentIntent);
 }
 
-async function findActiveBasket(basketId: string, buyerId: string) {
-  return prisma.basket.findFirst({
-    where: {
-      id: basketId,
-      userId: buyerId,
-      status: basketStatus.ACTIVE,
-    },
-    select: {
-      id: true,
-      proposedLoc: true,
-      pickupDate: true,
-      deliveryDate: true,
-      orderMethod: true,
-      items: {
-        select: {
-          quantity: true,
-          price: true,
-          listing: {
-            select: {
-              id: true,
-              title: true,
-              unit: true,
-              stock: true,
-              price: true,
-              subcategory: true,
-              minOrder: true,
-            },
-          },
-        },
-      },
-      location: {
-        select: {
-          id: true,
-          user: {
-            select: {
-              id: true,
-              url: true,
-              name: true,
-              role: true,
-            },
-          },
-        },
-      },
-    },
-  });
-}
-
-async function createOrderFromBasket(
-  basket: any,
-  buyerId: string,
+async function createOrderFromMetadata(
+  orderData: any,
   paymentIntent: Stripe.PaymentIntent,
 ) {
   return prisma.$transaction(async (tx) => {
-    const totalPrice = basket.items.reduce(
-      (acc: number, item: any) => acc + item.quantity * item.price,
-      0,
-    );
+    const seller = await tx.user.findUnique({
+      where: { id: orderData.order.store_id },
+      select: { id: true, name: true, role: true },
+    });
+
+    const buyer = await tx.user.findUnique({
+      where: { id: orderData.user.id },
+      select: { id: true, name: true, role: true },
+    });
+
+    if (!seller || !buyer) {
+      throw new Error("Seller or buyer not found");
+    }
+
+    const totalPrice = orderData.order.total_amt;
 
     const newOrder = await tx.order.create({
       data: {
-        userId: buyerId,
-        locationId: basket.location.id,
-        proposedLoc: basket.proposedLoc,
+        userId: orderData.user.id,
+        locationId: orderData.order.store_id,
+        proposedLoc: orderData.basket.proposed_loc,
         paymentIntentId: paymentIntent.id,
-        sellerId: basket.location.user.id,
-        pickupDate: basket.pickupDate ? new Date(basket.pickupDate) : null,
-        items: basket.items,
+        sellerId: seller.id,
+        fulfillmentDate: orderData.basket.fulfillment_date,
+        items: orderData.items.map((item: any) => ({
+          listingId: item.id,
+          quantity: item.quantity,
+          price: item.price,
+          title: item.title,
+          unit: item.unit,
+        })),
         totalPrice,
         status: "BUYER_PROPOSED_TIME",
-        fulfillmentType: basket.orderMethod,
+        fulfillmentType: orderData.basket.fulfillment_type,
         fee: { site: totalPrice * 0.06 },
+        notes: orderData.notes,
       },
       include: {
         buyer: true,
@@ -125,10 +137,10 @@ async function createOrderFromBasket(
       },
     });
 
-    await updateInventoryLevels(tx, basket.items);
+    await updateInventoryLevels(tx, orderData.items);
 
     await tx.basket.delete({
-      where: { id: basket.id },
+      where: { id: orderData.basket.id },
     });
 
     return newOrder;
@@ -137,10 +149,14 @@ async function createOrderFromBasket(
 
 async function updateInventoryLevels(tx: any, items: any[]) {
   await Promise.all(
-    items.map((item) =>
+    items.map((item: any) =>
       tx.listing.update({
-        where: { id: item.listing.id },
-        data: { stock: item.listing.stock - item.quantity },
+        where: { id: item.id },
+        data: {
+          stock: {
+            decrement: item.quantity,
+          },
+        },
       }),
     ),
   );
@@ -152,7 +168,7 @@ async function addOrderToGroup(orderId: string, orderGroupId: string) {
   await prisma.orderGroup.update({
     where: { id: cleanOrderGroupId },
     data: {
-      orderids: {
+      orderIds: {
         push: orderId.toString(),
       },
     },
@@ -196,10 +212,7 @@ async function updateOrderWithConversation(
 
 async function formatOrderItems(items: any[]): Promise<string> {
   const itemDescriptions = items.map((item: any) => {
-    const listing = item.listing;
-    return listing
-      ? `${item.quantity} ${listing.unit} of ${listing.title}`
-      : "";
+    return `${item.quantity} ${item.unit} of ${item.title}`;
   });
 
   return itemDescriptions.filter(Boolean).join(", ");

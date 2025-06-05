@@ -49,7 +49,7 @@ interface ListingType {
   unit: string;
   images: string[];
   price: number;
-  [key: string]: any; // Allow additional properties
+  [key: string]: any;
 }
 
 export interface BasketItem {
@@ -58,7 +58,6 @@ export interface BasketItem {
   [key: string]: any;
 }
 
-// Use any for complex nested types
 interface DetailedBasketGridProps {
   mapsKey: string;
   baskets: any[];
@@ -117,7 +116,6 @@ const DetailedBasketGrid: React.FC<DetailedBasketGridProps> = ({
     </ClientOnly>
   );
 };
-const libraries: Libraries = ["places", "geometry"];
 const DetailedBasketGridContent: React.FC<DetailedBasketGridProps> = ({
   baskets,
   mapsKey,
@@ -127,7 +125,6 @@ const DetailedBasketGridContent: React.FC<DetailedBasketGridProps> = ({
   mk,
   userId,
 }) => {
-  // Get basketTotals from context ONCE at the top level
   const { basketTotals, updateBasketTotals } = useBasket();
   const [pickupTimes, setPickupTimes] = useState(null);
   const { isLoaded } = useGoogleMaps();
@@ -157,6 +154,7 @@ const DetailedBasketGridContent: React.FC<DetailedBasketGridProps> = ({
       return acc;
     }, {} as Record<string, DeliveryPickupToggleMode>)
   );
+
   const [showLocationModal, setShowLocationModal] = useState(!userLoc);
 
   useEffect(() => {
@@ -164,7 +162,7 @@ const DetailedBasketGridContent: React.FC<DetailedBasketGridProps> = ({
       setShowLocationModal(true);
     }
   }, [userLoc]);
-  // Filter locations based on their current mode
+
   const locations = useMemo(() => {
     return baskets.reduce((acc: BasketLocation[], basket) => {
       if (basket.location) {
@@ -180,9 +178,8 @@ const DetailedBasketGridContent: React.FC<DetailedBasketGridProps> = ({
   const handleBasketModeChange = useCallback(
     (basketId: string, mode: DeliveryPickupToggleMode) => {
       setBasketModes((prev) => {
-        // Only update if the mode has actually changed
         if (prev[basketId] === mode) {
-          return prev; // Return the same object if no changes
+          return prev; 
         }
 
         return {
@@ -195,7 +192,6 @@ const DetailedBasketGridContent: React.FC<DetailedBasketGridProps> = ({
   );
 
   useEffect(() => {
-    // Calculate totals function
     const calculateTotals = () => {
       const newTotals = baskets.reduce(
         (acc, basket) => ({
@@ -216,7 +212,6 @@ const DetailedBasketGridContent: React.FC<DetailedBasketGridProps> = ({
         { total: 0, itemCount: 0 }
       );
 
-      // Only update if totals have changed
       if (
         basketTotals.total !== newTotals.total ||
         basketTotals.itemCount !== newTotals.itemCount
@@ -225,13 +220,10 @@ const DetailedBasketGridContent: React.FC<DetailedBasketGridProps> = ({
       }
     };
 
-    // Run once immediately
     calculateTotals();
 
-    // Set up interval
     const intervalId = setInterval(calculateTotals, 1000);
 
-    // Clean up
     return () => clearInterval(intervalId);
   }, [baskets, updateBasketTotals, basketTotals]);
 
@@ -241,10 +233,8 @@ const DetailedBasketGridContent: React.FC<DetailedBasketGridProps> = ({
   }
 
   function findLargestSODT(baskets: any[]): number {
-    // Initialize with 0 in case there are no eligible items
     let largestSODT = 0;
 
-    // Helper function to check if a basket's location has pickup hours
     const hasPickupHours = (basket: any): boolean => {
       return (
         basket.location?.hours?.pickup &&
@@ -253,20 +243,14 @@ const DetailedBasketGridContent: React.FC<DetailedBasketGridProps> = ({
       );
     };
 
-    // Iterate through each basket
     baskets.forEach((basket) => {
-      // Skip this basket if its location doesn't have pickup hours
       if (!hasPickupHours(basket)) {
-        return; // Skip to the next basket
+        return; 
       }
 
-      // Check if basket has items array
       if (basket.items && Array.isArray(basket.items)) {
-        // Iterate through each item in the basket
         basket.items.forEach((item: any) => {
-          // Check if the item has a listing with an SODT value
           if (item.listing && typeof item.listing.SODT === "number") {
-            // Update largestSODT if current SODT is larger
             largestSODT = Math.max(largestSODT, item.listing.SODT);
           }
         });

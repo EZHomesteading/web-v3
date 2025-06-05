@@ -24,12 +24,12 @@ const SoonExpiryModal: React.FC<CustomTimeProps> = ({
         className={`${OutfitFont.className} flex flex-col justify-between h-full`}
       >
         <div>
-          {expiryArr.map((expiryObj: any) => {
+          {expiryArr.map((expiryObj: any, index: number) => {
             const shelfLifeDisplay = expiryObj.expiry
               ? `${format(expiryObj.expiry, "MMM dd, yyyy")}`
               : "This product is non-perisable";
             return (
-              <div className={`px-1 py-[.35rem] overflow-y-auto`}>
+              <div key={index} className={`px-1 py-[.35rem] overflow-y-auto`}>
                 {expiryObj.soonValue === 1
                   ? `Your ${expiryObj.title} from ${expiryObj.sellerName} may expire within three days! This item is projected expire on ${shelfLifeDisplay}`
                   : null}

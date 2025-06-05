@@ -9,7 +9,7 @@ export async function getOrderGroupWithOrders(ordergroupId: string) {
       where: { id: ordergroupId },
       select: {
         id: true,
-        orderids: true,
+        orderIds: true,
         startLoc: true,
         endLoc: true,
       },
@@ -19,12 +19,11 @@ export async function getOrderGroupWithOrders(ordergroupId: string) {
 
     const orders = await prisma.order.findMany({
       where: {
-        id: { in: orderGroup.orderids },
+        id: { in: orderGroup.orderIds },
       },
       select: {
         id: true,
-        pickupDate: true,
-
+        fulfillmentDate: true,
         location: {
           select: {
             user: { select: { name: true } },
@@ -38,24 +37,24 @@ export async function getOrderGroupWithOrders(ordergroupId: string) {
 
     const mappedOrders: OrderMap[] = orders.map((order) => ({
       id: order.id,
-      pickupDate: order.pickupDate || new Date(),
+      pickupDate: order.fulfillmentDate || new Date(),
       name: order.location?.user.name,
       location: order.location
         ? {
-            name: order.location.name || "",
-            coordinates: order.location.coordinates,
-            address: order.location.address,
-          }
+          name: order.location.name || "",
+          coordinates: order.location.coordinates,
+          address: order.location.address,
+        }
         : {
-            name: "",
-            coordinates: [0, 0],
-            address: {
-              street: "undefined",
-              city: "undefined",
-              state: "undefined",
-              zip: "undefined",
-            },
+          name: "",
+          coordinates: [0, 0],
+          address: {
+            street: "undefined",
+            city: "undefined",
+            state: "undefined",
+            zip: "undefined",
           },
+        },
     }));
 
     return {
