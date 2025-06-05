@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
       console.error("Error creating PaymentIntent:");
       return NextResponse.json(
         { error: "Internal Server Error" },
-        { status: 500 }
+        { status: 500 },
       );
     }
     //const order = await getOrderById(orderId);
@@ -44,6 +44,7 @@ export async function POST(request: NextRequest) {
         basketId,
       },
       receipt_email: email,
+      capture_method: "manual",
     });
 
     return NextResponse.json({
@@ -53,7 +54,7 @@ export async function POST(request: NextRequest) {
     console.error("Error creating PaymentIntent:", error);
     return NextResponse.json(
       { error: "Internal Server Error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
