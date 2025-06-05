@@ -26,10 +26,10 @@ export default async function Page() {
   }
   const sortedLocations = locations
     ? [...locations].sort((a, b) => {
-        if (a.isDefault) return -1;
-        if (b.isDefault) return 1;
-        return 0;
-      })
+      if (a.isDefault) return -1;
+      if (b.isDefault) return 1;
+      return 0;
+    })
     : [];
 
   return (
