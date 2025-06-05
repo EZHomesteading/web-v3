@@ -160,7 +160,7 @@ export default function PaymentComponent({
   return (
     <form
       id="payment-form"
-      className="lg:fixed lg:w-[450px] xl:w-[550px] 3xl:w-[650px]"
+      className="lg:w-[450px] xl:w-[550px] 3xl:w-[650px]"
       onSubmit={handleSubmit}
     >
       <div className="mb-4">
