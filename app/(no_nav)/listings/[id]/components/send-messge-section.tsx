@@ -47,6 +47,7 @@ const SendMessageSection = ({
     locationId: listing.location.id,
     sellerId: listing.location.userId,
     stock: listing.stock,
+    type: listing.unit,
     listingId: listing.id,
     address: listing.location.id,
     user,

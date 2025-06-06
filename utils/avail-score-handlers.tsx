@@ -95,8 +95,8 @@ function calculateServiceScores(hours: Availability[]) {
 
   const normalizeScore = (score: number): number => {
     const maxPossibleScore = 7;
-    const normalized = (score / maxPossibleScore) * 4;
-    return Math.max(1, Math.min(3, Math.ceil(normalized)));
+    const normalized = (score / maxPossibleScore) * 3;
+    return Math.max(0, Math.min(3, Math.ceil(normalized)));
   };
 
   const finalWorkingmanScore = normalizeScore(workingmanScore);

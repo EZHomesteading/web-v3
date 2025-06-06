@@ -32,16 +32,16 @@ const AvailabilityScore = ({ scores, type }: AvailabilityScoreProps) => {
           {type === "pickup" ? "Pickup Availability" : "Delivery Availability"}
         </span>
       </div>
-      <div className="flex flex-row space-x-1">
-        {[0, 1, 2].map((dotIndex) => (
-          <div
-            key={dotIndex}
-            className={`w-2 h-2 rounded-full ${getColor(
-              typeScores.combinedScore
-            )}`}
-          />
-        ))}
-      </div>
+
+      {typeScores.combinedScore === 0 ? (
+        <div className={` ${getTextColor(typeScores.combinedScore)}`}>None</div>
+      ) : typeScores.combinedScore === 1 ? (
+        <div className={` ${getTextColor(typeScores.combinedScore)}`}>Poor</div>
+      ) : typeScores.combinedScore === 2 ? (
+        <div className={`${getTextColor(typeScores.combinedScore)}`}>Fair</div>
+      ) : typeScores.combinedScore === 3 ? (
+        <div className={`${getTextColor(typeScores.combinedScore)}`}>Good</div>
+      ) : null}
     </div>
   );
 };

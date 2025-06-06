@@ -8,7 +8,7 @@ export async function POST(request: Request) {
   const {
     name,
     email,
-    phoneNumber,
+    phone,
     role,
     url,
     hasPickedRole,
@@ -27,7 +27,7 @@ export async function POST(request: Request) {
     data: {
       name,
       email,
-      phoneNumber,
+      phone,
       image,
       role: role,
       url,

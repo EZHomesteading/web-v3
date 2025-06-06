@@ -37,6 +37,7 @@ const SearchLocation: React.FC<SearchLocationProps> = ({ apiKey }) => {
   // State management
   const [address, setAddress] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
+  const [radius, setRadius] = useState(20);
   const [coordinates, setCoordinates] = useState<Coordinates | null>(null);
   const [focusedInput, setFocusedInput] = useState<"location" | "query" | null>(
     null
@@ -147,17 +148,19 @@ const SearchLocation: React.FC<SearchLocationProps> = ({ apiKey }) => {
     const storedState = sessionStorage.getItem("searchLocationState");
     if (storedState) {
       try {
-        const { address, coordinates, searchQuery } = JSON.parse(storedState);
+        const { address, coordinates, searchQuery, radius } =
+          JSON.parse(storedState);
         setAddress(address || "");
         setCoordinates(coordinates || null);
         setSearchQuery(searchQuery || "");
+        setRadius(radius || 20);
         if (coordinates && searchQuery) {
           router.push(
-            `/market?lat=${coordinates.lat}&lng=${coordinates.lng}&q=${searchQuery}&radius=20`
+            `/market?lat=${coordinates.lat}&lng=${coordinates.lng}&q=${searchQuery}&radius=${radius}`
           );
         } else if (coordinates && !searchQuery) {
           router.push(
-            `/market?lat=${coordinates.lat}&lng=${coordinates.lng}&radius=20`
+            `/market?lat=${coordinates.lat}&lng=${coordinates.lng}&radius=${radius}`
           );
         } else if (!coordinates && searchQuery) {
           router.push(`/market?q=${searchQuery}`);
@@ -174,6 +177,7 @@ const SearchLocation: React.FC<SearchLocationProps> = ({ apiKey }) => {
       address,
       coordinates,
       searchQuery: listingName ? listingName : searchQuery,
+      radius,
     };
     if (state.address === "") {
       state.coordinates = null;
@@ -430,7 +434,7 @@ const SearchLocation: React.FC<SearchLocationProps> = ({ apiKey }) => {
         : {
             lat: coordinates.lat.toString(),
             lng: coordinates.lng.toString(),
-            radius: "20", // Default radius in miles
+            radius: radius.toString(), // Default radius in miles
           }),
     };
 
