@@ -33,6 +33,7 @@ export async function GET(req: NextRequest) {
         },
       },
       select: {
+        fulfillmentDate: true,
         id: true,
         createdAt: true,
         items: {
