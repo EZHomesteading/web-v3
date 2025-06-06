@@ -6,10 +6,11 @@ declare module "next-auth" {
   interface UserInfo extends DefaultUser {
     id: string;
     name: string;
+    phone?:string;
     email: string;
-    phoneNumber?: string;
     fullName?: fullName;
     stripeAccountId?: string;
+    customerAccountId?:string;
     url: string;
     image?: string;
     createdAt?: Date;
@@ -33,12 +34,13 @@ declare module "next-auth" {
 declare module "next-auth/jwt" {
   interface JWT {
     id: string;
-    phoneNumber?: string;
+    phone?: string;
     name: string;
     email: string;
     fullName?: fullName;
     image?: string;
     stripeAccountId?: string;
+    stripeCustomerId?: string;
     url: string;
     createdAt?: Date;
     updatedAt?: Date;

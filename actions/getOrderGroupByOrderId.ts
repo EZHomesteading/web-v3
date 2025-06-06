@@ -3,7 +3,7 @@ import prisma from "@/lib/prisma";
 export async function getOrderGroupIdByOrderId(orderId: string) {
   const orderGroup = await prisma.orderGroup.findFirst({
     where: {
-      orderids: {
+      orderIds: {
         has: orderId,
       },
     },

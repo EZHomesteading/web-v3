@@ -17,7 +17,6 @@ export async function POST(request: Request) {
       return new NextResponse("Listing ID is required", { status: 400 });
     }
 
-    // Only get locationId from listing
     const listing = await prisma.listing.findUnique({
       where: { id: listingId },
       select: {
@@ -30,7 +29,6 @@ export async function POST(request: Request) {
       return new NextResponse("Listing location not found", { status: 404 });
     }
 
-    // Check for existing group with minimal data
     let basketGroup = await prisma.basket.findFirst({
       where: {
         userId: user?.id,
@@ -52,7 +50,6 @@ export async function POST(request: Request) {
       });
     }
 
-    // Create basket item with only necessary data
     const basketItem = await prisma.basketItem.create({
       data: {
         basketId: basketGroup.id,
@@ -74,8 +71,7 @@ export async function POST(request: Request) {
   }
 }
 
-// GET route optimized to only fetch necessary fields
-export async function GET(request: Request) {
+export async function GET() {
   try {
     const user = await currentUser();
     if (!user) {
@@ -96,7 +92,6 @@ export async function GET(request: Request) {
         listingId: true,
         basket: {
           select: {
-            pickupDate: true,
             locationId: true,
           },
         },

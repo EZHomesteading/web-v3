@@ -33,7 +33,7 @@ declare module "chat-types" {
     validate?: () => boolean;
 
     data?: {
-      pickupDate?: Date;
+      fulfillmentDate?: Date;
       price?: number;
       reason?: string;
       images?: string[];
@@ -111,7 +111,7 @@ declare module "chat-types" {
     sellerId: string;
     userId: string;
     fulfillmentType: fulfillmentType;
-    pickupDate: Date | null;
+    fulfillmentDate: Date | null;
     totalPrice: number;
     conversationId: string | null;
     paymentIntentId: string | null;

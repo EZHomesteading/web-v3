@@ -18,7 +18,7 @@ export async function GET(req: NextRequest) {
     if (!locationIds.length) {
       return NextResponse.json(
         { error: "No location IDs provided" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -74,14 +74,13 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
 
     const validationResult = NewStoreReq.safeParse(body);
-
     if (!validationResult.success) {
       return NextResponse.json(
         {
           error: "Invalid request data",
           details: validationResult.error.format(),
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -99,13 +98,45 @@ export async function POST(req: NextRequest) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: "Validation error", details: error.format() },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     return NextResponse.json(
       { error: "Internal Server Error" },
-      { status: 500 }
+      { status: 500 },
     );
+  }
+}
+
+function slugify(input: string): string {
+  return input
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+export async function generateUniqueSlug(displayName: string): Promise<string> {
+  let baseSlug = slugify(displayName);
+  let uniqueSlug = baseSlug;
+
+  while (true) {
+    const existingUser = await prisma.user.findFirst({
+      where: {
+        url: {
+          equals: uniqueSlug,
+          mode: "insensitive",
+        },
+      },
+    });
+
+    if (!existingUser) {
+      return uniqueSlug;
+    }
+
+    const randomDigit = Math.floor(Math.random() * 10);
+    uniqueSlug = uniqueSlug.includes("-")
+      ? `${uniqueSlug}${randomDigit}`
+      : `${uniqueSlug}-${randomDigit}`;
   }
 }

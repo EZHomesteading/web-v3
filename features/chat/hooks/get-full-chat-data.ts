@@ -34,7 +34,7 @@ const extractListingIds = (items: any): string[] => {
   }
 };
 const getFullChatData = async (
-  conversationId: string
+  conversationId: string,
 ): Promise<FullChatData | null> => {
   try {
     const user = await currentUser();
@@ -67,7 +67,7 @@ const getFullChatData = async (
     }
 
     const otherUserId = conversation.participantIds.find(
-      (id) => id !== user.id
+      (id) => id !== user.id,
     );
 
     if (!otherUserId) {
@@ -95,7 +95,7 @@ const getFullChatData = async (
         id: true,
         sellerId: true,
         userId: true,
-        pickupDate: true,
+        fulfillmentDate: true,
         totalPrice: true,
         fulfillmentType: true,
         locationId: true,
@@ -170,19 +170,19 @@ const getFullChatData = async (
 
     const transformedOrder: ChatOrder | null = order
       ? {
-          id: order.id,
-          sellerId: order.sellerId,
-          userId: order.userId,
-          fulfillmentType: order.fulfillmentType,
-          pickupDate: order.pickupDate,
-          fee: order.fee,
-          totalPrice: order.totalPrice,
-          conversationId: order.conversationId,
-          paymentIntentId: order.paymentIntentId,
-          items: Array.isArray(order.items) ? order.items : [],
-          status: order.status,
-          location: location as Location,
-        }
+        id: order.id,
+        sellerId: order.sellerId,
+        userId: order.userId,
+        fulfillmentType: order.fulfillmentType,
+        fulfillmentDate: order.fulfillmentDate,
+        fee: order.fee,
+        totalPrice: order.totalPrice,
+        conversationId: order.conversationId,
+        paymentIntentId: order.paymentIntentId,
+        items: Array.isArray(order.items) ? order.items : [],
+        status: order.status,
+        location: location as Location,
+      }
       : null;
 
     // Extract listing IDs from the quantity array
@@ -191,32 +191,32 @@ const getFullChatData = async (
     const listings: Listing[] =
       listingIds.length > 0
         ? await prisma.listing.findMany({
-            where: { id: { in: listingIds } },
-            select: {
-              stock: true,
-              minOrder: true,
-              shelfLife: true,
-              rating: true,
-              createdAt: true,
-              locationId: true,
-              category: true,
-              subcategory: true,
-              description: true,
-              userId: true,
-              id: true,
-              title: true,
-              price: true,
-              unit: true,
-              images: true,
-            },
-          })
+          where: { id: { in: listingIds } },
+          select: {
+            stock: true,
+            minOrder: true,
+            shelfLife: true,
+            rating: true,
+            createdAt: true,
+            locationId: true,
+            category: true,
+            subcategory: true,
+            description: true,
+            userId: true,
+            id: true,
+            title: true,
+            price: true,
+            unit: true,
+            images: true,
+          },
+        })
         : [];
 
     const chatMessages: ChatMessage[] = conversation.messages.map(
       (message) => ({
         ...message,
         seen: !!message.seen,
-      })
+      }),
     );
 
     const result: FullChatData = {

@@ -147,7 +147,7 @@ type fullName {
 
 model OrderGroup {
   id       String   @id @default(auto()) @map("_id") @db.ObjectId
-  orderids String[]
+  orderIds String[]
   startLoc Float[]
   endLoc   Float[]
 }
@@ -345,7 +345,7 @@ enum basketStatus {
   CONVERTED_TO_ORDER
 }
 
-enum basket_time_type {
+enum BasketTimeType {
   ASAP
   CUSTOM
 }
@@ -390,12 +390,11 @@ model Basket {
   location     Location         @relation(fields: [locationId], references: [id], onDelete: Cascade)
   proposedLoc  proposedLoc?
   items        BasketItem[]     @relation("BasketToItems")
-  pickupDate   DateTime?
-  deliveryDate DateTime?
+  fulfillmentDate DateTime?
   orderMethod  orderMethod      @default(PICKUP)
   status       basketStatus     @default(ACTIVE)
   notes        String?
-  time_type    basket_time_type @default(ASAP)
+  timeType    BasketTimeType @default(ASAP)
   createdAt    DateTime         @default(now())
   updatedAt    DateTime         @updatedAt
 
@@ -430,8 +429,7 @@ model Order {
 
   sellerId String @db.ObjectId
 
-  pickupDate      DateTime?
-  deliveryDate    DateTime?
+  fulfillmentDate DateTime?
   paymentIntentId String?
 
   totalPrice  Float
@@ -452,7 +450,7 @@ model Order {
   proposedLoc         OrderLoc?
   preferredLocationId String?         @db.ObjectId
   actualLocationId    String?         @db.ObjectId
-  deliveryNotes       String?
+  notes String?
 
   location   Location? @relation(fields: [locationId], references: [id])
   locationId String?   @db.ObjectId

@@ -1,4 +1,3 @@
-// app/api/ordergroup/route.ts
 import { NextResponse, NextRequest } from "next/server";
 import { currentUser } from "@/lib/auth";
 import prisma from "@/lib/prisma";
@@ -15,7 +14,7 @@ export async function POST(request: NextRequest) {
   if (!startLoc) {
     return NextResponse.json(
       { error: "Missing location data" },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
@@ -24,7 +23,7 @@ export async function POST(request: NextRequest) {
       data: {
         startLoc,
         endLoc,
-        orderids: [], // Empty array initially
+        orderIds: [], // Empty array initially
       },
     });
 
@@ -33,7 +32,7 @@ export async function POST(request: NextRequest) {
     console.error(error);
     return NextResponse.json(
       { error: "Failed to create order group" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

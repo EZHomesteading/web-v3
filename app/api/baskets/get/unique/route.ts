@@ -36,9 +36,7 @@ export async function GET(
       select: {
         id: true,
         proposedLoc: true,
-        pickupDate: true,
-        deliveryDate: true,
-        orderMethod: true,
+        // fufillmentDate: true,
         items: {
           select: {
             quantity: true,
@@ -103,62 +101,10 @@ export async function GET(
     }
     return NextResponse.json(fullBasketGroup);
   } catch (error) {
+    console.log(error, "error in /ezhomesteading-web/app/api/baskets/get/unique/route.ts")
     return NextResponse.json(
       { error: "Failed to fetch basket" },
       { status: 500 }
     );
   }
 }
-
-// export async function DELETE({ params }: { params: { id: string } }) {
-//     try {
-//         const session = await authCache()
-
-//         if (!session?.user) {
-//             return NextResponse.json(
-//                 { error: "Unauthorized" },
-//                 { status: 401 }
-//             )
-//         }
-
-//         const id = params.id
-
-//         if (!id) {
-//             return NextResponse.json(
-//                 { error: "ID is required" },
-//                 { status: 400 }
-//             )
-//         }
-
-//         const deletedBasket = await prisma.basketGroup.deleteMany({
-//             where: {
-//                 AND: [
-//                     { id },
-//                     { userId: session.user.id }
-//                 ]
-//             }
-//         })
-
-//         if (deletedBasket.count === 0) {
-//             return NextResponse.json(
-//                 { error: "Basket not found or unauthorized" },
-//                 { status: 404 }
-//             )
-//         }
-
-//         return NextResponse.json({
-//             success: true,
-//             message: "Basket deleted successfully"
-//         })
-
-//     } catch (error) {
-//         console.error("Error deleting basket:", error)
-//         return NextResponse.json(
-//             {
-//                 error: "Failed to delete basket",
-//                 details: process.env.NODE_ENV === 'development' ? error : undefined
-//             },
-//             { status: 500 }
-//         )
-//     }
-// }

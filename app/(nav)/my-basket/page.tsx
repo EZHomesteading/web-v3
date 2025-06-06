@@ -13,20 +13,19 @@ const BasketPage = async () => {
     redirect("/auth/login");
   }
   const map_api_key = process.env.MAPS_KEY as string;
-  // Get the basic basket info first
   const { baskets: basicBaskets } = await getActiveBaskets();
   const userLocs = await getUserLocationsBasket();
   const mk = process.env.MAPS_KEY;
 
-  // Get detailed info for each basket
   const detailedBasketsPromises = basicBaskets.map(async (basket) => {
     const { basket: detailedBasket } = await getUnique({ id: basket.id });
     return detailedBasket;
   });
 
   const detailedBaskets = (await Promise.all(detailedBasketsPromises)).filter(
-    Boolean
+    Boolean,
   );
+
   const userLoc = await getUserLocations({ userId: session.user.id });
 
   return (

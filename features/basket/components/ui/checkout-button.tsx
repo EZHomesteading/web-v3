@@ -1,3 +1,4 @@
+"use client";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -38,13 +39,12 @@ const CheckoutButton = ({
   const threeDaysLater = new Date(now.getTime() + 3 * 24 * 60 * 60 * 1000);
   const router = useRouter();
 
-  // Check if any items are out of stock
   const hasOutOfStock = baskets.some((basket) =>
-    basket.items.some((item: any) => item.listing.stock <= 0)
+    basket.items.some((item: any) => item.listing.stock <= 0),
   );
 
   const hasNotEnoughStock = baskets.some((basket) =>
-    basket.items.some((item: any) => item.listing.stock <= item.quantity)
+    basket.items.some((item: any) => item.listing.stock <= item.quantity),
   );
 
   const createExpiryArray = () => {
@@ -58,7 +58,7 @@ const CheckoutButton = ({
           shelfLifeInDays !== -1 ? addDays(createdAt, shelfLifeInDays) : null;
 
         const percentExpiry = new Date(
-          now.getTime() + shelfLifeInDays * 0.3 * 24 * 60 * 60 * 1000
+          now.getTime() + shelfLifeInDays * 0.3 * 24 * 60 * 60 * 1000,
         );
 
         const adjustedListing: AdjustedListing = {
@@ -86,10 +86,8 @@ const CheckoutButton = ({
   };
 
   const handleCheckout = () => {
-    // Create expiry array
     const expiryArr = createExpiryArray();
 
-    // Handle missing pickup/delivery times
     if (!allTimesSet) {
       toast.error("Please set pickup or delivery times for all items", {
         duration: 2000,
@@ -98,7 +96,6 @@ const CheckoutButton = ({
       return;
     }
 
-    // Handle out of stock items
     if (hasOutOfStock) {
       toast.error("Some items in your basket are out of stock", {
         duration: 2000,
@@ -106,24 +103,23 @@ const CheckoutButton = ({
       });
       return;
     }
+
     if (hasNotEnoughStock) {
       toast.error(
         "Some items in your basket do not have enough stock for your order.",
         {
           duration: 2000,
           position: "bottom-right",
-        }
+        },
       );
       return;
     }
-    // If there are expired or soon-to-expire items, show modal
     if (expiryArr.length > 0) {
       setExpiredArray(expiryArr);
       setConfirmOpen(true);
       return;
     }
 
-    // If all checks pass, proceed with checkout
     createOrder();
   };
 
@@ -132,48 +128,49 @@ const CheckoutButton = ({
       console.log("Starting checkout process...");
       console.log("Initial baskets:", baskets);
       console.log("Pickup times:", pickupTimes);
+
       const orderGroupResponse = await axios.post(
         "/api/useractions/checkout/create-group",
         {
           startLoc: startLoc,
           endLoc: endLoc,
-        }
+        },
       );
       console.log(orderGroupResponse);
       const orderGroupId = orderGroupResponse.data.id;
       if (!orderGroupId) {
         return;
       }
-      // Prepare updates for all baskets that need pickup times set
+
       const updates = baskets
         .filter((basket) => {
           const hasPickupTime = Boolean(pickupTimes?.[basket.location.id]);
-          // Include if it has a pickup time OR if it has a delivery date
-          const needsUpdate =
-            hasPickupTime ||
-            (basket.orderMethod === "DELIVERY" && basket.deliveryDate);
+          const hasExistingFulfillmentDate = Boolean(basket.fulfillmentDate);
+
+          const needsUpdate = hasPickupTime || hasExistingFulfillmentDate;
 
           console.log(`Basket ${basket.id} needs update:`, needsUpdate, {
             currentOrderMethod: basket.orderMethod,
             hasPickupTime,
+            hasExistingFulfillmentDate,
             locationId: basket.location.id,
             pickupTime: pickupTimes?.[basket.location.id],
-            deliveryDate: basket.deliveryDate,
+            existingFulfillmentDate: basket.fulfillmentDate,
           });
           return needsUpdate;
         })
         .map((basket) => {
-          // Use nullish coalescing to safely handle pickupTimes
-          const pickupDate = pickupTimes?.[basket.location.id] ?? null;
+          const pickupTime = pickupTimes?.[basket.location.id];
+          const fulfillmentDate = pickupTime || basket.fulfillmentDate;
+
+          const orderMethod = pickupTime ? "PICKUP" : basket.orderMethod;
 
           const update = {
             id: basket.id,
-            pickupDate,
-            orderMethod: pickupDate ? "PICKUP" : basket.orderMethod,
-            // Only set deliveryDate if no pickup time
-            deliveryDate: pickupDate ? null : basket.deliveryDate,
+            orderMethod,
+            fulfillmentDate,
             proposedLoc: basket.proposedLoc,
-            time_type: basket.time_type,
+            timeType: basket.timeType,
             items: basket.items.map((item: any) => ({
               listingId: item.listing.id,
               quantity: item.quantity,
@@ -216,27 +213,29 @@ const CheckoutButton = ({
       });
     }
   };
-  // Also add debug logs to the all times check
+
   const allTimesSet = baskets.every((basket) => {
     const hasPickupTime = pickupTimes && pickupTimes[basket.location.id];
-    const hasDeliveryDate =
-      basket.orderMethod === "DELIVERY" && basket.deliveryDate;
+    const hasExistingFulfillmentDate = Boolean(basket.fulfillmentDate);
+
+    const hasTime = hasPickupTime || hasExistingFulfillmentDate;
+
     console.log(`Checking times for basket ${basket.id}:`, {
-      hasPickupTime,
-      hasDeliveryDate,
+      hasPickupTime: Boolean(hasPickupTime),
+      hasExistingFulfillmentDate,
+      hasTime,
       orderMethod: basket.orderMethod,
       pickupTime: pickupTimes?.[basket.location.id],
-      deliveryDate: basket.deliveryDate,
+      fulfillmentDate: basket.fulfillmentDate,
     });
-    return hasPickupTime || hasDeliveryDate;
+
+    return hasTime;
   });
 
-  // Don't render if there are no items
   if (basketTotals.itemCount === 0) {
     return null;
   }
 
-  // Determine button style and text based on state
   let buttonStyle = "w-full mt-4";
   let buttonText = "Proceed to Checkout";
 
@@ -257,8 +256,8 @@ const CheckoutButton = ({
       />
       {!allTimesSet ? (
         <div className="text-red-500">
-          You must set delivery/pickup times for all items before proceeding to
-          checkout
+          You must set delivery or pickup times for all items before proceeding
+          to checkout
         </div>
       ) : null}
       {hasOutOfStock ? (

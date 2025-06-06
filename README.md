@@ -1,10 +1,10 @@
 # EZHomesteading
 
-- 🏚️ EZ Homesteading is a multivendor marketplace application with an emphasis on connecting family-scale farmers and gardeners with local consumers in their area.
-- 🧑‍🌾 There are currently two roles on the site. A Co-Op, which can also be thought of as a vendor, is assigned a store upon signing up.
-- 👀 Co-Ops can customize their store's appearance and functionality with a profile picture, a store banner, hours of operation, and much more.
-- 🍅 Co-Ops can list items for sale so long as they are homesteading, farmer's market, or self-sufficiency-related. This can be anything from homegrown tomatoes to homemade candles to water purification tablets.
-- 👱‍♂️ The other role on the site currently is a consumer, which as the name implies, are people who are interested in anything homesteading, farmer's market, or self-sufficiency-related. Consumers can search for items or browse through an assortment of categories.
+- EZ Homesteading is a multivendor marketplace application with an emphasis on connecting family-scale farmers and gardeners with local consumers in their area.
+- There are currently two roles on the site. A Co-Op, which can also be thought of as a vendor, is assigned a store upon signing up.
+- Co-Ops can customize their store's appearance and functionality with a profile picture, a store banner, hours of operation, and much more.
+- Co-Ops can list items for sale so long as they are homesteading, farmer's market, or self-sufficiency-related. This can be anything from homegrown tomatoes to homemade candles to water purification tablets.
+- The other role on the site currently is a consumer, which as the name implies, are people who are interested in anything homesteading, farmer's market, or self-sufficiency-related. Consumers can search for items or browse through an assortment of categories.
 
 ### What Makes EZHomesteading Different?
 

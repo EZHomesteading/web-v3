@@ -6,7 +6,6 @@ import {
   Circle,
   MarkerF,
   Autocomplete,
-  Libraries,
 } from "@react-google-maps/api";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -21,7 +20,6 @@ import {
 } from "@/components/ui/dialog";
 import { formatDateToMMMDDAtHourMin } from "@/features/availability-calendar/utils/helper-functions-calendar";
 
-import useMediaQuery from "@/hooks/media-query";
 import { Calendar } from "../../ui/calendar";
 import TimePicker from "../modals/time.picker";
 import RouteOptimizerModal from "../mapping/route-optimizer.modal";
@@ -30,7 +28,6 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { DeliveryPickupToggleMode } from "../../utils/helper-components-calendar";
 
 interface LocationStatus {
   isOpen: boolean;
@@ -112,7 +109,6 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
         hour24 = 0;
       }
 
-      // Create a new date object with the selected date and time
       const dateWithTime = new Date(tempDate);
       dateWithTime.setHours(hour24);
       dateWithTime.setMinutes(minutes);
@@ -300,7 +296,6 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
     </AnimatePresence>
   );
 };
-const libraries: Libraries = ["places", "geometry"];
 
 const AvailabilityMap: React.FC<AvailabilityMapProps> = ({
   setStartLoc,
@@ -679,9 +674,6 @@ const AvailabilityMap: React.FC<AvailabilityMapProps> = ({
     []
   );
   console.log(initLoc);
-  // if (!isLoaded) {
-  //   return <div>Loading maps...</div>;
-  // }
 
   return (
     <div className="mt-8">
@@ -730,7 +722,6 @@ const AvailabilityMap: React.FC<AvailabilityMapProps> = ({
           </Button>
         </div>
         <div className="flex px-1 justify-between pt-2 items-center">
-          {" "}
           <Button
             variant="outline"
             size="default"

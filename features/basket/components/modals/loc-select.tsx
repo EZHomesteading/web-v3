@@ -71,7 +71,6 @@ const LocationModal: React.FC<LocationModalProps> = ({
     if (!selectedLocation) return;
 
     try {
-      console.log(selectedLocation?.address);
       setIsSaving(true);
       await axios.post("/api/useractions/update/newlocation", {
         name: selectedName,
@@ -98,10 +97,8 @@ const LocationModal: React.FC<LocationModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50" onClick={handleClose}>
-      {/* Backdrop */}
       <div className="absolute inset-0 bg-black/50" />
 
-      {/* Modal Container */}
       <div
         className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2  w-full sm:w-[500px] bg-white rounded-lg shadow-xl p-6"
         onClick={(e) => e.stopPropagation()}
