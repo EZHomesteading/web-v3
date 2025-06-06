@@ -15,7 +15,7 @@ import { useSearchParams } from "next/navigation";
 import { fulfillmentType } from "@prisma/client";
 
 const stripePromise = loadStripe(
-  process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || "",
+  process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || ""
 );
 
 interface CheckoutFormProps {
@@ -104,7 +104,7 @@ export default function CheckoutForm({ baskets, user }: CheckoutFormProps) {
       const basketTotal = basket.items.reduce(
         (sum: number, item: any) =>
           sum + (item.listing.price / 100) * item.quantity,
-        0,
+        0
       );
       return acc + basketTotal;
     }, 0);
@@ -131,7 +131,7 @@ export default function CheckoutForm({ baskets, user }: CheckoutFormProps) {
           const basketTotal = basket.items.reduce(
             (sum: number, item: any) =>
               sum + item.listing.price * item.quantity,
-            0,
+            0
           );
 
           const sellerId = basket.location.user.id;
@@ -139,7 +139,7 @@ export default function CheckoutForm({ baskets, user }: CheckoutFormProps) {
 
           if (!sellerResponse.ok) {
             throw new Error(
-              `Failed to fetch user: ${sellerResponse.statusText}`,
+              `Failed to fetch user: ${sellerResponse.statusText}`
             );
           }
 
@@ -173,7 +173,9 @@ export default function CheckoutForm({ baskets, user }: CheckoutFormProps) {
               currency: "usd",
               stripeAccountId: sellerStripeID,
               notes: basket.notes || "",
-              description: `Order from ${basket.location.name || basket.location.user.name}`,
+              description: `Order from ${
+                basket.location.name || basket.location.user.name
+              }`,
             },
             customerPayload: {
               name: user.name,
@@ -185,7 +187,7 @@ export default function CheckoutForm({ baskets, user }: CheckoutFormProps) {
 
           const response = await axios.post(
             "/api/stripe/create-payment-intent",
-            requestPayload,
+            requestPayload
           );
 
           intents.push({
@@ -199,7 +201,7 @@ export default function CheckoutForm({ baskets, user }: CheckoutFormProps) {
       } catch (error) {
         console.error("Error creating payment intents:", error);
         setError(
-          "Failed to initialize checkout. Please try refreshing the page.",
+          "Failed to initialize checkout. Please try refreshing the page."
         );
       } finally {
         setIsLoading(false);
@@ -230,7 +232,7 @@ export default function CheckoutForm({ baskets, user }: CheckoutFormProps) {
       </div>
     );
   }
-
+  console.log("RRREEEEEEEE", baskets);
   return (
     <div className="">
       <div
@@ -275,7 +277,7 @@ export default function CheckoutForm({ baskets, user }: CheckoutFormProps) {
                           .reduce(
                             (sum: number, item: any) =>
                               sum + (item.listing.price / 100) * item.quantity,
-                            0,
+                            0
                           )
                           .toFixed(2)}
                       </span>

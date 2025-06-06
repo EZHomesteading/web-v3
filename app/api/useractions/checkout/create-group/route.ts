@@ -14,7 +14,7 @@ export async function POST(request: NextRequest) {
   if (!startLoc) {
     return NextResponse.json(
       { error: "Missing location data" },
-      { status: 400 },
+      { status: 400 }
     );
   }
 
@@ -32,7 +32,7 @@ export async function POST(request: NextRequest) {
     console.error(error);
     return NextResponse.json(
       { error: "Failed to create order group" },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }
