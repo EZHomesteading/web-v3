@@ -6,26 +6,12 @@ import webPush, { PushSubscription } from "web-push";
 export async function handlePaymentIntentAmountCapturable(
   paymentIntent: Stripe.PaymentIntent,
 ): Promise<NextResponse | void> {
-  console.log("🎯 Step 1: Extracting order data from metadata");
-
   try {
     const orderData = extractOrderDataFromMetadata(paymentIntent.metadata);
-    console.log("📦 Order data extracted:", !!orderData);
 
     if (!orderData) {
-      console.log("❌ No order data found, exiting");
       return;
     }
-
-    console.log("🔍 Order data structure:", {
-      hasOrder: !!orderData.order,
-      hasUser: !!orderData.user,
-      hasBasket: !!orderData.basket,
-      itemCount: orderData.items?.length || 0,
-      hasNotes: !!orderData.notes,
-    });
-
-    console.log("🎯 Step 2: Creating order from metadata");
     const createdOrder = await createOrderFromMetadata(
       orderData,
       paymentIntent,
@@ -38,56 +24,31 @@ export async function handlePaymentIntentAmountCapturable(
     await createConversationAndNotify(createdOrder);
 
     if (orderData.basket.order_group_id) {
-      console.log(
-        "🎯 Step 4: Adding order to group:",
-        orderData.basket.order_group_id,
-      );
       await addOrderToGroup(createdOrder.id, orderData.basket.order_group_id);
-      console.log("✅ Order added to group");
     } else {
-      console.log("⏭️ No order group ID, skipping group assignment");
     }
-
-    console.log("🎉 Payment intent handler completed successfully");
   } catch (error) {
-    console.error("❌ Error in handlePaymentIntentAmountCapturable:", error);
-    console.error("📍 Stack trace:", error);
     throw error;
   }
 }
 
 function extractOrderDataFromMetadata(metadata: Record<string, string>) {
-  console.log("🔍 Extracting metadata with keys:", Object.keys(metadata));
-
   try {
-    console.log("📊 Parsing order_meta...");
     const orderMeta = JSON.parse(metadata.order_meta);
-    console.log("✅ Order meta parsed:", orderMeta);
 
-    console.log("📊 Parsing user_meta...");
     const userMeta = JSON.parse(metadata.user_meta);
-    console.log("✅ User meta parsed:", userMeta);
 
-    console.log("📊 Parsing basket_meta...");
     const basketMeta = JSON.parse(metadata.basket_meta);
-    console.log("✅ Basket meta parsed:", basketMeta);
 
     if (!orderMeta || !userMeta || !basketMeta) {
-      console.error("❌ Missing required metadata sections:", {
-        orderMeta: !!orderMeta,
-        userMeta: !!userMeta,
-        basketMeta: !!basketMeta,
-      });
       throw new Error("Missing required metadata sections");
     }
 
-    console.log("📦 Processing item metadata...");
     const items: any[] = [];
     Object.keys(metadata).forEach((key) => {
       if (key.startsWith("id_")) {
         try {
           const itemData = JSON.parse(metadata[key]);
-          console.log(`✅ Parsed item ${key}:`, itemData);
           items.push({
             id: key.replace("id_", ""),
             title: itemData.t,
@@ -96,16 +57,11 @@ function extractOrderDataFromMetadata(metadata: Record<string, string>) {
             quantity: itemData.q,
             image: itemData.i,
           });
-          console.log("ITEMS", items);
         } catch (itemError) {
-          console.error(`❌ Error parsing item ${key}:`, itemError);
-          console.error(`❌ Item data: ${metadata[key]}`);
           throw itemError;
         }
       }
     });
-
-    console.log(`✅ Processed ${items.length} items successfully`);
 
     const result = {
       order: orderMeta,
@@ -115,7 +71,6 @@ function extractOrderDataFromMetadata(metadata: Record<string, string>) {
       notes: metadata.notes || "",
     };
 
-    console.log("✅ Metadata extraction completed successfully");
     return result;
   } catch (error) {
     console.error("❌ Error parsing metadata:", error);
@@ -128,11 +83,8 @@ async function createOrderFromMetadata(
   orderData: any,
   paymentIntent: Stripe.PaymentIntent,
 ) {
-  console.log("🏗️ Starting database transaction");
-
   try {
     return await prisma.$transaction(async (tx) => {
-      console.log("🔍 Looking up store with ID:", orderData.order.store_id);
       const store = await tx.location.findUnique({
         where: { id: orderData.order.store_id },
         select: {
@@ -142,9 +94,6 @@ async function createOrderFromMetadata(
           user: { select: { id: true } },
         },
       });
-      console.log("👨‍💼 Seller found:", !!store, store?.name);
-
-      console.log("🔍 Looking up buyer with ID:", orderData.user.id);
       const buyer = await tx.user.findUnique({
         where: { id: orderData.user.id },
         select: {
@@ -153,20 +102,15 @@ async function createOrderFromMetadata(
           role: true,
         },
       });
-      console.log("👤 Buyer found:", !!buyer, buyer?.name);
 
       if (!store || !buyer) {
         const error = new Error(
           `Seller or buyer not found - Seller: ${!!store}, Buyer: ${!!buyer}`,
         );
-        console.error("❌", error.message);
         throw error;
       }
 
       const totalPrice = orderData.order.total_amt;
-      console.log("💰 Total price:", totalPrice);
-
-      console.log("📝 Creating order record...");
       const newOrder = await tx.order.create({
         data: {
           userId: orderData.user.id,
@@ -189,19 +133,10 @@ async function createOrderFromMetadata(
           notes: orderData.notes,
         },
       });
-      console.log("✅ Order created with ID:", newOrder.id);
-
-      console.log("📦 Updating inventory levels...");
       await updateInventoryLevels(tx, orderData.items);
-      console.log("✅ Inventory updated");
-
-      console.log("🗑️ Deleting basket:", orderData.basket.id);
       await tx.basket.delete({
         where: { id: orderData.basket.id },
       });
-      console.log("✅ Basket deleted");
-
-      console.log("✅ Transaction completed successfully");
       return newOrder;
     });
   } catch (error) {
