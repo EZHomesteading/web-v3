@@ -77,8 +77,8 @@ const ConversationList: React.FC<ConversationListProps> = ({
           hasId ? "hidden lg:block" : ""
         )}
       >
-        <div className="px-5">
-          <div className="flex mb-4 items-center justify-between">
+        <div className="">
+          <div className="flex ml-5 mb-4 items-center justify-between">
             <div className={`${OutfitFont.className} text-2xl font-medium`}>
               Messages
             </div>
@@ -184,8 +184,9 @@ const ConversationBox: React.FC<ConversationBoxProps> = ({
     <div
       onClick={handleClick}
       className={clsx(
-        `w-full relative flex items-center mb-1 space-x-3 p-3`,
-        selected ? "" : "hover:cursor-pointer"
+        `w-full relative flex items-center space-x-3 p-3`,
+        selected ? "" : "hover:cursor-pointer",
+        hasSeen || isOwn ? "bg-slate-100" : ""
       )}
     >
       <Avatar image={otherUser?.image} />
