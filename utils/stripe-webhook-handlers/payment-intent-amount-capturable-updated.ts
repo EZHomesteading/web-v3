@@ -3,46 +3,6 @@ import { NextResponse } from "next/server";
 import Stripe from "stripe";
 import webPush, { PushSubscription } from "web-push";
 
-//
-// const meta: Record<string, any> = {
-//   order_meta: {
-//     store_id: order.orderPayload.storeId,
-//     store_name: order.orderPayload.storeName,
-//     order_id: "TEMP_ORDER_ID",
-//     item_count: order.items.length,
-//     total_amt: order.orderPayload.totalAmount,
-//   },
-//   user_meta: {
-//     st_id: customerId,
-//     id: order.customerPayload.id,
-//     name: order.customerPayload.name,
-//   },
-//   basket_meta: {
-//     id: order.basketPayload.id,
-//     proposed_loc: order.basketPayload.proposedLoc,
-//     fulfillment_date: order.basketPayload.fulfillmentDate,
-//     order_method: order.basketPayload.orderMethod,
-//     status: order.basketPayload.status,
-//     time_type: order.basketPayload.timeType,
-//     order_group_id: order.basketPayload.orderGroupId,
-//   },
-// };
-//
-
-async function updateInventoryLevels(tx: any, items: any[]) {
-  await Promise.all(
-    items.map((item: any) =>
-      tx.listing.update({
-        where: { id: item.id },
-        data: {
-          stock: {
-            decrement: item.quantity,
-          },
-        },
-      }),
-    ),
-  );
-}
 export async function handlePaymentIntentAmountCapturable(
   paymentIntent: Stripe.PaymentIntent,
 ): Promise<NextResponse | void> {
@@ -136,6 +96,7 @@ function extractOrderDataFromMetadata(metadata: Record<string, string>) {
             quantity: itemData.q,
             image: itemData.i,
           });
+          console.log("ITEMS", items);
         } catch (itemError) {
           console.error(`❌ Error parsing item ${key}:`, itemError);
           console.error(`❌ Item data: ${metadata[key]}`);
@@ -392,7 +353,7 @@ async function sendPushNotification(
   conversationId: string,
 ) {
   try {
-    if (!seller.subscriptions) return;
+    if (!seller?.subscriptions) return;
 
     const subscriptions = JSON.parse(seller.subscriptions);
     const vapidDetails = {
@@ -413,4 +374,19 @@ async function sendPushNotification(
   } catch (error) {
     console.error("Error sending push notification:", error);
   }
+}
+
+async function updateInventoryLevels(tx: any, items: any[]) {
+  await Promise.all(
+    items.map((item: any) =>
+      tx.listing.update({
+        where: { id: item.id },
+        data: {
+          stock: {
+            decrement: item.quantity,
+          },
+        },
+      }),
+    ),
+  );
 }
