@@ -35,9 +35,7 @@ export async function handlePaymentIntentAmountCapturable(
 function extractOrderDataFromMetadata(metadata: Record<string, string>) {
   try {
     const orderMeta = JSON.parse(metadata.order_meta);
-
     const userMeta = JSON.parse(metadata.user_meta);
-
     const basketMeta = JSON.parse(metadata.basket_meta);
 
     if (!orderMeta || !userMeta || !basketMeta) {
