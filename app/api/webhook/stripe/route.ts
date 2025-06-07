@@ -8,10 +8,13 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 });
 
 const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET!;
-
+const bing = async () => {
+  console.log("okay");
+};
 export async function POST(request: NextRequest) {
   return webhookProcessor(request, stripe, endpointSecret, {
     "payment_intent.amount_capturable_updated":
       handlePaymentIntentAmountCapturable,
+    "payment_intent.created": bing,
   });
 }

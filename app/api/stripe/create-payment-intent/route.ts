@@ -11,7 +11,7 @@ console.log("🚀 Stripe Payment Intent API initialized");
 console.log("📋 Stripe API Version:", "2025-04-30.basil");
 console.log(
   "🔑 Stripe Secret Key (first 10 chars):",
-  process.env.STRIPE_SECRET_KEY?.substring(0, 10),
+  process.env.STRIPE_SECRET_KEY?.substring(0, 10)
 );
 
 interface StripePaymentIntentListing {
@@ -60,7 +60,7 @@ interface PaymentRequest {
 
 async function saveOrderMetadataToDB(
   order: PaymentRequest,
-  piId: string,
+  piId: string
 ): Promise<string> {
   const metaId = "order_meta_abc123";
 
@@ -69,7 +69,7 @@ async function saveOrderMetadataToDB(
 
 async function resolveStripeCustomerId(
   name: string,
-  email: string,
+  email: string
 ): Promise<string> {
   const customerParams: Stripe.CustomerCreateParams = {};
 
@@ -91,7 +91,7 @@ async function resolveStripeCustomerId(
 
 async function createPaymentIntentWithMetadata(
   order: PaymentRequest,
-  customerId: string,
+  customerId: string
 ): Promise<Stripe.PaymentIntent> {
   if (order.items.length === 0) {
     throw new Error("Order must have at least one item");
@@ -115,11 +115,11 @@ async function createPaymentIntentWithMetadata(
   };
   if (order.orderPayload.stripeAccountId) {
     console.log(
-      "🏪 [createPaymentIntentWithMetadata] Adding transfer data for connected account",
+      "🏪 [createPaymentIntentWithMetadata] Adding transfer data for connected account"
     );
     console.log(
       "🏪 [createPaymentIntentWithMetadata] Destination account:",
-      order.orderPayload.stripeAccountId,
+      order.orderPayload.stripeAccountId
     );
 
     params.transfer_data = {
@@ -128,58 +128,58 @@ async function createPaymentIntentWithMetadata(
 
     console.log(
       "🏪 [createPaymentIntentWithMetadata] Transfer data added:",
-      JSON.stringify(params.transfer_data, null, 2),
+      JSON.stringify(params.transfer_data, null, 2)
     );
   } else {
     console.log(
-      "⚠️ [createPaymentIntentWithMetadata] No Stripe account ID provided, no transfer data added",
+      "⚠️ [createPaymentIntentWithMetadata] No Stripe account ID provided, no transfer data added"
     );
   }
 
   if (order.items.length > 40) {
     console.log(
-      "📊 [createPaymentIntentWithMetadata] Large order detected (>40 items), using DB metadata storage",
+      "📊 [createPaymentIntentWithMetadata] Large order detected (>40 items), using DB metadata storage"
     );
     console.log(
-      "📊 [createPaymentIntentWithMetadata] Creating payment intent first, then saving metadata to DB",
+      "📊 [createPaymentIntentWithMetadata] Creating payment intent first, then saving metadata to DB"
     );
 
     console.log(
-      "💳 [createPaymentIntentWithMetadata] Creating payment intent with basic params...",
+      "💳 [createPaymentIntentWithMetadata] Creating payment intent with basic params..."
     );
     const pi = await stripe.paymentIntents.create(params);
 
     console.log(
-      "✅ [createPaymentIntentWithMetadata] Payment intent created successfully",
+      "✅ [createPaymentIntentWithMetadata] Payment intent created successfully"
     );
     console.log(
       "✅ [createPaymentIntentWithMetadata] Payment intent ID:",
-      pi.id,
+      pi.id
     );
     console.log(
       "✅ [createPaymentIntentWithMetadata] Payment intent status:",
-      pi.status,
+      pi.status
     );
     console.log(
       "✅ [createPaymentIntentWithMetadata] Payment intent amount:",
-      pi.amount,
+      pi.amount
     );
     console.log(
       "✅ [createPaymentIntentWithMetadata] Payment intent customer:",
-      pi.customer,
+      pi.customer
     );
 
     console.log(
-      "💾 [createPaymentIntentWithMetadata] Saving large order metadata to database...",
+      "💾 [createPaymentIntentWithMetadata] Saving large order metadata to database..."
     );
     const metaId = await saveOrderMetadataToDB(order, pi.id);
     console.log(
       "💾 [createPaymentIntentWithMetadata] Metadata saved with ID:",
-      metaId,
+      metaId
     );
 
     console.log(
-      "🔄 [createPaymentIntentWithMetadata] Updating payment intent with metadata reference...",
+      "🔄 [createPaymentIntentWithMetadata] Updating payment intent with metadata reference..."
     );
     await stripe.paymentIntents.update(pi.id, {
       metadata: {
@@ -188,16 +188,16 @@ async function createPaymentIntentWithMetadata(
     });
 
     console.log(
-      "✅ [createPaymentIntentWithMetadata] Payment intent updated with metadata reference",
+      "✅ [createPaymentIntentWithMetadata] Payment intent updated with metadata reference"
     );
     return pi;
   }
 
   console.log(
-    "📋 [createPaymentIntentWithMetadata] Standard order size, embedding metadata directly",
+    "📋 [createPaymentIntentWithMetadata] Standard order size, embedding metadata directly"
   );
   console.log(
-    "📋 [createPaymentIntentWithMetadata] Building comprehensive metadata object...",
+    "📋 [createPaymentIntentWithMetadata] Building comprehensive metadata object..."
   );
 
   const meta: Record<string, any> = {
@@ -228,37 +228,39 @@ async function createPaymentIntentWithMetadata(
   console.log("📋 [createPaymentIntentWithMetadata] Base metadata created:");
   console.log(
     "📋 [createPaymentIntentWithMetadata] - Order meta:",
-    JSON.stringify(meta.order_meta, null, 2),
+    JSON.stringify(meta.order_meta, null, 2)
   );
   console.log(
     "📋 [createPaymentIntentWithMetadata] - User meta:",
-    JSON.stringify(meta.user_meta, null, 2),
+    JSON.stringify(meta.user_meta, null, 2)
   );
   console.log(
     "📋 [createPaymentIntentWithMetadata] - Basket meta:",
-    JSON.stringify(meta.basket_meta, null, 2),
+    JSON.stringify(meta.basket_meta, null, 2)
   );
 
   if (order.orderPayload.notes) {
     console.log(
       "📝 [createPaymentIntentWithMetadata] Adding notes to metadata:",
-      order.orderPayload.notes,
+      order.orderPayload.notes
     );
     meta.notes = order.orderPayload.notes;
   }
 
   console.log(
-    "🛍️ [createPaymentIntentWithMetadata] Processing individual items for metadata...",
+    "🛍️ [createPaymentIntentWithMetadata] Processing individual items for metadata..."
   );
   order.items.forEach((item, index) => {
     console.log(
-      `🛍️ [createPaymentIntentWithMetadata] Processing item ${index + 1}/${order.items.length}:`,
+      `🛍️ [createPaymentIntentWithMetadata] Processing item ${index + 1}/${
+        order.items.length
+      }:`
     );
     console.log(`🛍️ [createPaymentIntentWithMetadata] - ID: ${item.id}`);
     console.log(`🛍️ [createPaymentIntentWithMetadata] - Title: ${item.title}`);
     console.log(`🛍️ [createPaymentIntentWithMetadata] - Price: ${item.price}`);
     console.log(
-      `🛍️ [createPaymentIntentWithMetadata] - Quantity: ${item.quantity}`,
+      `🛍️ [createPaymentIntentWithMetadata] - Quantity: ${item.quantity}`
     );
     console.log(`🛍️ [createPaymentIntentWithMetadata] - Unit: ${item.unit}`);
     console.log(`🛍️ [createPaymentIntentWithMetadata] - Image: ${item.image}`);
@@ -273,20 +275,20 @@ async function createPaymentIntentWithMetadata(
     };
 
     console.log(
-      `🛍️ [createPaymentIntentWithMetadata] - Metadata key: ${metaKey}`,
+      `🛍️ [createPaymentIntentWithMetadata] - Metadata key: ${metaKey}`
     );
     console.log(
       `🛍️ [createPaymentIntentWithMetadata] - Metadata value:`,
-      JSON.stringify(meta[metaKey], null, 2),
+      JSON.stringify(meta[metaKey], null, 2)
     );
   });
 
   console.log(
-    "📋 [createPaymentIntentWithMetadata] Converting metadata to JSON strings for Stripe...",
+    "📋 [createPaymentIntentWithMetadata] Converting metadata to JSON strings for Stripe..."
   );
   console.log(
     "📋 [createPaymentIntentWithMetadata] Total metadata keys before conversion:",
-    Object.keys(meta).length,
+    Object.keys(meta).length
   );
 
   Object.keys(meta).forEach((key) => {
@@ -300,118 +302,108 @@ async function createPaymentIntentWithMetadata(
         original: originalValue,
         jsonString: jsonString,
         length: jsonString.length,
-      },
+      }
     );
   });
 
   console.log(
-    "📋 [createPaymentIntentWithMetadata] Final metadata object for Stripe:",
+    "📋 [createPaymentIntentWithMetadata] Final metadata object for Stripe:"
   );
   console.log(
     "📋 [createPaymentIntentWithMetadata] Total metadata entries:",
-    Object.keys(params.metadata!).length,
+    Object.keys(params.metadata!).length
   );
   console.log(
     "📋 [createPaymentIntentWithMetadata] Metadata keys:",
-    Object.keys(params.metadata!),
-  );
-
-  // Log total metadata size
-  const totalMetadataSize = Object.values(params.metadata!).reduce(
-    (total, value) => total + value.length,
-    0,
-  );
-  console.log(
-    "📋 [createPaymentIntentWithMetadata] Total metadata size (characters):",
-    totalMetadataSize,
+    Object.keys(params.metadata!)
   );
 
   console.log(
     "💳 [createPaymentIntentWithMetadata] Final payment intent params:",
-    JSON.stringify(params, null, 2),
+    JSON.stringify(params, null, 2)
   );
   console.log(
-    "💳 [createPaymentIntentWithMetadata] Making Stripe API call to create payment intent...",
+    "💳 [createPaymentIntentWithMetadata] Making Stripe API call to create payment intent..."
   );
 
   try {
     const paymentIntent = await stripe.paymentIntents.create(params);
 
     console.log(
-      "✅ [createPaymentIntentWithMetadata] Payment intent created successfully!",
+      "✅ [createPaymentIntentWithMetadata] Payment intent created successfully!"
     );
     console.log(
       "✅ [createPaymentIntentWithMetadata] Payment intent ID:",
-      paymentIntent.id,
+      paymentIntent.id
     );
     console.log(
       "✅ [createPaymentIntentWithMetadata] Payment intent status:",
-      paymentIntent.status,
+      paymentIntent.status
     );
     console.log(
       "✅ [createPaymentIntentWithMetadata] Payment intent amount:",
-      paymentIntent.amount,
+      paymentIntent.amount
     );
     console.log(
       "✅ [createPaymentIntentWithMetadata] Payment intent currency:",
-      paymentIntent.currency,
+      paymentIntent.currency
     );
     console.log(
       "✅ [createPaymentIntentWithMetadata] Payment intent customer:",
-      paymentIntent.customer,
+      paymentIntent.customer
     );
     console.log(
       "✅ [createPaymentIntentWithMetadata] Payment intent client secret (first 20 chars):",
-      paymentIntent.client_secret?.substring(0, 20),
+      paymentIntent.client_secret?.substring(0, 20)
     );
     console.log(
       "✅ [createPaymentIntentWithMetadata] Payment intent created timestamp:",
-      paymentIntent.created,
+      paymentIntent.created
     );
     console.log(
       "✅ [createPaymentIntentWithMetadata] Payment intent capture method:",
-      paymentIntent.capture_method,
+      paymentIntent.capture_method
     );
     console.log(
       "✅ [createPaymentIntentWithMetadata] Payment intent transfer data:",
-      paymentIntent.transfer_data,
+      paymentIntent.transfer_data
     );
 
     return paymentIntent;
   } catch (error) {
     console.error(
       "❌ [createPaymentIntentWithMetadata] Error creating payment intent:",
-      error,
+      error
     );
     console.error(
       "❌ [createPaymentIntentWithMetadata] Error type:",
-      typeof error,
+      typeof error
     );
     console.error(
       "❌ [createPaymentIntentWithMetadata] Error message:",
-      error instanceof Error ? error.message : "Unknown error",
+      error instanceof Error ? error.message : "Unknown error"
     );
     console.error(
       "❌ [createPaymentIntentWithMetadata] Error stack:",
-      error instanceof Error ? error.stack : "No stack trace",
+      error instanceof Error ? error.stack : "No stack trace"
     );
 
     if (error instanceof Stripe.errors.StripeError) {
       console.error(
         "❌ [createPaymentIntentWithMetadata] Stripe error type:",
-        error.type,
+        error.type
       );
       console.error(
         "❌ [createPaymentIntentWithMetadata] Stripe error code:",
-        error.code,
+        error.code
       );
       console.error(
         "❌ [createPaymentIntentWithMetadata] Stripe error param:",
-        error.param,
+        error.param
       );
       console.error(
         "❌ [createPaymentIntentWithMetadata] Stripe error message:",
-        error.message,
+        error.message
       );
     }
 
@@ -426,7 +418,7 @@ export async function POST(request: NextRequest) {
   console.log("🚀 [POST] Request URL:", request.url);
   console.log(
     "🚀 [POST] Request headers:",
-    Object.fromEntries(request.headers.entries()),
+    Object.fromEntries(request.headers.entries())
   );
 
   try {
@@ -437,7 +429,7 @@ export async function POST(request: NextRequest) {
     console.log("📨 [POST] Request data keys:", Object.keys(requestData));
     console.log(
       "📨 [POST] Full request data:",
-      JSON.stringify(requestData, null, 2),
+      JSON.stringify(requestData, null, 2)
     );
 
     console.log("✅ [POST] Request body parsed successfully");
@@ -447,12 +439,12 @@ export async function POST(request: NextRequest) {
     console.log("🔍 [POST] Items present:", !!requestData.items);
     console.log(
       "🔍 [POST] BasketPayload present:",
-      !!requestData.basketPayload,
+      !!requestData.basketPayload
     );
     console.log("🔍 [POST] OrderPayload present:", !!requestData.orderPayload);
     console.log(
       "🔍 [POST] CustomerPayload present:",
-      !!requestData.customerPayload,
+      !!requestData.customerPayload
     );
 
     if (
@@ -465,15 +457,15 @@ export async function POST(request: NextRequest) {
       console.error("❌ [POST] Items:", requestData.items ? "✓" : "✗");
       console.error(
         "❌ [POST] BasketPayload:",
-        requestData.basketPayload ? "✓" : "✗",
+        requestData.basketPayload ? "✓" : "✗"
       );
       console.error(
         "❌ [POST] OrderPayload:",
-        requestData.orderPayload ? "✓" : "✗",
+        requestData.orderPayload ? "✓" : "✗"
       );
       console.error(
         "❌ [POST] CustomerPayload:",
-        requestData.customerPayload ? "✓" : "✗",
+        requestData.customerPayload ? "✓" : "✗"
       );
 
       return NextResponse.json(
@@ -481,7 +473,7 @@ export async function POST(request: NextRequest) {
           error:
             "Missing required fields: items, basketPayload, orderPayload, or customerPayload",
         },
-        { status: 400 },
+        { status: 400 }
       );
     }
 
@@ -491,11 +483,11 @@ export async function POST(request: NextRequest) {
     console.log("🏗️ [POST] Processing basketPayload...");
     console.log(
       "🏗️ [POST] Original fulfillmentDate:",
-      requestData.basketPayload.fulfillmentDate,
+      requestData.basketPayload.fulfillmentDate
     );
     console.log(
       "🏗️ [POST] Original orderMethod:",
-      requestData.basketPayload.orderMethod,
+      requestData.basketPayload.orderMethod
     );
 
     const req: PaymentRequest = {
@@ -530,13 +522,13 @@ export async function POST(request: NextRequest) {
     };
 
     const userStripeAccountId = await getUserStripeCustomerId(
-      req.customerPayload.id,
+      req.customerPayload.id
     );
     let customerId: string;
     if (userStripeAccountId === "" || userStripeAccountId === undefined) {
       customerId = await resolveStripeCustomerId(
         req.customerPayload.name,
-        req.customerPayload.email,
+        req.customerPayload.email
       );
     } else {
       customerId = userStripeAccountId;
@@ -548,7 +540,7 @@ export async function POST(request: NextRequest) {
 
     const paymentIntent = await createPaymentIntentWithMetadata(
       req,
-      customerId,
+      customerId
     );
 
     const response = {
@@ -565,11 +557,11 @@ export async function POST(request: NextRequest) {
     console.error("💥 [POST] Error constructor:", error?.constructor?.name);
     console.error(
       "💥 [POST] Error message:",
-      error instanceof Error ? error.message : "Unknown error",
+      error instanceof Error ? error.message : "Unknown error"
     );
     console.error(
       "💥 [POST] Error stack:",
-      error instanceof Error ? error.stack : "No stack trace",
+      error instanceof Error ? error.stack : "No stack trace"
     );
 
     if (error instanceof Error) {
@@ -578,14 +570,14 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(
       { error: "Internal Server Error" },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }
 
 async function updateUserStripeCustomerId(
   userId: string,
-  stripeCustomerId: string,
+  stripeCustomerId: string
 ): Promise<void> {
   try {
     const updatedUser = await prisma.user.update({
@@ -600,7 +592,7 @@ async function updateUserStripeCustomerId(
 }
 
 async function getUserStripeCustomerId(
-  userId: string,
+  userId: string
 ): Promise<string | undefined> {
   try {
     const user = await prisma.user.findUnique({

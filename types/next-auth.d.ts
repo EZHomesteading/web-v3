@@ -6,11 +6,11 @@ declare module "next-auth" {
   interface UserInfo extends DefaultUser {
     id: string;
     name: string;
-    phone?:string;
+    phone?: string;
     email: string;
     fullName?: fullName;
     stripeAccountId?: string;
-    customerAccountId?:string;
+    stripeCustomerId?: string;
     url: string;
     image?: string;
     createdAt?: Date;
