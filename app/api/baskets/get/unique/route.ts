@@ -36,7 +36,8 @@ export async function GET(
       select: {
         id: true,
         proposedLoc: true,
-        // fufillmentDate: true,
+        fulfillmentDate: true,
+        orderMethod: true,
         items: {
           select: {
             quantity: true,
@@ -101,7 +102,10 @@ export async function GET(
     }
     return NextResponse.json(fullBasketGroup);
   } catch (error) {
-    console.log(error, "error in /ezhomesteading-web/app/api/baskets/get/unique/route.ts")
+    console.log(
+      error,
+      "error in /ezhomesteading-web/app/api/baskets/get/unique/route.ts"
+    );
     return NextResponse.json(
       { error: "Failed to fetch basket" },
       { status: 500 }
