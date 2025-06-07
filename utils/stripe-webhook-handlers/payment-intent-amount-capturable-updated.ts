@@ -1,8 +1,16 @@
-import { formatPickupDate } from "@/features/chat/components/conversation/Body";
 import prisma from "@/lib/prismadb";
+import { format } from "date-fns";
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
 import webPush, { PushSubscription } from "web-push";
+function formatPickupDate(date: Date): string {
+  try {
+    return format(date, "EEE MMM d, h:mma");
+  } catch (error) {
+    console.error("Error formatting date:", error);
+    return "Invalid Date";
+  }
+}
 
 export async function handlePaymentIntentAmountCapturable(
   paymentIntent: Stripe.PaymentIntent
