@@ -36,7 +36,7 @@ const Home = () => {
     <div
       className={clsx(
         " md:pl-80  h-full md:block",
-        isOpen ? "block" : "hidden"
+        isOpen ? "block" : "hidden",
       )}
     >
       <div className=" hidden md:block">

@@ -12,7 +12,6 @@ import PaymentComponent from "./payment-component";
 import axios from "axios";
 import { formatDate } from "@/utils/time-managers";
 import { useSearchParams } from "next/navigation";
-import { fulfillmentType } from "@prisma/client";
 
 const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || ""
@@ -125,8 +124,6 @@ export default function CheckoutForm({ baskets, user }: CheckoutFormProps) {
       try {
         const intents: PaymentIntentData[] = [];
 
-        console.log("Order Group ID:", orderGroupId);
-
         for (const basket of baskets) {
           const basketTotal = basket.items.reduce(
             (sum: number, item: any) =>
@@ -146,14 +143,19 @@ export default function CheckoutForm({ baskets, user }: CheckoutFormProps) {
           const seller = await sellerResponse.json();
           const sellerStripeID = seller?.data.stripeAccountId;
 
-          const items = basket.items.map((item: any) => ({
-            id: item.listing.id,
-            quantity: item.quantity,
-            price: item.listing.price,
-            title: item.listing.title,
-            unit: item.listing.unit,
-            image: item.listing.images?.[0] || "",
-          }));
+          const items = basket.items.map((item: any) => {
+            console.log("🛍️ Item data:", item);
+            console.log("🛍️ Listing:", item.listing);
+            console.log("🛍️ Listing ID:", item.listing?.id);
+            return {
+              id: item.listing.id,
+              quantity: item.quantity,
+              price: item.listing.price,
+              title: item.listing.title,
+              unit: item.listing.unit,
+              image: item.listing.images?.[0] || "",
+            };
+          });
 
           const requestPayload = {
             items,

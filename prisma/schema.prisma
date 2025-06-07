@@ -194,6 +194,7 @@ model User {
   role                  UserRole               @default(PRODUCER)
   password              String?
   stripeAccountId       String?
+  stripeCustomerId      String?
   totalPaidOut          Int?
   notifications         Notification[]
   createdAt             DateTime               @default(now())
