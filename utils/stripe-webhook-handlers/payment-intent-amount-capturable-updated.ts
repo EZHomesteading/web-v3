@@ -1,10 +1,11 @@
+import { formatPickupDate } from "@/features/chat/components/conversation/Body";
 import prisma from "@/lib/prismadb";
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
 import webPush, { PushSubscription } from "web-push";
 
 export async function handlePaymentIntentAmountCapturable(
-  paymentIntent: Stripe.PaymentIntent,
+  paymentIntent: Stripe.PaymentIntent
 ): Promise<NextResponse | void> {
   try {
     const orderData = extractOrderDataFromMetadata(paymentIntent.metadata);
@@ -14,7 +15,7 @@ export async function handlePaymentIntentAmountCapturable(
     }
     const createdOrder = await createOrderFromMetadata(
       orderData,
-      paymentIntent,
+      paymentIntent
     );
 
     if (!createdOrder) {
@@ -81,7 +82,7 @@ function extractOrderDataFromMetadata(metadata: Record<string, string>) {
 
 async function createOrderFromMetadata(
   orderData: any,
-  paymentIntent: Stripe.PaymentIntent,
+  paymentIntent: Stripe.PaymentIntent
 ) {
   try {
     return await prisma.$transaction(async (tx) => {
@@ -105,7 +106,7 @@ async function createOrderFromMetadata(
 
       if (!store || !buyer) {
         const error = new Error(
-          `Seller or buyer not found - Seller: ${!!store}, Buyer: ${!!buyer}`,
+          `Seller or buyer not found - Seller: ${!!store}, Buyer: ${!!buyer}`
         );
         throw error;
       }
@@ -184,7 +185,7 @@ async function createOrderConversation(order: any) {
 
 async function updateOrderWithConversation(
   orderId: string,
-  conversationId: string,
+  conversationId: string
 ) {
   await prisma.order.update({
     where: { id: orderId },
@@ -203,28 +204,29 @@ async function formatOrderItems(items: any[]): Promise<string> {
 async function handlePickupOrder(
   order: any,
   conversation: any,
-  orderSummary: string,
+  orderSummary: string
 ) {
+  console.log("WEBHOOK ORDER", order);
   const pickupTime =
-    order.pickupDate?.toLocaleTimeString() || "a convenient time";
-  const pickupDate =
-    order.pickupDate?.toLocaleDateString() || "a convenient date";
+    formatPickupDate(order.fulfillmentDate) || "a convenient time";
+  // const pickupDate =
+  //   order.fulfillmentDate?.toDateString() || "a convenient date";
 
-  const message = `Hi! I just ordered ${orderSummary} from you and would like to pick them up at ${pickupTime} on ${pickupDate}. Please let me know when my order can be ready by that time or if that doesn't work.`;
+  const message = `Hi! I just ordered ${orderSummary} from you and would like to pick them up at ${pickupTime}. Please let me know when my order can be ready by that time or if that doesn't work.`;
 
   await createOrderMessage(conversation.id, order.userId, message);
   await sendPushNotification(
     order.seller,
     "You have a new order!",
     message,
-    conversation.id,
+    conversation.id
   );
 }
 
 async function handleDeliveryOrder(
   order: any,
   conversation: any,
-  orderSummary: string,
+  orderSummary: string
 ) {
   await updateOrderDeliveryLocation(order);
 
@@ -236,7 +238,7 @@ async function handleDeliveryOrder(
     order.seller,
     "You have a new order!",
     message,
-    conversation.id,
+    conversation.id
   );
 }
 
@@ -268,7 +270,7 @@ function getDeliveryAddress(buyer: any): string {
 async function createOrderMessage(
   conversationId: string,
   senderId: string,
-  body: string,
+  body: string
 ) {
   await prisma.message.create({
     data: {
@@ -285,7 +287,7 @@ async function sendPushNotification(
   seller: any,
   title: string,
   body: string,
-  conversationId: string,
+  conversationId: string
 ) {
   try {
     if (!seller?.subscriptions) return;
@@ -302,9 +304,9 @@ async function sendPushNotification(
         webPush.sendNotification(
           subscription,
           JSON.stringify({ title, body, id: conversationId }),
-          { vapidDetails },
-        ),
-      ),
+          { vapidDetails }
+        )
+      )
     );
   } catch (error) {
     console.error("Error sending push notification:", error);
@@ -321,7 +323,7 @@ async function updateInventoryLevels(tx: any, items: any[]) {
             decrement: item.quantity,
           },
         },
-      }),
-    ),
+      })
+    )
   );
 }

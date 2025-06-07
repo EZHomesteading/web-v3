@@ -120,8 +120,8 @@ const Body: React.FC<BodyProps> = ({
   }, [user?.email, conversationId, router]);
 
   // Format pickup date if available
-  const formattedPickupDate = order?.pickupDate
-    ? formatPickupDate(order.pickupDate)
+  const formattedPickupDate = order?.fulfillmentDate
+    ? formatPickupDate(order.fulfillmentDate)
     : "No pickup date set";
 
   const itemText = order?.items.length === 1 ? "item" : "items";

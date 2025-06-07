@@ -186,7 +186,7 @@ export default function CheckoutForm({ baskets, user }: CheckoutFormProps) {
               stripeCustomerId: user?.stripeCustomerId,
             },
           };
-
+          console.log("REQUEST PAYLOAD", requestPayload);
           const response = await axios.post(
             "/api/stripe/create-payment-intent",
             requestPayload
