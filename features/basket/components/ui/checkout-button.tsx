@@ -40,11 +40,11 @@ const CheckoutButton = ({
   const router = useRouter();
 
   const hasOutOfStock = baskets.some((basket) =>
-    basket.items.some((item: any) => item.listing.stock <= 0),
+    basket.items.some((item: any) => item.listing.stock <= 0)
   );
 
   const hasNotEnoughStock = baskets.some((basket) =>
-    basket.items.some((item: any) => item.listing.stock <= item.quantity),
+    basket.items.some((item: any) => item.listing.stock <= item.quantity)
   );
 
   const createExpiryArray = () => {
@@ -58,7 +58,7 @@ const CheckoutButton = ({
           shelfLifeInDays !== -1 ? addDays(createdAt, shelfLifeInDays) : null;
 
         const percentExpiry = new Date(
-          now.getTime() + shelfLifeInDays * 0.3 * 24 * 60 * 60 * 1000,
+          now.getTime() + shelfLifeInDays * 0.3 * 24 * 60 * 60 * 1000
         );
 
         const adjustedListing: AdjustedListing = {
@@ -110,7 +110,7 @@ const CheckoutButton = ({
         {
           duration: 2000,
           position: "bottom-right",
-        },
+        }
       );
       return;
     }
@@ -134,7 +134,7 @@ const CheckoutButton = ({
         {
           startLoc: startLoc,
           endLoc: endLoc,
-        },
+        }
       );
       console.log(orderGroupResponse);
       const orderGroupId = orderGroupResponse.data.id;

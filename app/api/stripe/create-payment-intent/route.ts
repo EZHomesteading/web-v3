@@ -49,6 +49,7 @@ interface CustomerPayload {
   email: string;
   id: string;
   stripeCustomerId?: string;
+  timeZone: string;
 }
 
 interface PaymentRequest {
@@ -213,6 +214,7 @@ async function createPaymentIntentWithMetadata(
       st_id: customerId,
       id: order.customerPayload.id,
       name: order.customerPayload.name,
+      time_zone: order.customerPayload.timeZone,
     },
     basket_meta: {
       id: order.basketPayload.id,
@@ -518,6 +520,7 @@ export async function POST(request: NextRequest) {
         name: requestData.customerPayload.name,
         email: requestData.customerPayload.email,
         stripeCustomerId: requestData.customerPayload.stripeCustomerId,
+        timeZone: requestData.customerPayload.timeZone,
       },
     };
 
