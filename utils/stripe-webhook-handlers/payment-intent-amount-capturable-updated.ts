@@ -11,7 +11,19 @@ function formatPickupDate(date: Date): string {
     return "Invalid Date";
   }
 }
+function convertUTCToTimezone(utcDate: Date, timeZone: string) {
+  try {
+    // Create a new Date object from the UTC date
+    const date = new Date(utcDate);
 
+    // Convert to the specified timezone
+    return new Date(date.toLocaleString("en-US", { timeZone }));
+  } catch (error) {
+    console.warn("Timezone conversion failed:", error);
+    // Fallback to original date
+    return new Date(utcDate);
+  }
+}
 export async function handlePaymentIntentAmountCapturable(
   paymentIntent: Stripe.PaymentIntent
 ): Promise<NextResponse | void> {
@@ -30,7 +42,7 @@ export async function handlePaymentIntentAmountCapturable(
       return;
     }
 
-    await createConversationAndNotify(createdOrder);
+    await createConversationAndNotify(createdOrder, orderData.user.time_zone);
 
     if (orderData.basket.order_group_id) {
       await addOrderToGroup(createdOrder.id, orderData.basket.order_group_id);
@@ -168,14 +180,14 @@ async function addOrderToGroup(orderId: string, orderGroupId: string) {
   });
 }
 
-async function createConversationAndNotify(order: any) {
+async function createConversationAndNotify(order: any, timeZone: string) {
   const conversation = await createOrderConversation(order);
   await updateOrderWithConversation(order.id, conversation.id);
 
   const orderSummary = await formatOrderItems(order.items);
 
   if (order.fulfillmentType === "PICKUP") {
-    await handlePickupOrder(order, conversation, orderSummary);
+    await handlePickupOrder(order, conversation, orderSummary, timeZone);
   } else if (order.fulfillmentType === "DELIVERY") {
     await handleDeliveryOrder(order, conversation, orderSummary);
   }
@@ -212,11 +224,16 @@ async function formatOrderItems(items: any[]): Promise<string> {
 async function handlePickupOrder(
   order: any,
   conversation: any,
-  orderSummary: string
+  orderSummary: string,
+  timeZone: string
 ) {
+  const localFulfillmentDate = convertUTCToTimezone(
+    order.fulfillmentDate,
+    timeZone
+  );
   console.log("WEBHOOK ORDER", order);
   const pickupTime =
-    formatPickupDate(order.fulfillmentDate) || "a convenient time";
+    formatPickupDate(localFulfillmentDate) || "a convenient time";
   // const pickupDate =
   //   order.fulfillmentDate?.toDateString() || "a convenient date";
 

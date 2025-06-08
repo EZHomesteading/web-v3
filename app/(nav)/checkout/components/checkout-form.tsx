@@ -184,6 +184,7 @@ export default function CheckoutForm({ baskets, user }: CheckoutFormProps) {
               email: user.email,
               id: user.id,
               stripeCustomerId: user?.stripeCustomerId,
+              timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
             },
           };
           console.log("REQUEST PAYLOAD", requestPayload);
