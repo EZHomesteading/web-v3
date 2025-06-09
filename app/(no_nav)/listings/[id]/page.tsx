@@ -176,6 +176,10 @@ export default async function ListingPage({
                     </div>
                   </div>
                 </Link>
+                <div className={`border-b py-3`}>
+                  <div className={`text-sm sm:text-xl`}>Item Description</div>
+                  {listing.description}{" "}
+                </div>
                 <ul className="list-none list-inside my-3 space-y-4 border-b pb-3">
                   {applicableRatings.map((ratingIndex: number) => (
                     <li
@@ -199,11 +203,8 @@ export default async function ListingPage({
                       {inverseRatingMeanings[ratingIndex]}
                     </li>
                   ))}
-                </ul>
-                <div className={`h-[50vh]`}>
-                  {listing.description}{" "}
-                  <HoursDisplay location={listing.location} className="mt-4" />
-                </div>
+                </ul>{" "}
+                <HoursDisplay location={listing.location} className="mt-4" />
               </div>{" "}
             </div>
 
