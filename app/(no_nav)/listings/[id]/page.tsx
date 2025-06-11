@@ -3,7 +3,7 @@ import { getUnique } from "@/actions/getListings";
 import ListingHead from "./components/listing-head";
 import { OutfitFont } from "@/components/fonts";
 import Link from "next/link";
-import { PiBasketThin } from "react-icons/pi";
+import { PiAlarm, PiBasketThin } from "react-icons/pi";
 import { auth } from "@/auth";
 import Avatar from "@/components/Avatar";
 import SendMessageComponent from "./components/send-message-component";
@@ -14,6 +14,11 @@ import BackButton from "./components/back-button";
 import { FcCheckmark } from "react-icons/fc";
 import { HiMiniXMark } from "react-icons/hi2";
 import HoursDisplay from "./components/hours-display";
+import {
+  calculateExpiryDate,
+  pluralizeQuantityType,
+} from "@/utils/listing-helpers";
+import { FiAlertTriangle } from "react-icons/fi";
 
 export const viewport: Viewport = {
   themeColor: "#fff",
@@ -98,6 +103,12 @@ export default async function ListingPage({
         console.error("Error fetching basket items:", error);
       }
     }
+    const expiryDate = calculateExpiryDate(
+      listing.createdAt,
+      listing.shelfLife
+    );
+    const expiryDateObj = new Date(expiryDate);
+    const now = new Date();
     console.log(listing);
     return (
       <>
@@ -144,16 +155,37 @@ export default async function ListingPage({
                   {listing.location.address.state}
                 </div>
                 <div
-                  className={`flex items-center justify-start space-x-1 text-sm mb-3`}
+                  className={`flex items-center justify-start space-x-1 text-sm `}
                 >
                   <div>
-                    {listing.stock} {listing.unit} remaining
+                    {listing.stock}{" "}
+                    {listing.unit !== "each"
+                      ? pluralizeQuantityType(listing.stock, listing.unit)
+                      : "item"}{" "}
+                    remaining{" "}
                   </div>
+
                   <div className={`bg-black h-1 w-1 rounded-full`} />
                   <div>
-                    ${listing.price / 100} per {listing.unit}
+                    ${listing.price / 100} per{" "}
+                    {listing.unit !== "each" ? listing.unit : "item"}
                   </div>
                 </div>
+                <p
+                  className={`text-sm mb-3  ${
+                    expiryDateObj < now
+                      ? "bg-red-400 w-fit  px-2 rounded-sm"
+                      : ""
+                  } `}
+                >
+                  {expiryDateObj < now ? (
+                    <div className="flex flex-row justify-center items-center">
+                      <FiAlertTriangle className="mr-2" /> Expired: {expiryDate}
+                    </div>
+                  ) : (
+                    <div>Expires: {expiryDate}</div>
+                  )}
+                </p>
                 <Link
                   className={`border-y py-3 flex items-start justify-start gap-x-2  `}
                   href={`/store/${listing.user.url}`}
@@ -204,7 +236,10 @@ export default async function ListingPage({
                     </li>
                   ))}
                 </ul>{" "}
-                <HoursDisplay location={listing.location} className="mt-4" />
+                <HoursDisplay
+                  location={listing.location}
+                  className="mt-4 h-[50%]"
+                />
               </div>{" "}
             </div>
 

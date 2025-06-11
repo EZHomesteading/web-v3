@@ -11,15 +11,21 @@ import { Clock } from "lucide-react";
 import Link from "next/link";
 
 import ClientBasketButton from "../../utils/market-toggle.client";
-import { calculateAvailabilityScores } from "@/utils/avail-score-handlers";
+import {
+  calculateAvailabilityScores,
+  calculateExpiryDate,
+  pluralizeQuantityType,
+} from "@/utils/listing-helpers";
 import { ListingWithLocAndUser } from "@/types";
 import { formatPrice } from "@/utils/listing";
 import { FcCheckmark } from "react-icons/fc";
 import { HiMiniXMark } from "react-icons/hi2";
+import { FiAlertTriangle } from "react-icons/fi";
+import { GiPlantsAndAnimals } from "react-icons/gi";
 
 const MarketGrid = ({ children }: { children: any }) => {
   return (
-    <div className="w-full px-2 mx-auto max-w-[2560px] z-content mb-20 ">
+    <div className="w-full px-2 mx-auto max-w-[2560px] z-content bg-slate-100 pb-20 ">
       <div
         className="
         pt-[4.5rem] lg:pt-[5.5rem]
@@ -82,16 +88,45 @@ const MarketCard = ({
   params,
 }: MarketCardProps) => {
   const locHours = listing?.location?.hours;
-
+  const expiryDate = calculateExpiryDate(listing.createdAt, listing.shelfLife);
+  const expiryDateObj = new Date(expiryDate);
+  const now = new Date();
   const scores = calculateAvailabilityScores(locHours);
   return (
-    <div className={`relative border-2 rounded-xl`}>
+    <div className={`relative border-2 rounded-xl bg-white`}>
       <div className="flex flex-col relative w-full p-1 z-0">
+        <div className="flex flew-row justify-between">
+          {" "}
+          <Link
+            href={`/listings/${listing.id}${params && `?${params}`}`}
+            prefetch={true}
+            className="block w-full cursor-pointer group mx-auto "
+          >
+            <h3
+              className={`absolute top-2 left-2 pb-[.125rem] z-9999 h-8 w-fit px-2 aspect-square rounded-full flex items-center justify-center transition-none bg-white/90 font-semibold text-sm whitespace-nowrap`}
+            >
+              {listing.title}
+            </h3>
+          </Link>
+          <div className="pointer-events-none">
+            <div className="absolute top-2 right-2 z-9999">
+              <ClientBasketButton
+                listing={listing}
+                user={user}
+                isInitiallyInBasket={
+                  basketItemIds &&
+                  basketItemIds.some((item) => item?.listingId === listing.id)
+                }
+              />
+            </div>
+          </div>
+        </div>
         <Link
           href={`/listings/${listing.id}${params && `?${params}`}`}
           prefetch={true}
           className="block w-full cursor-pointer group mx-auto !z-0"
         >
+          {" "}
           <div className="relative overflow-hidden rounded-xl w-full z-0 aspect-square">
             <Carousel
               className="h-full w-full relative rounded-lg z-0"
@@ -133,68 +168,75 @@ const MarketCard = ({
           </div>{" "}
         </Link>
         <div className={`mt-1 w-full ${OutfitFont.className}`}>
-          <div className="flex flew-row justify-between">
-            {" "}
-            <Link
-              href={`/listings/${listing.id}${params && `?${params}`}`}
-              prefetch={true}
-              className="block w-full cursor-pointer group mx-auto !z-0"
-            >
-              <h3 className={`font-semibold`}>{listing.title}</h3>{" "}
-            </Link>
-            <div className="pointer-events-none">
-              <ClientBasketButton
-                listing={listing}
-                user={user}
-                isInitiallyInBasket={
-                  basketItemIds &&
-                  basketItemIds.some((item) => item?.listingId === listing.id)
-                }
-              />
-            </div>
+          <div className={`flex flex-row w-full justify-between items-center `}>
+            <h2 className={`text-sm font-semibold`}>{listing.location.name}</h2>
+            <p className={` text-xs font-semibold text-neutral-500`}>
+              {listing.location.address.state}, {listing.location.address.city}
+            </p>
           </div>
+
           <Link
             href={`/listings/${listing.id}${params && `?${params}`}`}
             prefetch={true}
             className="block w-full cursor-pointer group mx-auto !z-0"
           >
             {" "}
-            <div className="flex items-center justify-between  w-full">
-              <div className={`text-sm flex flex-col items-start `}>
-                <h2 className={`text-xs font-normal`}>
-                  {listing.location.name}
-                </h2>
-                <p className={` text-xs font-light text-neutral-500`}>
-                  {listing.location.address.state},{" "}
-                  {listing.location.address.city}
-                </p>
-              </div>
-              <div className={`text-sm flex flex-col items-end `}>
-                <h2 className={`text-xs font-normal`}>
-                  {listing.stock} {listing.unit} in stock
-                </h2>{" "}
-                <h2 className={`text-xs font-normal`}>
-                  minimum order: {listing.minOrder} {listing.unit}
-                </h2>
+            <div className="flex items-center justify-between border-b-2 border-black pb-1  w-full">
+              <div className={`text-sm flex flex-col w-full items-start `}>
+                <div
+                  className={`text-sm flex flex-row w-full justify-between items-center gap-1`}
+                >
+                  <span className="font-semibold  text-xs">
+                    {formatPrice(listing.price)} per{" "}
+                    {listing.unit && listing.unit !== "each"
+                      ? listing.unit
+                      : "item"}
+                  </span>
+                  <span
+                    className={`text-xs ${
+                      expiryDateObj < now
+                        ? "bg-red-400 w-fit px-1 rounded-sm"
+                        : ""
+                    } `}
+                  >
+                    {expiryDateObj < now ? (
+                      <div className="flex flex-row justify-center items-center">
+                        <FiAlertTriangle className="mr-1" /> Expired:{" "}
+                        {expiryDate}
+                      </div>
+                    ) : (
+                      <div>Expires: {expiryDate}</div>
+                    )}
+                  </span>
+                </div>{" "}
+                <div
+                  className={`text-sm flex flex-row w-full justify-between items-center gap-1`}
+                >
+                  <h2 className={`text-xs font-normal`}>
+                    Stock: {listing.stock}{" "}
+                    {pluralizeQuantityType(listing.stock, listing.unit)}
+                  </h2>{" "}
+                  <h2 className={`text-xs font-normal`}>
+                    Minimum order: {listing.minOrder}{" "}
+                    {listing.unit !== "each"
+                      ? pluralizeQuantityType(listing.minOrder, listing.unit)
+                      : "item"}
+                  </h2>
+                </div>
               </div>
             </div>
-            <div className="flex items-center justify-between mt-2 w-full">
-              <div className={`text-sm flex items-center gap-1`}>
-                <span className="font-semibold">
-                  {formatPrice(listing.price)}
-                </span>
-                <span className="font-light">
-                  per {listing.unit ? listing.unit : "item"}
-                </span>
+            <div className="flex items-center justify-between w-full">
+              <div className="flex flex-row items-center text-xs">
+                <GiPlantsAndAnimals className="mr-1" />
+                Organic Rating
               </div>
-
               <StarRating
                 value={listing?.rating?.length - 1}
                 size={20}
                 color="#000"
               />
             </div>
-            <div className="flex flex-col gap-1 mt-2">
+            <div className="flex flex-col  ">
               {listing.location?.hours?.pickup?.length === 0 ? (
                 <div className="text-red-500 font-medium flex items-center text-xs">
                   <Clock size={14} className="mr-1" />{" "}

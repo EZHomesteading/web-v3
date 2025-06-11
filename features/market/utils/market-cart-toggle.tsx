@@ -13,6 +13,9 @@ import {
 import HoursWarningModal from "../components/modals/cart-hours-warning";
 import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
+import { calculateExpiryDate } from "@/utils/listing-helpers";
+import { FiAlertTriangle } from "react-icons/fi";
+import NotifyModal from "@/app/(no_nav)/listings/[id]/components/notifyModal";
 
 interface User {
   id: string;
@@ -43,6 +46,7 @@ const MarketCartToggle = ({
   const [showQuantityModal, setShowQuantityModal] = useState(false);
   const [quantity, setQuantity] = useState(listing?.minOrder || 1);
   const [mounted, setMounted] = useState(false);
+  const [showNotifyModal, setShowNotifyModal] = useState(false); // Add this state
 
   // Ensure we're mounted before rendering portal
   useEffect(() => {
@@ -163,12 +167,23 @@ const MarketCartToggle = ({
       Toast({ message: "Failed to add to basket" });
     }
   };
+
+  // Handle notify button click
+  const handleNotifyClick = () => {
+    setShowQuantityModal(false); // Close the quantity modal first
+    setShowNotifyModal(true); // Then open the notify modal
+  };
+
+  const expiryDate = calculateExpiryDate(listing.createdAt, listing.shelfLife);
+  const expiryDateObj = new Date(expiryDate);
+  const now = new Date();
+
   const renderModal = () => {
     if (!mounted || !showQuantityModal) return null;
 
     return createPortal(
       <div
-        className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4"
+        className="fixed inset-0 bg-black bg-opacity-50  flex items-center justify-center p-4"
         style={{
           zIndex: 2147483647, // Maximum z-index value
           position: "fixed",
@@ -188,7 +203,7 @@ const MarketCartToggle = ({
         onTouchStart={(e) => e.stopPropagation()}
       >
         <div
-          className="bg-white rounded-xl shadow-2xl max-w-sm w-full mx-4 max-h-[90vh] flex flex-col"
+          className="bg-white rounded-xl max-w-sm w-full mx-4 max-h-[90vh] flex flex-col"
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
@@ -239,7 +254,7 @@ const MarketCartToggle = ({
                     handleQuantityChange(quantity - 1);
                   }}
                   disabled={quantity <= (listing?.minOrder || 1)}
-                  className="w-12 h-12 rounded-full border-2 border-gray-300 flex items-center justify-center hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  className="w-12 h-12 rounded-full border-2 border-gray-300 flex items-center justify-center hover:bg-gray-50  disabled:cursor-not-allowed transition-colors"
                 >
                   <PiMinus size={20} />
                 </button>
@@ -258,7 +273,7 @@ const MarketCartToggle = ({
                     handleQuantityChange(quantity + 1);
                   }}
                   disabled={quantity >= listing.stock}
-                  className="w-12 h-12 rounded-full border-2 border-gray-300 flex items-center justify-center hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  className="w-12 h-12 rounded-full border-2 border-gray-300 flex items-center justify-center hover:bg-gray-50 disabled:cursor-not-allowed transition-colors"
                 >
                   <PiPlus size={20} />
                 </button>
@@ -266,15 +281,28 @@ const MarketCartToggle = ({
             </div>
 
             {/* Stock & Min Order Info */}
-            <div className="mb-6 space-y-1 text-xs text-gray-500 text-center">
+            <div className="mb-1 space-y-1 text-xs text-gray-500 flex flex-col items-center justify-center text-center">
               <div>
                 Stock available: {listing.stock} {listing.unit}
               </div>
-              {listing?.minOrder && listing.minOrder > 1 && (
-                <div>
-                  Minimum order: {listing.minOrder} {listing.unit}
-                </div>
-              )}
+              <div>
+                Minimum order: {listing.minOrder} {listing.unit}
+              </div>{" "}
+              <p
+                className={`text-sm mb-3  ${
+                  expiryDateObj < now
+                    ? "bg-red-400 w-fit text-black  px-2 rounded-sm"
+                    : ""
+                } `}
+              >
+                {expiryDateObj < now ? (
+                  <div className="flex flex-row justify-center items-center">
+                    <FiAlertTriangle className="mr-2" /> Expired: {expiryDate}
+                  </div>
+                ) : (
+                  <div>Expires: {expiryDate}</div>
+                )}
+              </p>
             </div>
 
             {/* Total */}
@@ -294,7 +322,7 @@ const MarketCartToggle = ({
           </div>
 
           {/* Footer - Fixed */}
-          <div className="flex space-x-3 p-6 pt-0 border-t border-gray-100 flex-shrink-0">
+          <div className="flex space-x-3 p-6 pt-2 border-t border-gray-100 flex-shrink-0">
             <button
               onClick={(e) => {
                 e.preventDefault();
@@ -305,34 +333,44 @@ const MarketCartToggle = ({
             >
               Cancel
             </button>
-            <button
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                handleConfirmQuantity();
-              }}
-              disabled={isLoading}
-              className="flex-1 py-3 px-4 bg-sky-500 hover:bg-sky-600 text-white font-medium rounded-lg flex items-center justify-center gap-2 transition-colors disabled:opacity-50"
-            >
-              <PiCheck size={18} />
-              Add to Basket
-            </button>
+            {listing.stock === 0 ? (
+              <button
+                onClick={handleNotifyClick} // Use the new handler
+                className="flex-1 py-3 px-4 bg-green-400 hover:bg-green-500 text-white font-medium rounded-lg transition-colors"
+              >
+                Notify me when in stock
+              </button>
+            ) : (
+              <button
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  handleConfirmQuantity();
+                }}
+                disabled={isLoading}
+                className="flex-1 py-3 px-4 bg-sky-500 hover:bg-sky-600 text-white font-medium rounded-lg flex items-center justify-center gap-2 transition-colors "
+              >
+                <PiCheck size={18} />
+                Add to Basket
+              </button>
+            )}
           </div>
         </div>
       </div>,
       document.body
     );
   };
+
   return (
     <>
       <button
         disabled={isLoading}
         onClick={handleToggleBasket}
-        className={`w-14 h-8 aspect-square rounded-full border flex items-center justify-center transition-all duration-200
+        className={`w-14 h-8 aspect-square rounded-full flex items-center justify-center transition-all duration-200
           ${
             isInBasket
-              ? "bg-red-400 hover:bg-red-500"
-              : "bg-black/30 hover:bg-black/40"
+              ? "bg-red-400/90 hover:bg-red-500/90"
+              : "bg-green-400/90 hover:bg-green-500/90"
           }
           relative pointer-events-auto`}
       >
@@ -341,7 +379,7 @@ const MarketCartToggle = ({
             className="text-white"
             size={20}
             style={{
-              filter: "drop-shadow(2px 2px 2px rgba(0,0,0,0.3))",
+              filter: "",
               strokeWidth: 1.5,
             }}
           />
@@ -351,7 +389,7 @@ const MarketCartToggle = ({
               className="text-white"
               size={20}
               style={{
-                filter: "drop-shadow(10px 10px 5px black)",
+                filter: "",
                 strokeWidth: 1.5,
               }}
             />
@@ -359,7 +397,7 @@ const MarketCartToggle = ({
               className="text-white"
               size={20}
               style={{
-                filter: "drop-shadow(10px 10px 5px black)",
+                filter: "",
                 strokeWidth: 1.5,
               }}
             />
@@ -381,6 +419,16 @@ const MarketCartToggle = ({
             listing?.location?.hours?.pickup?.length > 0 ? "pickup" : "delivery"
           }
           isFirstItem={isFirstItemInCart}
+        />
+      )}
+
+      {/* Notify Modal - Rendered at the same level as other modals */}
+      {showNotifyModal && (
+        <NotifyModal
+          isOpen={showNotifyModal}
+          listingId={listing.id}
+          onClose={() => setShowNotifyModal(false)}
+          userEmail={user?.email as string | undefined}
         />
       )}
     </>

@@ -143,9 +143,8 @@ const LayoutClient = ({
             <div
               className={`flex items-center justify-evenly lg:justify-between w-full px-4 h-fit`}
             >
-              <div className={`hidden lg:block max-w-[25%] w-full`}>
-                <Logo />
-              </div>
+              <Logo />
+
               <div
                 className={`fixed h-20 lg:h-fit  pt-2 top-0  w-full lg:ml-60 xl:inset-x-0 xl:mx-auto lg:w-[40%] bg-inherit px-2 bg-white mx-auto lg:absolute`}
               >

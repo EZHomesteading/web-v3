@@ -40,7 +40,7 @@ export const getColor = (score: number) => {
     case 1:
       return "bg-red-500";
     default:
-      return "bg-gray-300";
+      return "bg-gray-400";
   }
 };
 
@@ -54,7 +54,7 @@ export const getTextColor = (score: number) => {
     case 1:
       return "text-red-500";
     default:
-      return "text-gray-300";
+      return "text-gray-400";
   }
 };
 
@@ -129,4 +129,50 @@ function calculateTimeSlotCoverage(
   });
 
   return Math.min(1, totalCoverage);
+}
+export const calculateExpiryDate = (createdAt: Date, shelfLife: number) => {
+  if (shelfLife === 365000) return "Never";
+
+  const createdDate = new Date(createdAt);
+  const expiryDate = new Date(
+    createdDate.getTime() + shelfLife * 24 * 60 * 60 * 1000
+  );
+  return expiryDate.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+};
+export function pluralizeQuantityType(quantity: number, type: string) {
+  if (quantity === 1) {
+    return type;
+  }
+
+  switch (type.toLowerCase()) {
+    case "lb":
+      return "lbs";
+    case "oz":
+      return "oz";
+    case "pint":
+    case "quart":
+    case "gallon":
+    case "bushel":
+    case "peck":
+    case "crate":
+    case "basket":
+    case "clove":
+    case "bag":
+      return type + "s";
+    case "box":
+    case "bunch":
+      return type + "es";
+    case "dozen":
+      return "dozen";
+    case "each":
+      return "items";
+    case "none":
+      return "";
+    default:
+      return type;
+  }
 }

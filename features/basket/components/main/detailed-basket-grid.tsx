@@ -41,6 +41,10 @@ import {
   useGoogleMaps,
 } from "../../hooks/google-maps-provider";
 import { formatDate } from "@/utils/time-managers";
+import {
+  calculateExpiryDate,
+  pluralizeQuantityType,
+} from "@/utils/listing-helpers";
 
 // Keep specific types where they're well-defined
 interface ListingType {
@@ -179,7 +183,7 @@ const DetailedBasketGridContent: React.FC<DetailedBasketGridProps> = ({
     (basketId: string, mode: DeliveryPickupToggleMode) => {
       setBasketModes((prev) => {
         if (prev[basketId] === mode) {
-          return prev; 
+          return prev;
         }
 
         return {
@@ -245,7 +249,7 @@ const DetailedBasketGridContent: React.FC<DetailedBasketGridProps> = ({
 
     baskets.forEach((basket) => {
       if (!hasPickupHours(basket)) {
-        return; 
+        return;
       }
 
       if (basket.items && Array.isArray(basket.items)) {
@@ -308,8 +312,8 @@ const DetailedBasketGridContent: React.FC<DetailedBasketGridProps> = ({
             isLoaded={isLoaded}
             userName={userName}
           />
-          <div className="flex flex-col xl:flex-row px-4 xl:px-0 gap-8">
-            <div className="w-full xl:w-[65%] pt-6 xl:absolute xl:left-0 justify-start">
+          <div className="flex flex-col xl:flex-row px-4  gap-8">
+            <div className="w-full xl:w-[63%] pt-6 xl:absolute justify-start">
               <h1 className="text-4xl font-medium pb-6">My Market Baskets</h1>
               <div className="flex flex-col space-y-6">
                 {baskets.map((basket) => (
@@ -353,7 +357,6 @@ const DetailedBasketCard: React.FC<DetailedBasketCardProps> = ({
   onModeChange,
   pickupTimes,
 }) => {
-  const over_768px = useMediaQuery("(min-width: 768px)");
   const { basketTotals } = useBasket();
   const [errorType, setErrorType] = useState<
     "undecided" | "location" | "deliveryDate" | "pickupDate" | null
@@ -416,19 +419,6 @@ const DetailedBasketCard: React.FC<DetailedBasketCardProps> = ({
   };
 
   const router = useRouter();
-  const calculateExpiryDate = (createdAt: Date, shelfLife: number) => {
-    if (shelfLife === 365000) return "Never";
-
-    const createdDate = new Date(createdAt);
-    const expiryDate = new Date(
-      createdDate.getTime() + shelfLife * 24 * 60 * 60 * 1000
-    );
-    return expiryDate.toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-    });
-  };
 
   return (
     <div className="border rounded-xl shadow-lg p-4 bg-white">
@@ -467,13 +457,13 @@ const DetailedBasketCard: React.FC<DetailedBasketCardProps> = ({
           Pickup set for {formatDate(pickupTimes[basket.location.id])}
         </div>
       ) : null}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 4xl:grid-cols-4  gap-4">
         {basket.items.map((item: any, index: number) => (
           <div
             key={index}
             className="p-3 border rounded-lg hover:shadow-md transition-shadow"
           >
-            <div className="flex flex-row gap-4">
+            <div className="flex flex-row  gap-4">
               <div className="w-32 h-32 flex-shrink-0 relative rounded-md overflow-hidden">
                 <Carousel className="w-full h-full">
                   <CarouselContent>
@@ -503,7 +493,7 @@ const DetailedBasketCard: React.FC<DetailedBasketCardProps> = ({
                   <h3 className="font-medium text-sm mb-1 line-clamp-2">
                     {item.listing.title}
                   </h3>
-                  <p className="text-xs text-gray-600">
+                  <p className="text-xs text-gray-600 border-b-2">
                     Expires:{" "}
                     {calculateExpiryDate(
                       item.listing.createdAt,
@@ -514,10 +504,10 @@ const DetailedBasketCard: React.FC<DetailedBasketCardProps> = ({
                 </div>
                 <div className="mt-1 text-sm font-medium text-gray-900 flex flex-row">
                   ${item.listing.price / 100}{" "}
-                  {item.listing.unit ? (
+                  {item.listing.unit && item.listing.unit !== "each" ? (
                     <span className="ml-1"> per {item.listing.unit}</span>
                   ) : (
-                    <span className="ml-1"> per {item.listing.subcateory}</span>
+                    <span className="ml-1"> per item</span>
                   )}
                 </div>
                 <div className="mt-auto">
