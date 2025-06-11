@@ -28,6 +28,7 @@ import StockCounter from "./ui/stock-counter";
 import { UserInfo } from "next-auth";
 import { AlertDialogTitle } from "@radix-ui/react-alert-dialog";
 import { Listing } from "@/types";
+import { pluralizeQuantityType } from "@/utils/listing-helpers";
 
 const work = Work_Sans({
   display: "block",
@@ -83,37 +84,7 @@ const ListingCard: React.FC<ListingCardProps> = ({
     },
     [disabled, onAction, actionId]
   );
-  function pluralizeQuantityType(quantity: number, type: string) {
-    if (quantity === 1) {
-      return type;
-    }
 
-    switch (type.toLowerCase()) {
-      case "lb":
-        return "lbs";
-      case "oz":
-        return "oz";
-      case "pint":
-      case "quart":
-      case "gallon":
-      case "bushel":
-      case "peck":
-      case "crate":
-      case "basket":
-      case "bag":
-      case "box":
-      case "bunch":
-        return type + "s";
-      case "dozen":
-        return "dozen";
-      case "each":
-        return "each";
-      case "none":
-        return "";
-      default:
-        return type;
-    }
-  }
   const pluralQuan = pluralizeQuantityType(stock, data.unit ? data.unit : "");
   const handleCardClick = useCallback(() => {
     if (pathname !== "/dashboard/my-store") {

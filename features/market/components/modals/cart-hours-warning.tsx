@@ -101,22 +101,51 @@ const HoursWarningModal = ({
   //console.log(incompatibleDays);
   const processedDays = calculateTimeRangeFromBasketData(incompatibleDays);
 
-  // Responsive dialog content class
-  const dialogContentClass = isMobile
-    ? "w-full h-[100dvh] max-h-screen rounded-none p-4 sm:p-6 flex flex-col"
-    : "sm:max-w-md";
-
   // Responsive content area class
   const contentAreaClass = isMobile
     ? "py-2 flex-grow overflow-y-auto mb-4"
     : "py-2 max-h-[60vh] overflow-y-auto";
 
   // First Item View - Show location hours
+  // Updated dialog content for hours display
   if (isFirstItem) {
-    //console.log(processedDays);
+    // Helper function to get current week dates starting from today
+    const getCurrentWeekDates = (): Date[] => {
+      const today = new Date();
+      return Array.from({ length: 7 }, (_, i) => {
+        const date = new Date(today);
+        date.setDate(today.getDate() + i);
+        return date;
+      });
+    };
+
+    // Format time function (same as in HoursDisplay)
+    const formatTime = (minutes: number): string => {
+      const hour = Math.floor(minutes / 60);
+      const ampm = hour >= 12 ? "PM" : "AM";
+      const hour12 = hour % 12 || 12;
+      return `${hour12}${ampm}`;
+    };
+
+    const weekDates = getCurrentWeekDates();
+
+    // Create a map of processed days for easier lookup
+    const hoursMap = new Map<string, any>(
+      processedDays.map((day) => [new Date(day.date).toDateString(), day])
+    );
+
+    const firstDate = weekDates[0];
+    const lastDate = weekDates[6];
+    const monthRange =
+      firstDate.getMonth() === lastDate.getMonth()
+        ? firstDate.toLocaleString("en-US", { month: "long" })
+        : `${firstDate.toLocaleString("en-US", {
+            month: "short",
+          })} - ${lastDate.toLocaleString("en-US", { month: "short" })}`;
+
     return (
       <Dialog open={isOpen} onOpenChange={onClose}>
-        <DialogContent className={dialogContentClass}>
+        <DialogContent className="min-w-[95%] md:min-w-[60%]  xl:min-w-[50%]  2xl:min-w-[40%]">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Clock className="h-5 w-5" />
@@ -127,34 +156,73 @@ const HoursWarningModal = ({
               available:
             </DialogDescription>
           </DialogHeader>
+
           <div className={contentAreaClass}>
-            <ul className="space-y-3">
-              {processedDays.map((day, index) => (
-                <li key={index} className="border-b pb-2 last:border-0">
-                  <div className="flex justify-between items-center font-medium">
-                    <span>
-                      {day.dayName || ""} {day.monthDay || day.date}
+            {/* Week Header */}
+            <div className="flex items-center justify-center mb-3">
+              <span className="text-sm font-medium text-gray-700">
+                {monthRange} {firstDate.getFullYear()}
+              </span>
+            </div>
+
+            {/* Days Grid */}
+            <div className="grid grid-cols-7 gap-2 text-xs mb-4">
+              {weekDates.map((date, index) => {
+                const isToday =
+                  new Date().toDateString() === date.toDateString();
+                const dayName = date.toLocaleString("en-US", {
+                  weekday: "short",
+                });
+                const formattedDate = date.toLocaleString("en-US", {
+                  month: "numeric",
+                  day: "numeric",
+                });
+
+                const dayHours = hoursMap.get(date.toDateString());
+                const timeSlots = dayHours?.timeSlots || [];
+
+                return (
+                  <div
+                    key={index}
+                    className={`flex flex-col items-center p-2 rounded border ${
+                      isToday
+                        ? "font-semibold text-blue-600 bg-blue-50 border-blue-200"
+                        : "text-gray-700 bg-gray-50"
+                    }`}
+                  >
+                    <span className="font-medium mb-1">{dayName}</span>
+                    <span className="text-gray-400 mb-2 text-xs">
+                      {formattedDate}
                     </span>
+                    {timeSlots.length > 0 ? (
+                      <div className="flex flex-col items-center space-y-1">
+                        {timeSlots.map((slot: any, slotIndex: number) => (
+                          <span
+                            key={slotIndex}
+                            className="whitespace-nowrap text-xs"
+                          >
+                            {slot.openFormatted || formatTime(slot.open)}-
+                            {slot.closeFormatted || formatTime(slot.close)}
+                          </span>
+                        ))}
+                        {dayHours?.capacity !== undefined &&
+                          dayHours.capacity > 0 && (
+                            <span className="text-xs text-gray-500">
+                              Cap: {dayHours.capacity}
+                            </span>
+                          )}
+                      </div>
+                    ) : (
+                      <span className="text-gray-400 text-xs">
+                        {dayHours?.overlapHours > 0
+                          ? `${Math.floor(dayHours.overlapHours)}h`
+                          : "Closed"}
+                      </span>
+                    )}
                   </div>
-                  {day.timeSlots && day.timeSlots.length > 0 ? (
-                    <div className="mt-1 text-sm text-gray-600">
-                      {day.timeSlots.map((slot, idx) => (
-                        <div key={idx} className="inline-block mr-3 mb-1">
-                          {slot.openFormatted || formatTime(slot.open)} -{" "}
-                          {slot.closeFormatted || formatTime(slot.close)}
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="mt-1 text-sm text-gray-600">
-                      {day.overlapHours > 0
-                        ? `Available for ${Math.floor(day.overlapHours)}h`
-                        : "No hours available"}
-                    </div>
-                  )}
-                </li>
-              ))}
-            </ul>
+                );
+              })}
+            </div>
           </div>
 
           <DialogFooter
@@ -194,7 +262,7 @@ const HoursWarningModal = ({
   // Subsequent Items View - Show compatibility check
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className={dialogContentClass}>
+      <DialogContent className="min-w-[95%] md:min-w-[60%]  xl:min-w-[50%]  2xl:min-w-[40%]">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Clock className="h-5 w-5" />

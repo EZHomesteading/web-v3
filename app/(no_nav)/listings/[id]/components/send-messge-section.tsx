@@ -7,6 +7,11 @@ import Link from "next/link";
 import { useBasket } from "@/hooks/listing/use-basket";
 import HoursWarningModal from "@/features/market/components/modals/cart-hours-warning";
 import { PiMinusBold, PiPencilThin, PiPlusBold } from "react-icons/pi";
+import {
+  calculateExpiryDate,
+  pluralizeQuantityType,
+} from "@/utils/listing-helpers";
+import { FiAlertTriangle } from "react-icons/fi";
 
 interface p {
   listing: any;
@@ -123,16 +128,35 @@ const SendMessageSection = ({
     setQuantity(newQuantity);
     updateQuantity(newQuantity);
   };
-
+  const expiryDate = calculateExpiryDate(listing.createdAt, listing.shelfLife);
+  const expiryDateObj = new Date(expiryDate);
+  const now = new Date();
   return (
     <>
       <div className="border shadow-sm mt-3 rounded-md h-fit pb-6 pt-2 px-2">
         <div className="text-xl font-semibold">Add to your Basket</div>
-        <div className={`${!isInBasket && "pb-4"} flex items-center gap-x-1`}>
+        <div className={` flex items-center gap-x-1`}>
           ${listing.price / 100} per {listing.unit}{" "}
           <div className={`h-1 w-1 rounded-full bg-black`} />
-          {listing.minOrder || 1} {listing.unit || ""} Minimum Order
-        </div>
+          {listing.minOrder || 1}{" "}
+          {listing.unit !== "each"
+            ? pluralizeQuantityType(listing.minOrder, listing.unit)
+            : "item"}{" "}
+          Minimum Order
+        </div>{" "}
+        <p
+          className={`text-sm mb-3  ${
+            expiryDateObj < now ? "bg-red-400 w-fit  px-2 rounded-sm" : ""
+          } `}
+        >
+          {expiryDateObj < now ? (
+            <div className="flex flex-row justify-center items-center">
+              <FiAlertTriangle className="mr-2" /> Expired: {expiryDate}
+            </div>
+          ) : (
+            <div>Expires: {expiryDate}</div>
+          )}
+        </p>
         {!isInBasket && (
           <div className="flex items-center justify-center space-x-4 relative">
             <button
@@ -181,10 +205,17 @@ const SendMessageSection = ({
           }`}
         >
           {isInBasket
-            ? `Remove ${quantity} ${listing?.unit} from Basket`
-            : `Add ${quantity ? quantity : 0} ${listing?.unit} to Basket`}
+            ? `Remove ${quantity} ${
+                listing.unit !== "each" || quantity > 1
+                  ? pluralizeQuantityType(quantity, listing.unit)
+                  : "item"
+              } from Basket`
+            : `Add ${quantity ? quantity : 0} ${
+                listing.unit !== "each" || quantity > 1
+                  ? pluralizeQuantityType(quantity, listing.unit)
+                  : "item"
+              } to Basket`}
         </button>
-
         {!isInBasket && (
           <div className="text-xs text-center mt-3">
             You will not be charged at this time

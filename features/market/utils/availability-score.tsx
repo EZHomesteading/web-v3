@@ -1,4 +1,4 @@
-import { getTextColor, getColor } from "@/utils/avail-score-handlers";
+import { getTextColor, getColor } from "@/utils/listing-helpers";
 import { OutfitFont } from "../../../components/fonts";
 import { Clock } from "lucide-react";
 
@@ -28,19 +28,27 @@ const AvailabilityScore = ({ scores, type }: AvailabilityScoreProps) => {
         )}`}
       >
         <Clock size={14} className="mr-1" />
-        <span className={`${OutfitFont.className} font-medium`}>
+        <div className={`${OutfitFont.className} font-medium`}>
           {type === "pickup" ? "Pickup Availability" : "Delivery Availability"}
-        </span>
+        </div>
       </div>
 
       {typeScores.combinedScore === 0 ? (
-        <div className={` ${getTextColor(typeScores.combinedScore)}`}>None</div>
+        <div className={`text-xs ${getTextColor(typeScores.combinedScore)}`}>
+          None
+        </div>
       ) : typeScores.combinedScore === 1 ? (
-        <div className={` ${getTextColor(typeScores.combinedScore)}`}>Poor</div>
+        <div className={`text-xs ${getTextColor(typeScores.combinedScore)}`}>
+          Poor
+        </div>
       ) : typeScores.combinedScore === 2 ? (
-        <div className={`${getTextColor(typeScores.combinedScore)}`}>Fair</div>
+        <div className={`text-xs ${getTextColor(typeScores.combinedScore)}`}>
+          Fair
+        </div>
       ) : typeScores.combinedScore === 3 ? (
-        <div className={`${getTextColor(typeScores.combinedScore)}`}>Good</div>
+        <div className={`text-xs ${getTextColor(typeScores.combinedScore)}`}>
+          Good
+        </div>
       ) : null}
     </div>
   );
