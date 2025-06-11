@@ -11,7 +11,8 @@ import Image from "next/image";
 import PaymentComponent from "./payment-component";
 import axios from "axios";
 import { formatDate } from "@/utils/time-managers";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import { PiArrowLeftThin } from "react-icons/pi";
 
 const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || ""
@@ -89,6 +90,7 @@ const MobilePriceSummary = ({ formattedTotal }: { formattedTotal: number }) => {
 };
 
 export default function CheckoutForm({ baskets, user }: CheckoutFormProps) {
+  const router = useRouter();
   if (!baskets) baskets = [];
   const [paymentIntents, setPaymentIntents] = useState<PaymentIntentData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -235,9 +237,21 @@ export default function CheckoutForm({ baskets, user }: CheckoutFormProps) {
       </div>
     );
   }
-  console.log("RRREEEEEEEE", baskets);
+
   return (
     <div className="">
+      {" "}
+      <div className={`fixed top-0 w-full mt-2 ml-2 max-w-5xl z-10`}>
+        <button
+          onClick={() => router.push("/my-basket")}
+          className={`flex flex-row items-center  justify-center rounded-full border text-black p-3 
+          
+          `}
+        >
+          <PiArrowLeftThin className="mr-2" />
+          Return to Basket
+        </button>
+      </div>
       <div
         className="fixed left-0 top-0 hidden h-full w-1/2 bg-white lg:block"
         aria-hidden="true"
@@ -246,7 +260,6 @@ export default function CheckoutForm({ baskets, user }: CheckoutFormProps) {
         className="fixed right-0 top-0 hidden h-full w-1/2 bg-gray-50 lg:block"
         aria-hidden="true"
       />
-
       <div className="relative mx-auto grid max-w-7xl grid-cols-1 gap-x-16 lg:grid-cols-2 lg:px-8 xl:gap-x-48">
         <h1 className="sr-only">Order information</h1>
 
