@@ -338,6 +338,7 @@ const DetailedBasketGridContent: React.FC<DetailedBasketGridProps> = ({
                 setEndLoc={setEndLoc}
                 userLoc={userLoc}
                 locations={locations}
+                baskets={baskets}
                 mapsKey={mapsKey}
                 setPickupTimes={setPickupTimes}
                 pickupTimes={pickupTimes}

@@ -12,7 +12,7 @@ import {
 } from "date-fns";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { basket_time_type, orderMethod, TimeSlot } from "@prisma/client";
+import { BasketTimeType, orderMethod, TimeSlot } from "@prisma/client";
 import {
   convertTimeStringToMinutes,
   createDateKey,
@@ -215,7 +215,7 @@ const SetCustomPickupDeliveryCalendar = ({
         orderMethod: basketState.orderMethod,
         proposedLoc: basketState.proposedLoc,
         items: basketState.items,
-        time_type: basket_time_type.CUSTOM,
+        timeType: BasketTimeType.CUSTOM,
       };
 
       console.log("Payload being sent to backend:", payload);
