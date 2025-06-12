@@ -7,7 +7,7 @@ export async function POST(req: NextRequest) {
     proposedLoc,
     deliveryDate,
     pickupDate,
-    time_type,
+    timeType,
     orderMethod,
     items,
   } = await req.json();
@@ -21,8 +21,12 @@ export async function POST(req: NextRequest) {
       where: { id },
       data: {
         proposedLoc: proposedLoc,
-        deliveryDate: deliveryDate ? new Date(deliveryDate) : null,
-        pickupDate: pickupDate ? new Date(pickupDate) : null,
+
+        fulfillmentDate: pickupDate
+          ? new Date(pickupDate)
+          : deliveryDate
+          ? new Date(deliveryDate)
+          : null,
         orderMethod: orderMethod,
         items: {
           updateMany: items.map((item: any) => ({
@@ -30,7 +34,7 @@ export async function POST(req: NextRequest) {
             data: { quantity: item.quantity },
           })),
         },
-        time_type: time_type,
+        timeType: timeType,
       },
     });
     return NextResponse.json(updatedBasket);

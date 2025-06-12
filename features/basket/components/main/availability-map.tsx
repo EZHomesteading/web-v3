@@ -28,6 +28,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { calculateExpiryDate } from "@/utils/listing-helpers";
 
 interface LocationStatus {
   isOpen: boolean;
@@ -52,6 +53,7 @@ interface RandomizedPositions {
 }
 interface DateTimePickerProps {
   locations: any[];
+  baskets: any;
   selectedDate: string;
   selectedTime: string;
   onSelect: (date: string, time: string) => void;
@@ -62,6 +64,7 @@ interface DateTimePickerProps {
 interface AvailabilityMapProps {
   setStartLoc: React.Dispatch<React.SetStateAction<any[]>>;
   setEndLoc: React.Dispatch<React.SetStateAction<any[]>>;
+  baskets: any;
   userLoc: any;
   mapsKey: string;
   setPickupTimes: any;
@@ -69,9 +72,46 @@ interface AvailabilityMapProps {
   startDelay: number;
   pickupTimes: any;
 }
+const getEarliestExpiryDate = (baskets: any[]): Date | null => {
+  let earliestExpiry: Date | null = null;
 
+  baskets.forEach((basket: any) => {
+    basket.items.forEach((item: any) => {
+      const expiryDate = calculateExpiryDate(
+        item.listing.createdAt,
+        parseInt(item.listing.shelfLife)
+      );
+
+      // Skip items that never expire
+      if (expiryDate === "Never") return;
+
+      const expiry = new Date(expiryDate);
+      if (!earliestExpiry || expiry < earliestExpiry) {
+        earliestExpiry = expiry;
+      }
+    });
+  });
+
+  return earliestExpiry;
+};
+
+const getMaxSODT = (baskets: any[]): number => {
+  let maxSODT = 0;
+
+  baskets.forEach((basket: any) => {
+    basket.items.forEach((item: any) => {
+      const sodt = parseInt(item.listing.SODT) || 0;
+      if (sodt > maxSODT) {
+        maxSODT = sodt;
+      }
+    });
+  });
+
+  return maxSODT;
+};
 const DateTimePicker: React.FC<DateTimePickerProps> = ({
   locations,
+  baskets,
   selectedDate,
   selectedTime,
   onSelect,
@@ -143,13 +183,49 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
     }
   };
   // Add this utility function to collect closed dates from locations
-  const getClosedDates = (locations: any[]): Date[] => {
+  baskets.forEach((basket: any) => {
+    basket.items.forEach((item: any) => {
+      console.log(
+        item.listing.SODT, //time in minutes that the shop owner needs advance notice of an order.
+        item.listing.createdAt,
+        item.listing.shelfLife
+      );
+      const expirydate = calculateExpiryDate(
+        //date the produce will expire
+        item.listing.createdAt,
+        parseInt(item.listing.shelfLife)
+      );
+    });
+  });
+  //  export const calculateExpiryDate = (createdAt: Date, shelfLife: number) => {
+  //   if (shelfLife === 365000) return "Never";
+
+  //   const createdDate = new Date(createdAt);
+  //   const expiryDate = new Date(
+  //     createdDate.getTime() + shelfLife * 24 * 60 * 60 * 1000
+  //   );
+  //   return expiryDate.toLocaleDateString("en-US", {
+  //     month: "short",
+  //     day: "numeric",
+  //     year: "numeric",
+  //   });
+  // };
+  console.log(baskets);
+  const getClosedDates = (locations: any[], baskets: any[]): Date[] => {
     console.log(locations);
     const closedDates = new Set<string>();
 
     const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
     const maxDate = new Date();
     maxDate.setDate(today.getDate() + 365); // Look ahead 365 days
+
+    // Get expiry date constraint
+    const earliestExpiryDate = getEarliestExpiryDate(baskets);
+
+    // Get maximum SODT constraint
+    const maxSODT = getMaxSODT(baskets);
 
     // Generate all dates in our range
     const allDates = new Set<string>();
@@ -172,6 +248,17 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
         }
       });
     });
+
+    // Add dates that violate expiry constraint
+    if (earliestExpiryDate) {
+      const currentDate = new Date(earliestExpiryDate);
+      currentDate.setDate(currentDate.getDate() + 1); // Start from day after expiry
+
+      while (currentDate <= maxDate) {
+        closedDates.add(currentDate.toDateString());
+        currentDate.setDate(currentDate.getDate() + 1);
+      }
+    }
 
     // Convert back to Date objects
     return Array.from(closedDates).map((dateStr) => new Date(dateStr));
@@ -251,8 +338,34 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
                           return true;
                         }
 
+                        // Get expiry date constraint
+                        const earliestExpiryDate =
+                          getEarliestExpiryDate(baskets);
+                        if (earliestExpiryDate && date > earliestExpiryDate) {
+                          return true;
+                        }
+
+                        // Get maximum SODT constraint
+                        const maxSODT = getMaxSODT(baskets);
+
+                        // Check SODT constraint for today
+                        if (
+                          date.toDateString() === today.toDateString() &&
+                          maxSODT > 0
+                        ) {
+                          const now = new Date();
+                          const currentMinutes =
+                            now.getHours() * 60 + now.getMinutes();
+                          const minutesUntilMidnight = 24 * 60 - currentMinutes;
+
+                          // If there's not enough time left in the day to meet SODT requirement
+                          if (minutesUntilMidnight < maxSODT) {
+                            return true;
+                          }
+                        }
+
                         // Block dates when any store is closed
-                        const closedDates = getClosedDates(locations);
+                        const closedDates = getClosedDates(locations, baskets);
                         return closedDates.some(
                           (closedDate) =>
                             closedDate.toDateString() === date.toDateString()
@@ -300,6 +413,7 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
 const AvailabilityMap: React.FC<AvailabilityMapProps> = ({
   setStartLoc,
   setEndLoc,
+  baskets,
   userLoc,
   locations,
   mapsKey,
@@ -765,6 +879,7 @@ const AvailabilityMap: React.FC<AvailabilityMapProps> = ({
 
       <DateTimePicker
         locations={locations}
+        baskets={baskets}
         selectedDate={selectedDate}
         selectedTime={selectedTime}
         onSelect={handleDateTimeSelect}
