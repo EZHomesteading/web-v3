@@ -36,7 +36,7 @@ const RefundModal: React.FC<ConfirmModalProps> = ({
   const onDelete = useCallback(async () => {
     setIsLoading(true);
     const data = { orderId, status: "REFUNDED" };
-    axios.post("/api/stripe/refund-payment", {
+    axios.post("/api/stripe/cancel-intent", {
       paymentId: paymentId,
     });
     axios.post(`/api/chat/dispute/updateDispute/`, data);

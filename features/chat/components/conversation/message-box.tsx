@@ -41,6 +41,7 @@ import { ImageUpload } from "../../utils/image-upload";
 import { useRouter } from "next/navigation";
 import { MessageWithListing } from "./new/types";
 import { Listing } from "@/types";
+import { toast } from "sonner";
 //import DateTimePicker from "./customtimemodal";
 
 interface MessageBoxProps {
@@ -198,20 +199,56 @@ const MessageBox: React.FC<MessageBoxProps> = ({
   // all onsubmit options dependent on messages in chat.
   const trySubmit = async (status: OrderStatus) => {
     const message = await getMessageByStatus(status);
-    if (status === "COMPLETED") {
-      try {
-        // First API call
+
+    try {
+      if (status === "PICKED_UP") {
+        // Update order status
         await axios.post("/api/useractions/update/update-order", {
           orderId: order?.id,
           status: status,
           completedAt: new Date(),
         });
 
-        // Second API call (stripe payout)
+        // Capture the payment intent (finalize the held payment)
+        await axios.post("/api/stripe/capture-payment", {
+          paymentId: order?.paymentIntentId,
+          orderId: order?.id,
+        });
+
+        // Post status message
+        await axios.post("/api/chat/messages", {
+          message: message,
+          messageOrder: status,
+          conversationId: convoId,
+          otherUserId: otherUsersId,
+        });
+      } else if (status === "COMPLETED") {
+        // Update order status
+        await axios.post("/api/useractions/update/update-order", {
+          orderId: order?.id,
+          status: status,
+          completedAt: new Date(),
+        });
+
+        // Transfer funds to seller (payment should already be captured)
         await axios.post("/api/stripe/transfer", {
           total: order?.totalPrice ? order.totalPrice / 100 : null,
           paymentId: order?.paymentIntentId,
           orderId: order?.id,
+        });
+
+        // Post status message
+        await axios.post("/api/chat/messages", {
+          message: message,
+          messageOrder: status,
+          conversationId: convoId,
+          otherUserId: otherUsersId,
+        });
+      } else {
+        // For other statuses, just update order and post message
+        await axios.post("/api/useractions/update/update-order", {
+          orderId: order?.id,
+          status: status,
         });
 
         await axios.post("/api/chat/messages", {
@@ -220,42 +257,29 @@ const MessageBox: React.FC<MessageBoxProps> = ({
           conversationId: convoId,
           otherUserId: otherUsersId,
         });
-      } catch (error) {
-        console.error("Error processing order:", error);
+      }
+    } catch (error) {
+      console.error(`Error processing order status ${status}:`, error);
 
-        // You can check for specific error conditions
-        if (axios.isAxiosError(error)) {
-          if (error.response?.status === 401) {
-            // Unauthorized
-            router.push("/login");
-            return;
-          } else if (error.response?.status === 400) {
-            // Bad request
-            // router.push("/selling/my-store");
-            return;
-          } else {
-            // General error
-            // router.push("/selling/my-store");
-            return;
-          }
+      if (axios.isAxiosError(error)) {
+        if (error.response?.status === 401) {
+          // Unauthorized - redirect to login
+          router.push("/login");
+          return;
+        } else if (error.response?.status === 400) {
+          // Bad request - show error message
+          toast("Invalid request. Please try again.");
+          return;
         } else {
-          // Non-axios error
-          //router.push("/selling/my-store");
+          // General server error
+          toast("Server error. Please try again later.");
           return;
         }
+      } else {
+        // Non-axios error
+        toast("An unexpected error occurred.");
+        return;
       }
-      //coop seller confirms order pickup time
-    } else {
-      await axios.post("/api/useractions/update/update-order", {
-        orderId: order?.id,
-        status: status,
-      });
-      await axios.post("/api/chat/messages", {
-        message: message,
-        messageOrder: status,
-        conversationId: convoId,
-        otherUserId: otherUsersId,
-      });
     }
   };
   const onSubmit = async (status: OrderStatus) => {
@@ -552,7 +576,8 @@ const MessageBox: React.FC<MessageBoxProps> = ({
             <PopoverTrigger asChild>
               <Button
                 variant={
-                  (notOwn &&
+                  (data.messageOrder !== "CANCELED" &&
+                    notOwn &&
                     data.messageOrder !== "IN_TRANSIT" &&
                     data.messageOrder !== "SELLER_PREPARING" &&
                     data.messageOrder !== "SELLER_ACCEPTED" &&
@@ -568,7 +593,8 @@ const MessageBox: React.FC<MessageBoxProps> = ({
             hover:scale-105
             focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75`}
                 style={
-                  (notOwn &&
+                  (data.messageOrder !== "CANCELED" &&
+                    notOwn &&
                     data.messageOrder !== "IN_TRANSIT" &&
                     data.messageOrder !== "SELLER_PREPARING" &&
                     data.messageOrder !== "SELLER_ACCEPTED" &&
@@ -580,7 +606,8 @@ const MessageBox: React.FC<MessageBoxProps> = ({
                     : {}
                 }
               >
-                {(notOwn &&
+                {(data.messageOrder !== "CANCELED" &&
+                  notOwn &&
                   data.messageOrder !== "IN_TRANSIT" &&
                   data.messageOrder !== "SELLER_PREPARING" &&
                   data.messageOrder !== "SELLER_ACCEPTED" &&

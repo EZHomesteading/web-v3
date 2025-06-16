@@ -40,120 +40,67 @@ const CancelModal: React.FC<ConfirmModalProps> = ({
   };
 
   const onDelete = async () => {
-    //early return if the user has not entered a message, tell the user why
     if (text === "") {
-      Toast({ message: "No message entered" });
+      Toast({ message: "Please provide a reason for cancellation" });
       return;
     }
 
     setIsLoading(true);
-    axios.post("/api/stripe/refund-payment", {
-      paymentId: order?.paymentIntentId,
-    });
 
-    if (isSeller === true) {
-      axios.post("/api/useractions/update/update-order", {
+    try {
+      const paymentResponse = await axios.post("/api/stripe/cancel-intent", {
+        paymentId: order?.paymentIntentId,
+      });
+
+      if (!paymentResponse.data.success) {
+        Toast({
+          message:
+            paymentResponse.data.message ||
+            "Failed to process payment cancellation",
+        });
+        return;
+      }
+
+      const action = paymentResponse.data.action;
+      if (action === "canceled") {
+        Toast({ message: "Payment authorization canceled successfully" });
+      } else if (action === "refunded") {
+        Toast({ message: "Payment refunded successfully" });
+      }
+
+      await axios.post("/api/useractions/update/update-order", {
         orderId: order?.id,
         status: "CANCELED",
         completedAt: new Date(),
       });
-    } else {
-      axios.post("/api/useractions/update/update-order", {
+
+      await axios.post("/api/useractions/checkout/remove-order-from-group", {
+        orderGroupId: orderGroupId,
         orderId: order?.id,
-        status: "CANCELED",
-        completedAt: new Date(),
       });
+
+      await axios.post("/api/chat/messages", {
+        message: `I have canceled this item, because: ${text}`,
+        messageOrder: "CANCELED",
+        conversationId: convoId,
+        otherUserId: otherUser,
+      });
+
+      await axios.post("/api/chat/updateListingOnCancel", {
+        order: order,
+      });
+
+      Toast({ message: "Order canceled successfully" });
+      onClose();
+      router.refresh();
+    } catch (error) {
+      console.error("Error canceling order:", error);
+      Toast({
+        message: "Failed to cancel order. Please try again.",
+      });
+    } finally {
+      setIsLoading(false);
     }
-    await axios.post("/api/useractions/checkout/remove-order-from-group", {
-      orderGroupId: orderGroupId,
-      orderId: order?.id,
-    });
-    //axios post is always the same. post a message with the users input text
-    axios.post("/api/chat/messages", {
-      message: `I have canceled this item, because: ${text}`,
-      messageOrder: "CANCELED",
-      conversationId: convoId,
-      otherUserId: otherUser,
-    });
-    axios
-      .post("/api/chat/updateListingOnCancel", { order: order })
-      .then(() => {
-        //sependent on who canceled, set order status appropriately.
-        if (session.data?.user.id === order?.sellerId) {
-          //if seller cancels
-          if (session.data?.user.role === "COOP") {
-            //if seller is coop
-            axios
-              .post("/api/useractions/update/update-order", {
-                orderId: order?.id,
-                status: "CANCELED",
-                completedAt: new Date(),
-              })
-              .then(() => {
-                onClose();
-                router.refresh();
-              });
-          } else {
-            //if seller is producer(can be else as consumers cant create listings)
-            axios
-              .post("/api/useractions/update/update-order", {
-                orderId: order?.id,
-                status: "CANCELED",
-                completedAt: new Date(),
-              })
-              .then(() => {
-                onClose();
-                router.refresh();
-              });
-          }
-        } else {
-          //if canceling user is not seller
-          if (session.data?.user.role === "COOP") {
-            //if cancelling user is coop
-            if (
-              session.data?.user.role === "COOP" &&
-              otherUserRole === "COOP"
-            ) {
-              //if both users are coop's
-              axios
-                .post("/api/useractions/update/update-order", {
-                  orderId: order?.id,
-                  status: "CANCELED",
-                  completedAt: new Date(),
-                })
-                .then(() => {
-                  onClose();
-                  router.refresh();
-                });
-            } else {
-              //if only person cancelling is coop buying from producer
-              axios
-                .post("/api/useractions/update/update-order", {
-                  orderId: order?.id,
-                  status: "CANCELED",
-                  completedAt: new Date(),
-                })
-                .then(() => {
-                  onClose();
-                  router.refresh();
-                });
-            }
-          } else {
-            //if consumer cancels
-            axios
-              .post("/api/useractions/update/update-order", {
-                orderId: order?.id,
-                status: "CANCELED",
-                completedAt: new Date(),
-              })
-              .then(() => {
-                onClose();
-                router.refresh();
-              });
-          }
-        }
-      })
-      .finally(() => setIsLoading(false));
   };
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
