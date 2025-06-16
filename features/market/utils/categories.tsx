@@ -419,11 +419,11 @@ const Categories = ({ role }: Props) => {
   return (
     <Container>
       <div className={`${OutfitFont.className} flex flex-col`}>
-        <div className="flex items-center justify-center lg:justify-between min-h-[70px]">
-          <div className="flex-shrink-0 mr-16">
+        <div className="flex items-center mx-10 justify-center lg:justify-between min-h-[70px]">
+          <div className="flex-shrink-0 mr-2 ml-10 sm:mr-16 sm:ml-2 ">
             <Filters role={role} />
           </div>
-          <div className="flex-shrink-0">
+          <div className="flex-shrink-0 mr-10">
             <AnimatePresence mode="wait">
               {renderTitleSection()}
             </AnimatePresence>

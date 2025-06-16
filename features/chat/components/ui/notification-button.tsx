@@ -34,7 +34,6 @@ const SubToggle = (): ReactElement | null => {
 
     getActivePushSubscription();
 
-    // Cleanup function to prevent state updates if component unmounts
     return () => {
       isMounted = false;
     };
@@ -70,7 +69,6 @@ const SubToggle = (): ReactElement | null => {
     [loading]
   );
 
-  // Don't render until we know subscription status
   if (hasActivePushSubscription === undefined) return null;
 
   // Render notification toggle buttons
